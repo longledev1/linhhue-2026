@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  /* --font-sans: "Inter", sans-serif; */
+  --font-sans: "Montserrat", sans-serif;
+  --font-script: "1KHighSpirited", cursive;
+  --font-display: "Oooh Baby", cursive;
+  --color-primary: #ab8c5d;
+  --color-secondary: #1c1c1a;
+}
+
+@font-face {
+  font-family: "1KHighSpirited";
+  src: url("/fonts/1KHighSpirited.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-weight: 400;
+  color: #2d2d2d;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* padding left-right 40px padding top-bottom 20px */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 20px;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Thêm vào file CSS toàn cục của bạn, ví dụ: src/index.css hoặc src/styles/global.css */
+
+.rich-content {
+  line-height: 1.8;
+  color: #2c2a29; /* Sửa nhẹ lại màu chữ stone-800 nhìn cho sang và dịu mắt */
+}
+
+/* 🌟 TỐI ƯU TIÊU ĐỀ: Chỉ gom các thẻ hay dùng từ h1 đến h3 để tránh loãng */
+.rich-content h1,
+.rich-content h2,
+.rich-content h3 {
+  color: #1c1c1a;
+  font-weight: 700;
+  line-height: 1.4;
+  /* Giữ khoảng cách chuẩn: cách thằng bên trên xa một chút, thằng sát bên dưới gần lại */
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.rich-content h1 {
+  font-size: 1.5rem;
+} /* md:text-2xl */
+.rich-content h2 {
+  font-size: 1.35rem;
+} /* md:text-xl */
+.rich-content h3 {
+  font-size: 1.2rem;
+} /* md:text-lg */
+
+/* 🌟 ĐOẠN VĂN: Khoảng cách các đoạn text xuống hàng */
+.rich-content p {
+  margin-bottom: 1rem;
+}
+.rich-content p:last-child {
+  margin-bottom: 0; /* Đoạn cuối cùng thì bỏ margin để không làm hở chân card */
+}
+
+/* 🌟 FIX DỨT ĐIỂM DANH SÁCH: Ép hiện dấu chấm tròn và số thứ tự của Quill */
+.rich-content ul {
+  list-style-type: disc !important;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.rich-content ol {
+  list-style-type: decimal !important;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.rich-content li {
+  margin-bottom: 0.35rem;
+}
+
+/* Đường dẫn liên kết */
+.rich-content a {
+  color: #ab8c5d;
+  text-decoration: none;
+  font-weight: 600;
+}
+.rich-content a:hover {
+  text-decoration: underline;
+}
+
+/* Ảnh đính kèm trong bài viết */
+.rich-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  display: block;
+}
+
+/* Khối trích dẫn (Blockquote) */
+.rich-content blockquote {
+  border-left: 4px solid #ab8c5d;
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #57534e;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// --- 1. MOCKUP DATA ---
 const PRODUCT_DATA = {
   coffee: [
     {
@@ -88,200 +89,139 @@ const PRODUCT_DATA = {
 };
 
 const tabs = [
-  {
-    id: "coffee",
-    label: "CÀ PHÊ",
-  },
-  {
-    id: "tea",
-    label: "TRÀ",
-  },
-  {
-    id: "gift",
-    label: "SET QUÀ TẶNG",
-  },
+  { id: "coffee", label: "CÀ PHÊ" },
+  { id: "tea", label: "TRÀ" },
+  { id: "gift", label: "SET QUÀ TẶNG" },
 ];
 
 const ShowCaseSection = () => {
   const [activeTab, setActiveTab] = useState("coffee");
 
   return (
-    <section className="relative mt-[80px] overflow-hidden py-24">
-      {/* BACKGROUND */}
+    <section className="relative mt-[80px] overflow-hidden py-14 lg:py-24">
       <img
         src="/images/fnb/showcase_banner.png"
         alt="banner"
         className="absolute inset-0 h-full w-full object-cover"
       />
 
-      {/* OVERLAY */}
       <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" />
 
-      <div className="relative z-10 container mx-auto px-6">
-        {/* HEADER */}
-        <div className="mb-20 grid items-start gap-10 lg:grid-cols-2">
-          {/* LEFT */}
+      <div className="relative z-10 container mx-auto px-4 md:px-6">
+        <div className="mb-12 grid grid-cols-1 items-start gap-6 lg:mb-20 lg:grid-cols-2 lg:gap-10">
           <motion.div
-            initial={{
-              opacity: 0,
-              x: -50,
-            }}
-            whileInView={{
-              opacity: 1,
-              x: 0,
-            }}
-            transition={{
-              duration: 1,
-            }}
-            viewport={{
-              once: true,
-            }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center lg:text-left"
           >
-            <h2 className="text-primary text-[38px] font-bold tracking-[6px] uppercase md:text-[42px]">
+            <h2 className="text-[26px] leading-tight font-bold tracking-[4px] text-[#ab8c5d] uppercase sm:text-[32px] lg:text-[38px] lg:tracking-[6px] xl:text-[42px]">
               GÓI TRỌN HƯƠNG VỊ
             </h2>
 
-            <p className="font-script -mt-3 text-[42px] text-white md:text-[60px]">
+            <p className="font-script mt-1 text-[28px] text-white italic sm:text-[38px] lg:-mt-3 lg:text-[50px] xl:text-[60px]">
               Thưởng thức sự nguyên bản ở bất cứ đâu.
             </p>
           </motion.div>
 
-          {/* RIGHT */}
           <motion.div
-            initial={{
-              opacity: 0,
-              x: 50,
-            }}
-            whileInView={{
-              opacity: 1,
-              x: 0,
-            }}
-            transition={{
-              duration: 1,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="max-w-[500px] justify-self-end text-right"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="w-full max-w-none text-justify lg:max-w-[500px] lg:justify-self-end lg:text-right"
           >
-            <p className="text-[15px] leading-[2.1] text-white/80">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s.
+            <p className="text-[14px] leading-[1.8] font-light text-white/80 sm:text-[15px] lg:leading-[2.1]">
+              Gìn giữ trọn vẹn tinh hoa nông sản Việt thông qua những gói quà
+              tặng tinh tế. Linh Huệ gửi gắm vào từng sản phẩm lòng đam mê và sự
+              trân quý, sẵn sàng đồng hành cùng bạn trên mọi hành trình thưởng
+              thức hương vị đỉnh cao.
             </p>
           </motion.div>
         </div>
 
-        {/* TAB */}
-        <div className="mb-16 flex flex-wrap items-center justify-center gap-3">
-          {tabs.map((tab, index) => (
-            <React.Fragment key={tab.id}>
-              <button
-                onClick={() => setActiveTab(tab.id)}
-                className={`text-[20px] tracking-[2px] uppercase transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? "text-[#c9a063]"
-                    : "text-white hover:text-[#c9a063]"
-                } `}
-              >
-                {tab.label}
-              </button>
+        <div className="mb-12 flex w-full justify-center">
+          <div className="custom-scrollbar-hide flex max-w-full items-center gap-4 overflow-x-auto px-4 pb-2 whitespace-nowrap lg:flex-wrap lg:justify-center lg:gap-3 lg:overflow-visible lg:p-0">
+            {tabs.map((tab, index) => (
+              <React.Fragment key={tab.id}>
+                <button
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`cursor-pointer text-[15px] font-semibold tracking-[1px] uppercase transition-all duration-300 lg:text-[20px] lg:tracking-[2px] ${
+                    activeTab === tab.id
+                      ? "scale-105 font-bold text-[#c9a063]"
+                      : "text-white/80 hover:text-[#c9a063]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
 
-              {/* Divider */}
-              {index !== tabs.length - 1 && (
-                <span className="text-[20px] text-white/60">|</span>
-              )}
-            </React.Fragment>
-          ))}
+                {index !== tabs.length - 1 && (
+                  <span className="hidden text-[20px] text-white/40 lg:inline">
+                    |
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
-        {/* PRODUCT LIST */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              y: 20,
-            }}
-            transition={{
-              duration: 0.6,
-            }}
-            className="mx-auto grid max-w-[1200px] gap-6 md:grid-cols-2 xl:grid-cols-3"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto grid max-w-[340px] items-stretch justify-center gap-8 sm:max-w-[540px] md:max-w-none md:grid-cols-2 xl:grid-cols-3"
           >
             {PRODUCT_DATA[activeTab].map((item, index) => (
               <motion.div
                 key={item.id}
-                initial={{
-                  opacity: 0,
-                  y: 50,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.7,
-                  delay: index * 0.1,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                whileHover={{
-                  y: -10,
-                }}
-                className="flex h-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.12] shadow-[0_10px_40px_rgba(0,0,0,0.15)] backdrop-blur-xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+                className="flex h-full flex-col overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.08] shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl"
               >
-                {/* IMAGE */}
-                <div className="flex h-[300px] items-center justify-center bg-white/[0.06] p-8">
+                <div className="flex h-[260px] flex-shrink-0 items-center justify-center bg-white/[0.04] p-6 sm:h-[300px] sm:p-8">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="h-[230px] object-contain transition-transform duration-700 hover:scale-105"
+                    className="h-[200px] object-contain transition-transform duration-700 hover:scale-105 sm:h-[230px]"
                   />
                 </div>
 
-                {/* CONTENT */}
                 {activeTab === "coffee" ? (
-                  <>
-                    {/* TITLE */}
-                    <div className="relative flex h-[72px] items-center justify-center overflow-hidden border-y border-white/10 bg-white/[0.06] px-6 text-center backdrop-blur-xl">
-                      {/* overlay glow */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/[0.02] via-white/[0.08] to-white/[0.02]" />
-
-                      <h3 className="relative z-10 text-[16px] font-bold tracking-[1px] text-white uppercase">
+                  <div className="flex flex-1 flex-col">
+                    <div className="relative flex h-[68px] items-center justify-center overflow-hidden border-y border-white/10 bg-white/[0.05] px-4 text-center sm:h-[72px]">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/[0.01] via-white/[0.06] to-white/[0.01]" />
+                      <h3 className="relative z-10 text-[14px] font-bold tracking-[0.5px] text-white uppercase sm:text-[16px]">
                         {item.name}
                       </h3>
                     </div>
 
-                    {/* COLOR INFO */}
                     <div
-                      className={` ${item.bgColor} flex min-h-[110px] flex-col items-center justify-center px-6 py-5 text-center`}
+                      className={`${item.bgColor} flex min-h-[110px] flex-1 flex-col items-center justify-center px-5 py-4 text-center`}
                     >
                       {item.desc.map((text, idx) => (
                         <p
                           key={idx}
-                          className="text-[12px] leading-[1.9] text-white"
+                          className="text-[11px] leading-[1.8] font-medium text-white/95 sm:text-[12px]"
                         >
                           {text}
                         </p>
                       ))}
                     </div>
-                  </>
+                  </div>
                 ) : (
-                  <div className="flex flex-1 flex-col items-center justify-between bg-white/[0.03] px-8 py-8 text-center backdrop-blur-xl">
-                    <h3 className="mb-5 text-[18px] font-bold tracking-[1px] text-white uppercase">
+                  <div className="flex flex-1 flex-col justify-between bg-white/[0.02] p-6 text-center sm:p-8">
+                    <h3 className="mb-3 text-[16px] leading-snug font-bold tracking-[0.5px] text-white uppercase sm:mb-4 sm:text-[18px]">
                       {item.name}
                     </h3>
 
-                    <p className="flex-1 text-[13px] leading-[2] text-white/75">
+                    <p className="flex-1 text-justify text-[13px] leading-[1.7] font-light text-white/80 sm:text-center sm:leading-[2]">
                       {item.description}
                     </p>
                   </div>
@@ -291,6 +231,16 @@ const ShowCaseSection = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <style jsx global>{`
+        .custom-scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .custom-scrollbar-hide {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      `}</style>
     </section>
   );
 };

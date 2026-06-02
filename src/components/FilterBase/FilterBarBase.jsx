@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -10,7 +10,7 @@ import {
   Typography,
   TextField,
   FormHelperText,
-  Autocomplete, // 🌟 ĐÃ TÍCH HỢP: Import Autocomplete để xử lý mảng phường xã lớn
+  Autocomplete,
 } from "@mui/material";
 import { FiSearch, FiRefreshCw } from "react-icons/fi";
 
@@ -22,10 +22,13 @@ export default function FilterBarBase({
   defaultValues,
   isAdmin = false,
 }) {
-  const initialDefaultValues = fields.reduce((acc, field) => {
-    acc[field] = "";
-    return acc;
-  }, {});
+  // 🌟 KHẮC PHỤC LỖI LOOP: Bọc reduce vào useMemo để cố định địa chỉ ô nhớ Object
+  const initialDefaultValues = useMemo(() => {
+    return fields.reduce((acc, field) => {
+      acc[field] = "";
+      return acc;
+    }, {});
+  }, [fields]);
 
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     defaultValues: defaultValues || initialDefaultValues,
@@ -33,14 +36,17 @@ export default function FilterBarBase({
 
   const currentStatus = watch("status");
 
+  // 🌟 ĐỒNG BỘ DỮ LIỆU: Reset form an toàn không sợ kích hoạt vòng lặp vô hạn
   useEffect(() => {
     if (defaultValues && Object.keys(defaultValues).length > 0) {
       reset({
         ...initialDefaultValues,
         ...defaultValues,
       });
+    } else {
+      reset(initialDefaultValues);
     }
-  }, [defaultValues, reset]);
+  }, [defaultValues, reset, initialDefaultValues]);
 
   useEffect(() => {
     if (fields.includes("price")) {
@@ -94,6 +100,7 @@ export default function FilterBarBase({
   };
 
   const PRIMARY_COLOR = "#ab8c5d";
+  const FONT_FAMILY = '"Montserrat", sans-serif'; // 🌟 BIẾN ĐỊNH DẠNG FONT CHỮ MONTSERRAT
 
   return (
     <Box className="w-full bg-transparent">
@@ -106,9 +113,17 @@ export default function FilterBarBase({
         {/* Breadcrumb Client */}
         {!isAdmin && (
           <Box className="mb-2 flex flex-col gap-2">
-            <Typography className="text-base font-medium text-stone-500 md:text-lg">
+            <Typography
+              className="text-base font-medium text-stone-500 md:text-lg"
+              sx={{ fontFamily: FONT_FAMILY }}
+            >
               Trang chủ / Bất động sản /{" "}
-              <span className="text-primary font-bold">{title}</span>
+              <span
+                className="text-primary font-bold"
+                style={{ color: PRIMARY_COLOR }}
+              >
+                {title}
+              </span>
             </Typography>
           </Box>
         )}
@@ -141,12 +156,16 @@ export default function FilterBarBase({
                           variant="outlined"
                           placeholder="Nhập mã ID..."
                           sx={{
-                            "& .MuiInputLabel-root": { fontSize: "14px" },
+                            "& .MuiInputLabel-root": {
+                              fontSize: "14px",
+                              fontFamily: FONT_FAMILY,
+                            },
                             "& .MuiInputLabel-root.Mui-focused": {
                               color: PRIMARY_COLOR,
                             },
                             "& .MuiOutlinedInput-root": {
                               borderRadius: "8px",
+                              fontFamily: FONT_FAMILY,
                               "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                 {
                                   borderColor: PRIMARY_COLOR,
@@ -160,7 +179,7 @@ export default function FilterBarBase({
                   );
                 }
 
-                // ================= TRƯỜNG HỢP 2: Ô AUTOCOMPLETE PHƯỜNG XÃ CHỐNG LAG (VIOLATION) =================
+                // ================= TRƯỜNG HỢP 2: Ô AUTOCOMPLETE PHƯỜNG XÃ CHỐNG LAG =================
                 if (fieldName === "ward") {
                   return (
                     <Controller
@@ -184,6 +203,13 @@ export default function FilterBarBase({
                               onChange(newValue ? newValue.value : "");
                             }}
                             disableScrollLock
+                            // Ép font Montserrat cho danh sách đổ xuống của Autocomplete
+                            ListboxProps={{
+                              style: {
+                                fontFamily: FONT_FAMILY,
+                                fontSize: "14px",
+                              },
+                            }}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
@@ -191,12 +217,16 @@ export default function FilterBarBase({
                                 label={getFieldLabel(fieldName)}
                                 placeholder="Gõ để tìm nhanh phường xã..."
                                 sx={{
-                                  "& .MuiInputLabel-root": { fontSize: "14px" },
+                                  "& .MuiInputLabel-root": {
+                                    fontSize: "14px",
+                                    fontFamily: FONT_FAMILY,
+                                  },
                                   "& .MuiInputLabel-root.Mui-focused": {
                                     color: PRIMARY_COLOR,
                                   },
                                   "& .MuiOutlinedInput-root": {
                                     borderRadius: "8px",
+                                    fontFamily: FONT_FAMILY,
                                     "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                       {
                                         borderColor: PRIMARY_COLOR,
@@ -224,12 +254,16 @@ export default function FilterBarBase({
                     size="medium"
                     disabled={isPriceDisabled}
                     sx={{
-                      "& .MuiInputLabel-root": { fontSize: "14px" },
+                      "& .MuiInputLabel-root": {
+                        fontSize: "14px",
+                        fontFamily: FONT_FAMILY,
+                      },
                       "& .MuiInputLabel-root.Mui-focused": {
                         color: PRIMARY_COLOR,
                       },
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "8px",
+                        fontFamily: FONT_FAMILY,
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: isPriceDisabled
                             ? "rgba(0, 0, 0, 0.26)"
@@ -256,17 +290,24 @@ export default function FilterBarBase({
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
-                          MenuProps={{ disableScrollLock: true }}
-                          sx={{ fontSize: "14px" }}
+                          MenuProps={{
+                            disableScrollLock: true,
+                            // Ép font Montserrat cho Paper của Menu Popover
+                            PaperProps: { style: { fontFamily: FONT_FAMILY } },
+                          }}
+                          sx={{ fontSize: "14px", fontFamily: FONT_FAMILY }}
                         >
-                          <MenuItem value="">
+                          <MenuItem
+                            value=""
+                            sx={{ fontSize: "14px", fontFamily: FONT_FAMILY }}
+                          >
                             <em>Tất cả dữ liệu</em>
                           </MenuItem>
                           {fieldOptions.map((opt) => (
                             <MenuItem
                               key={String(opt.value)}
                               value={String(opt.value)}
-                              sx={{ fontSize: "14px" }}
+                              sx={{ fontSize: "14px", fontFamily: FONT_FAMILY }}
                             >
                               {opt.label}
                             </MenuItem>
@@ -275,12 +316,12 @@ export default function FilterBarBase({
                       )}
                     />
 
-                    {/* Dòng Note nhắc nhở động cho trường khoảng giá */}
                     {fieldName === "price" && isPriceDisabled && (
                       <FormHelperText
                         sx={{
                           color: "#a8a29e",
                           fontSize: "11px",
+                          fontFamily: FONT_FAMILY,
                           mt: 0.5,
                           ml: 1,
                           fontStyle: "italic",
@@ -294,7 +335,7 @@ export default function FilterBarBase({
               })}
             </Box>
 
-            {/* HỆ THỐNG NÚT BẤM TO KHỎE, ĐẦM TAY */}
+            {/* HỆ THỐNG NÚT BẤM TO KHỎE, ĐẦM TAY VỚI FONT MONTSERRAT */}
             <Box className="flex flex-col justify-end gap-3 border-t border-gray-100 pt-4 sm:flex-row">
               <Button
                 onClick={handleClearFilters}
@@ -305,6 +346,7 @@ export default function FilterBarBase({
                   px: 4,
                   fontSize: "14px",
                   fontWeight: 600,
+                  fontFamily: FONT_FAMILY,
                   borderRadius: "8px",
                   color: "#475569",
                   borderColor: "#cbd5e1",
@@ -329,6 +371,7 @@ export default function FilterBarBase({
                   px: 5,
                   fontSize: "14px",
                   fontWeight: 600,
+                  fontFamily: FONT_FAMILY,
                   borderRadius: "8px",
                   bgcolor: PRIMARY_COLOR,
                   color: "white",

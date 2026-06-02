@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import { FiMail, FiLock, FiCheckCircle } from "react-icons/fi";
+import { FiLock, FiCheckCircle, FiShield, FiMail } from "react-icons/fi";
 import { supabase } from "../../config/supabaseClient";
 
 const FIXED_ADMIN_EMAIL = "longle1882@gmail.com";
@@ -23,7 +23,6 @@ export default function AdminLogin() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Hàm kích hoạt gửi OTP về Email cố định
   const handleRequestOtp = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -33,13 +32,13 @@ export default function AdminLogin() {
       const { error } = await supabase.auth.signInWithOtp({
         email: FIXED_ADMIN_EMAIL,
         options: {
-          shouldCreateUser: false, // 🔑 KHÓA CHẾ ĐỘ: Không cho phép tự đăng ký tài khoản mới
+          shouldCreateUser: false,
         },
       });
 
       if (error) throw error;
 
-      setStep(2); // Chuyển sang ô nhập mã số
+      setStep(2);
       setSuccessMsg("Mã OTP đã được gửi về email quản trị thành công!");
     } catch (error) {
       setErrorMsg(
@@ -51,7 +50,6 @@ export default function AdminLogin() {
     }
   };
 
-  // Hàm xác thực mã số OTP
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (!otpCode) return;
@@ -95,17 +93,39 @@ export default function AdminLogin() {
         }}
       >
         <CardContent className="space-y-5">
+          {/* Header */}
           <Box className="space-y-1 text-center">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mb: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: "12px",
+                  bgcolor: "#fdf6ec",
+                  border: "1px solid #f0dfc0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FiShield size={22} color={PRIMARY_COLOR} />
+              </Box>
+            </Box>
             <Typography variant="h5" sx={{ fontWeight: 700, color: "#1e293b" }}>
               XÁC THỰC QUẢN TRỊ
             </Typography>
-            <div className="mt-2">
-              <Typography variant="body2" color="textSecondary">
-                Hệ thống bảo mật dùng mã OTP Session.
-              </Typography>
-            </div>
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
+              Hệ thống bảo mật dùng mã OTP Session.
+            </Typography>
           </Box>
 
+          {/* Alerts */}
           {errorMsg && (
             <Alert severity="error" sx={{ borderRadius: "8px" }}>
               {errorMsg}
@@ -117,45 +137,65 @@ export default function AdminLogin() {
             </Alert>
           )}
 
+          {/* Step 1: Yêu cầu OTP */}
           {step === 1 ? (
             <Box className="space-y-4">
-              <TextField
-                fullWidth
-                disabled
-                label="Email nhận mã"
-                value="###@gmail.com"
-                InputProps={{
-                  startAdornment: (
-                    <FiMail style={{ marginRight: 8, color: "#94a3b8" }} />
-                  ),
+              {/* Thông tin gửi OTP */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 1.5,
+                  bgcolor: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1.5,
                 }}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px" } }}
-              />
-              <div className="mt-[16px]">
-                <Button
-                  fullWidth
-                  variant="contained"
-                  disableElevation
-                  onClick={handleRequestOtp}
-                  disabled={loading}
-                  sx={{
-                    height: "46px",
-                    bgcolor: PRIMARY_COLOR,
-                    fontWeight: 600,
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    "&:hover": { bgcolor: "#967b51" },
-                  }}
+              >
+                <FiMail
+                  size={16}
+                  color="#94a3b8"
+                  style={{ marginTop: 2, flexShrink: 0 }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#475569", lineHeight: 1.6 }}
                 >
-                  {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    "LẤY MÃ OTP"
-                  )}
-                </Button>
-              </div>
+                  Nhấn <strong style={{ color: "#1e293b" }}>Lấy mã OTP</strong>{" "}
+                  — mã xác thực sẽ được gửi tự động về{" "}
+                  <strong style={{ color: PRIMARY_COLOR }}>
+                    email quản trị
+                  </strong>{" "}
+                  đã được cấu hình trong hệ thống.
+                </Typography>
+              </Box>
+
+              <Button
+                fullWidth
+                variant="contained"
+                disableElevation
+                onClick={handleRequestOtp}
+                disabled={loading}
+                sx={{
+                  height: "46px",
+                  bgcolor: PRIMARY_COLOR,
+                  fontWeight: 600,
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  fontSize: "0.95rem",
+                  "&:hover": { bgcolor: "#967b51" },
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={22} color="inherit" />
+                ) : (
+                  "LẤY MÃ OTP"
+                )}
+              </Button>
             </Box>
           ) : (
+            /* Step 2: Nhập OTP */
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <TextField
                 fullWidth
@@ -209,7 +249,7 @@ export default function AdminLogin() {
                   }}
                 >
                   {loading ? (
-                    <CircularProgress size={24} color="inherit" />
+                    <CircularProgress size={22} color="inherit" />
                   ) : (
                     "VÀO TRANG"
                   )}

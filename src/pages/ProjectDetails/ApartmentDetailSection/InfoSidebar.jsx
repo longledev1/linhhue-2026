@@ -50,7 +50,7 @@ export default function InfoSidebar({ specs }) {
 
         <motion.a
           whileTap={{ scale: 0.98 }}
-          href="https://zalo.me"
+          href="https://zalo.me/0937175384"
           target="_blank"
           rel="noreferrer"
           className="bg-primary shadow-primary/10 hover:bg-primary/90 mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-bold tracking-widest text-white shadow-md transition-colors"
@@ -95,7 +95,7 @@ export default function InfoSidebar({ specs }) {
         <motion.a
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          href="https://zalo.me"
+          href="https://zalo.me/0937175384"
           target="_blank"
           rel="noreferrer"
           className="bg-primary shadow-primary/20 hover:bg-primary/90 flex w-full items-center justify-center gap-3 rounded-xl py-3.5 text-sm font-bold tracking-widest text-white shadow-lg transition-colors"

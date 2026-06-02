@@ -20,7 +20,7 @@ const CoffeVideoSection = () => {
   return (
     <section className="overflow-hidden">
       <div className="container mx-auto px-6">
-        <div className="grid items-center gap-20 lg:grid-cols-2">
+        <div className="grid items-center gap-5 sm:gap-20 lg:grid-cols-2">
           {/* LEFT CONTENT */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -30,8 +30,8 @@ const CoffeVideoSection = () => {
             className="max-w-[700px]"
           >
             {/* Script Heading */}
-            <div className="mb-12">
-              <h2 className="font-script text-[52px] leading-[1.1] font-light text-[#b08b57] md:text-[72px]">
+            <div className="md:mb-12">
+              <h2 className="font-script text-center text-[52px] leading-[1.1] font-light text-[#b08b57] sm:text-left md:text-[72px]">
                 Nguồn hạt chất lượng
                 <br />
                 từ nông trại
@@ -41,11 +41,12 @@ const CoffeVideoSection = () => {
             {/* Description */}
             <div className="space-y-8 text-[16px] leading-[2.1] text-[#2f2f2f]">
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry’s standard dummy
-                text ever since the 1500s. Carefully cultivated coffee cherries
-                are harvested directly from highland farms, preserving their
-                pure aroma and natural flavor.
+                Hạt cà phê chất lượng thượng hạng được nuôi dưỡng và chắt lọc
+                khắt khe từ những nông trại vùng cao lộng gió. Từng quả chín
+                mọng được thu hoạch thủ công hoàn toàn vào thời điểm lý tưởng
+                nhất, trải qua quy trình phân loại nghiêm ngặt nhằm gìn giữ vẹn
+                nguyên hương thơm thuần khiết cùng vị ngọt tự nhiên sâu lắng của
+                đất trời.
               </p>
             </div>
           </motion.div>

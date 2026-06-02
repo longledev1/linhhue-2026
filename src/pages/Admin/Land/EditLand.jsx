@@ -35,8 +35,8 @@ export default function AdminEditLand() {
 
   const [loadingData, setLoadingData] = useState(true);
   const [isSubmittingState, setIsSubmittingState] = useState(false);
+  const [oldLandData, setOldLandData] = useState(null);
 
-  // 🌟 ĐỒNG BỘ CHUẨN ĐẤT NỀN: Lấy hàm updateLand từ đúng Store
   const { updateLand } = useLandStore();
 
   const {
@@ -48,11 +48,8 @@ export default function AdminEditLand() {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(landSchema), // Sử dụng landSchema gác cổng dữ liệu số
+    resolver: zodResolver(landSchema),
   });
-
-  // Khai báo Debug bắt lỗi Validation trực diện của Zod dành riêng cho Đất nền
-  console.log("=== ❌ LỖI VALIDATION CHỈNH SỬA ĐẤT NỀN ===", errors);
 
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState("");
@@ -65,11 +62,10 @@ export default function AdminEditLand() {
     const fetchLandDetail = async () => {
       try {
         setLoadingData(true);
-        // 🌟 ĐỒNG BỘ CHUẨN ĐẤT NỀN: Gọi API bốc dữ liệu từ table lands
         const data = await landService.getById(id);
 
         if (data) {
-          // Reset dữ liệu đổ vào form khớp 100% các cột đặc thù của bảng lands
+          setOldLandData(data);
           reset({
             title: data.title || "",
             price: data.price?.toString() || "",
@@ -87,7 +83,6 @@ export default function AdminEditLand() {
             is_featured: data.is_featured ?? false,
           });
 
-          // Lưu giữ trạng thái ảnh cũ đang hiển thị từ folder lands/
           setOldImages({
             thumbnail: data.thumbnail || "",
             images: data.images || [],
@@ -160,7 +155,6 @@ export default function AdminEditLand() {
       let thumbnailUrl = oldImages.thumbnail;
       let slideUrls = oldImages.images;
 
-      // Nếu có chọn ảnh đại diện mới thì mới upload đè lên folder con lands
       if (thumbnail) {
         thumbnailUrl = await uploadSingleImage(
           thumbnail,
@@ -169,7 +163,6 @@ export default function AdminEditLand() {
         );
       }
 
-      // Khớp mảng album ảnh slides dập tắt lỗi truyền nhầm biến thumbnail cũ
       if (slides.length > 0) {
         const uploadedNewSlideUrls = await uploadMultipleImages(
           slides,
@@ -179,7 +172,6 @@ export default function AdminEditLand() {
         slideUrls = [...slideUrls, ...uploadedNewSlideUrls];
       }
 
-      // Build payload chuẩn chỉnh theo đúng Schema cấu trúc bảng public.lands
       const payload = {
         title: data.title,
         price: parseFloat(data.price),
@@ -191,18 +183,30 @@ export default function AdminEditLand() {
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
         description: data.description,
-        dimensions: data.dimensions, // Trường đặc thù Đất nền
-        road_width: data.road_width, // Trường đặc thù Đất nền
+        dimensions: data.dimensions,
+        road_width: data.road_width,
         is_published: data.is_published,
         is_featured: data.is_featured,
         thumbnail: thumbnailUrl,
         images: slideUrls,
-        category: "land", // Định danh chuẩn phân hệ đất nền
+        category: "land",
       };
 
-      console.log("=== 🚀 PAYLOAD CẬP NHẬT ĐẤT NỀN BẮN QUA STORE ===", payload);
+      if (oldLandData) {
+        const oldFeatured = oldLandData.is_featured;
+        const newFeatured = data.is_featured;
 
-      // 🌟 ĐỒNG BỘ CHUẨN ĐẤT NỀN: Gọi đúng hàm updateLand từ useLandStore
+        // false -> true
+        if (!oldFeatured && newFeatured) {
+          payload.featured_at = new Date().toISOString();
+        }
+
+        // true -> false
+        if (oldFeatured && !newFeatured) {
+          payload.featured_at = null;
+        }
+      }
+
       const result = await updateLand(id, payload);
 
       if (result.success) {
@@ -244,9 +248,7 @@ export default function AdminEditLand() {
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="w-full space-y-6">
-      {/* Thanh tiêu đề điều hướng */}
       <div className="flex w-full items-center gap-3">
-        {/* ĐỒNG BỘ ROUTE: Bấm mũi tên quay lại trang danh sách đất nền */}
         <IconButton
           onClick={() => navigate("/admin/lands")}
           sx={{ bgcolor: "white", border: "1px solid #e2e8f0" }}
@@ -265,7 +267,6 @@ export default function AdminEditLand() {
       </div>
 
       <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* KHỐI NHẬP LIỆU CHÍNH */}
         <div className="w-full lg:col-span-8">
           <InfoFormCardLand
             register={register}
@@ -276,7 +277,6 @@ export default function AdminEditLand() {
           />
         </div>
 
-        {/* KHỐI ẢNH & TRẠNG THÁI HỆ THỐNG */}
         <div className="flex w-full flex-col justify-between lg:col-span-4">
           <ConFfigAndImageCardLand
             register={register}
@@ -295,9 +295,7 @@ export default function AdminEditLand() {
             PRIMARY_COLOR={PRIMARY_COLOR}
           />
 
-          {/* Cụm nút bấm gửi bài */}
           <div className="mt-auto flex justify-end gap-3 pt-6">
-            {/* ĐỒNG BỘ ROUTE: Nút hủy quay về danh sách đất nền */}
             <Button
               variant="outlined"
               onClick={() => navigate("/admin/lands")}
@@ -308,7 +306,7 @@ export default function AdminEditLand() {
             </Button>
             <Button
               type="submit"
-              onClick={handleSubmit(onFormSubmit)} // Ép trigger submit dập tắt lỗi layout
+              onClick={handleSubmit(onFormSubmit)}
               variant="contained"
               disabled={isSubmittingState}
               sx={{

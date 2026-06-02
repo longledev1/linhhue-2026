@@ -7,18 +7,22 @@ import {
   formatHouseType,
   formatLandType,
 } from "../../utils/format";
-// 🌟 ĐỒNG BỘ: Import thêm hàm format đất nền của bạn
 
 const ProjectCard = ({ project, isDetail = false }) => {
-  console.log("Thumbnail:", project.thumbnail);
+  if (!project) return null;
+
+  // Hàm phân luồng link chuẩn chỉ, chống lệch danh mục
   const getDetailLink = (item) => {
-    if (item.category === "house") return `/bat-dong-san/nha-o/${item.id}`;
-    if (item.category === "land") return `/bat-dong-san/dat-dai/${item.id}`;
+    const cate = item.category?.toLowerCase().trim();
+    if (cate === "house" || cate === "nha-o")
+      return `/bat-dong-san/nha-o/${item.id}`;
+    if (cate === "land" || cate === "dat-dai")
+      return `/bat-dong-san/dat-dai/${item.id}`;
     return `/bat-dong-san/can-ho/${item.id}`;
   };
 
   const isLand =
-    project.category === "land" ||
+    project.category?.toLowerCase().trim() === "land" ||
     project.apartment_type === "dat-nen" ||
     !!project.land_type;
 
@@ -64,7 +68,6 @@ const ProjectCard = ({ project, isDetail = false }) => {
             </span>
           )}
 
-          {/* 🌟 CUSTOM 1: Thêm badge phân loại hiển thị tiếng Việt có dấu cho Đất nền */}
           {project.land_type && (
             <span className="rounded-lg bg-stone-900/80 px-2.5 py-1 text-[10px] font-medium tracking-wider text-white uppercase shadow-sm backdrop-blur-[2px]">
               {formatLandType(project.land_type)}
@@ -88,14 +91,13 @@ const ProjectCard = ({ project, isDetail = false }) => {
             {project.title}
           </h3>
 
-          {/* 🌟 VÙNG THÔNG SỐ KỸ THUẬT ĐƯỢC PHÂN LUỒNG THÔNG MINH */}
+          {/* VÙNG THÔNG SỐ KỸ THUẬT ĐƯỢC PHÂN LUỒNG THÔNG MINH */}
           <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-gray-50 py-2 text-xs font-medium text-gray-500">
             <div>
               Diện tích:{" "}
               <span className="font-bold text-gray-800">{project.area} m²</span>
             </div>
 
-            {/* 🌟 CUSTOM 2: Nếu là ĐẤT NỀN -> Hiện kích thước hình học thay thế cho phòng ngủ */}
             {isLand ? (
               <>
                 {project.dimensions && (
@@ -111,7 +113,6 @@ const ProjectCard = ({ project, isDetail = false }) => {
                 )}
               </>
             ) : (
-              /* Nếu là Nhà ở hoặc Căn hộ -> Giữ nguyên phòng ngủ và nhà vệ sinh */
               <>
                 <div className="h-3 w-[1px] bg-gray-200"></div>
                 <div>

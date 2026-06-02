@@ -34,15 +34,59 @@ export const houseService = {
   /**
    * Danh sách tất cả nhà cho Admin
    */
-  getAllForAdmin: async () => {
-    const { data, error } = await supabase
-      .from("houses")
-      .select("*")
-      .order("created_at", { ascending: false });
+  // src/services/houseService.js
 
-    if (error) throw error;
+  getAllForAdmin: async (page, limit, filters = {}) => {
+    try {
+      const from = page * limit;
+      const to = from + limit - 1;
 
-    return data;
+      // 1. Khởi tạo câu query từ bảng houses
+      let query = supabase.from("houses").select("*", { count: "exact" });
+
+      // 🌟 2. XỬ LÝ BỘ LỌC ĐỘNG TỪ ADMIN:
+
+      // Tìm kiếm chính xác theo mã ID bài đăng
+      if (filters.id) {
+        query = query.eq("id", filters.id);
+      }
+
+      // Lọc theo Phường/Xã
+      if (filters.ward) {
+        query = query.eq("ward", filters.ward);
+      }
+
+      // Lọc theo Hình thức (rent / sale)
+      if (filters.status) {
+        query = query.eq("status", filters.status);
+      }
+
+      // Lọc theo số lượng Phòng ngủ
+      if (filters.bedroom) {
+        query = query.eq("bedroom", filters.bedroom);
+      }
+
+      // Lọc theo trạng thái Ẩn / Hiện (is_published)
+      if (filters.is_published) {
+        const isPublishedBool = filters.is_published === "true";
+        query = query.eq("is_published", isPublishedBool);
+      }
+
+      // 3. Thực hiện phân trang và sắp xếp ngày tạo mới nhất
+      const { data, count, error } = await query
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      return {
+        data: data || [],
+        total: count || 0,
+      };
+    } catch (error) {
+      console.error("Lỗi getAllForAdmin House Service:", error);
+      throw error;
+    }
   },
 
   /**
@@ -54,11 +98,13 @@ export const houseService = {
       .select("*")
       .eq("is_published", true)
       .eq("is_featured", true)
-      .order("created_at", { ascending: false });
+      .order("featured_at", {
+        ascending: false,
+      });
 
     if (error) throw error;
 
-    return data;
+    return data || [];
   },
 
   /**

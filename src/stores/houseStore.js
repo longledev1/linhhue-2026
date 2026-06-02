@@ -83,14 +83,18 @@ export const useHouseStore = create((set, get) => ({
     }
   },
 
-  fetchHousesForAdmin: async () => {
+  // src/stores/houseStore.js
+
+  fetchHousesForAdmin: async (page, limit, filters = {}) => {
     set({ isLoading: true, error: null });
 
     try {
-      const data = await houseService.getAllForAdmin();
+      // 🌟 ĐÃ CẬP NHẬT: Truyền page, limit, filters vào trong service
+      const result = await houseService.getAllForAdmin(page, limit, filters);
 
       set({
-        houses: data,
+        houses: result.data,
+        total: result.total, // Lưu tổng số lượng bài đăng phục vụ phân trang
         isLoading: false,
       });
     } catch (err) {

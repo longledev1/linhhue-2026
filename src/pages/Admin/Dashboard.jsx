@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { dashboardService } from "../../services/dashboardService";
 import {
   Box,
   Typography,
@@ -10,14 +11,28 @@ import {
 import {
   LuWallet,
   LuBuilding2,
-  LuWarehouse, // 🌟 SỬA TẠI ĐÂY: Thay LuHome bằng LuWarehouse
+  LuWarehouse,
   LuCompass,
   LuHandshake,
   LuDollarSign,
 } from "react-icons/lu";
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState(null);
   const PRIMARY_COLOR = "#ab8c5d";
+
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const result = await dashboardService.getStatistics();
+        setStats(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
 
   return (
     <Box className="space-y-6">
@@ -36,12 +51,11 @@ export default function AdminDashboard() {
       {/* ========================================================================= */}
       <Typography
         variant="h6"
-        sx={{ fontWeight: 600, color: "#475569", mb: -1 }}
+        sx={{ fontWeight: 600, color: "#475569", mb: "16px" }}
       >
         Hiệu năng tích hợp toàn hệ thống
       </Typography>
 
-      {/* 🌟 SỬA TẠI ĐÂY: Đổi sang dùng Grid container cũ */}
       <Grid container spacing={3}>
         {/* Card 1: Tổng tài sản trên sàn */}
         <Grid item xs={12} sm={4}>
@@ -69,7 +83,7 @@ export default function AdminDashboard() {
                   variant="h3"
                   sx={{ fontWeight: 700, mt: 1, color: "#0f172a" }}
                 >
-                  42
+                  {stats?.totalProducts || 0}
                 </Typography>
               </Box>
               <Box
@@ -113,7 +127,7 @@ export default function AdminDashboard() {
                   variant="h3"
                   sx={{ fontWeight: 700, mt: 1, color: "#10b981" }}
                 >
-                  25
+                  {stats?.totalRent || 0}
                 </Typography>
               </Box>
               <Box
@@ -157,7 +171,7 @@ export default function AdminDashboard() {
                   variant="h3"
                   sx={{ fontWeight: 700, mt: 1, color: "#ef4444" }}
                 >
-                  17
+                  {stats?.totalSale || 0}
                 </Typography>
               </Box>
               <Box
@@ -183,7 +197,7 @@ export default function AdminDashboard() {
       {/* ========================================================================= */}
       <Typography
         variant="h6"
-        sx={{ fontWeight: 600, color: "#475569", mb: -1 }}
+        sx={{ fontWeight: 600, color: "#475569", mb: "16px" }}
       >
         Phân loại theo danh mục kinh doanh
       </Typography>
@@ -216,19 +230,39 @@ export default function AdminDashboard() {
                   Mảng Căn Hộ
                 </Typography>
               </Box>
-              <Typography variant="body2" color="textSecondary">
-                Tổng số bài đăng: <strong>12</strong>
+
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                Tổng số bài đăng:{" "}
+                <strong>{stats?.apartments?.total || 0}</strong>
               </Typography>
+
+              {/* Bổ sung hiển thị Ẩn/Hiện */}
+              <Box sx={{ display: "flex", gap: 3, fontSize: "13px", mb: 1.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#4caf50", fontWeight: 600 }}
+                >
+                  ● Đang hiện: {stats?.apartments?.visible || 0}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#f44336", fontWeight: 600 }}
+                >
+                  ● Đang ẩn: {stats?.apartments?.hidden || 0}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ opacity: 0.6, my: 1 }} />
+
               <Box
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "12px",
                 }}
                 sx={{ fontSize: "14px", color: "#64748b" }}
               >
-                <span>Thuê: 8</span>
-                <span>Bán: 4</span>
+                <span>Thuê: {stats?.apartments?.rent || 0}</span>
+                <span>Bán: {stats?.apartments?.sale || 0}</span>
               </Box>
             </CardContent>
           </Card>
@@ -256,29 +290,48 @@ export default function AdminDashboard() {
                 }}
                 sx={{ color: "#334155" }}
               >
-                {/* 🌟 SỬA TẠI ĐÂY: Đổi LuHome sang LuWarehouse */}
                 <LuWarehouse size={20} style={{ color: "#3b82f6" }} />
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Mảng Nhà Ở
                 </Typography>
               </Box>
-              <Typography variant="body2" color="textSecondary">
-                Tổng số bài đăng: <strong>18</strong>
+
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                Tổng số bài đăng: <strong>{stats?.houses?.total || 0}</strong>
               </Typography>
+
+              {/* Bổ sung hiển thị Ẩn/Hiện */}
+              <Box sx={{ display: "flex", gap: 3, fontSize: "13px", mb: 1.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#4caf50", fontWeight: 600 }}
+                >
+                  ● Đang hiện: {stats?.houses?.visible || 0}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#f44336", fontWeight: 600 }}
+                >
+                  ● Đang ẩn: {stats?.houses?.hidden || 0}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ opacity: 0.6, my: 1 }} />
+
               <Box
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "12px",
                 }}
                 sx={{ fontSize: "14px", color: "#64748b" }}
               >
-                <span>Thuê: 10</span>
-                <span>Bán: 8</span>
+                <span>Thuê: {stats?.houses?.rent || 0}</span>
+                <span>Bán: {stats?.houses?.sale || 0}</span>
               </Box>
             </CardContent>
           </Card>
         </Grid>
+
         {/* Khối Đất Đai */}
         <Grid item xs={12} md={4}>
           <Card
@@ -306,19 +359,38 @@ export default function AdminDashboard() {
                   Mảng Đất Đai
                 </Typography>
               </Box>
-              <Typography variant="body2" color="textSecondary">
-                Tổng số bài đăng: <strong>12</strong>
+
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                Tổng số bài đăng: <strong>{stats?.lands?.total || 0}</strong>
               </Typography>
+
+              {/* Bổ sung hiển thị Ẩn/Hiện */}
+              <Box sx={{ display: "flex", gap: 3, fontSize: "13px", mb: 1.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#4caf50", fontWeight: 600 }}
+                >
+                  ● Đang hiện: {stats?.lands?.visible || 0}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#f44336", fontWeight: 600 }}
+                >
+                  ● Đang ẩn: {stats?.lands?.hidden || 0}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ opacity: 0.6, my: 1 }} />
+
               <Box
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: "12px",
                 }}
                 sx={{ fontSize: "14px", color: "#64748b" }}
               >
-                <span>Thuê: 7</span>
-                <span>Bán: 5</span>
+                <span>Thuê: {stats?.lands?.rent || 0}</span>
+                <span>Bán: {stats?.lands?.sale || 0}</span>
               </Box>
             </CardContent>
           </Card>

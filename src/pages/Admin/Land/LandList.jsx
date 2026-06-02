@@ -1,50 +1,84 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  Paper,
-  TableHead,
-  TableRow,
-  IconButton,
-  Chip,
-  CircularProgress,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
-import { FaPlus, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-// 🌟 ĐỒNG BỘ: Chuyển sang sử dụng Store Đất nền
+import { Link, useSearchParams } from "react-router-dom";
+import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { FaPlus } from "react-icons/fa";
 import { useLandStore } from "../../../stores/landStore";
-import { WARD_OPTIONS } from "../../../constants/wardOptions";
-import { formatLandType } from "../../../utils/format";
+
+// IMPORT CÁC COMPONENT ĐÃ PHÂN TÁCH LUỒNG CHỨC NĂNG
+import LandTable from "./components/LandTable";
+import DeleteConfirmDialog from "../DeleteConfirmDialog";
+import FilterBarBase from "../../../components/FilterBase/FilterBarBase";
+import { LAND_OPTIONS } from "../../../constants/filterOptions";
 
 export default function AdminLandList() {
-  // 🌟 ĐỒNG BỘ: Bóc tách các hàm và state từ useLandStore
-  const { lands, isLoading, error, fetchLandsForAdmin, deleteLand } =
+  const { lands, total, isLoading, error, fetchLandsForAdmin, deleteLand } =
     useLandStore();
 
-  // State quản lý việc đóng/mở và lưu ID đất nền chuẩn bị xóa của Popup
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    fetchLandsForAdmin();
-  }, [fetchLandsForAdmin]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const formatWard = (wardSlug) => {
-    if (!wardSlug) return "---";
-    const foundWard = WARD_OPTIONS.find((item) => item.value === wardSlug);
-    return foundWard ? foundWard.label : wardSlug;
+  // 🌟 1. ĐỌC CÁC THÔNG SỐ PHÂN TRANG VÀ BỘ LỌC TỪ URL XUỐNG
+  const pageUrl = parseInt(searchParams.get("page") || "1", 10);
+  const limitUrl = parseInt(searchParams.get("limit") || "10", 10);
+
+  const filterId = searchParams.get("id") || "";
+  const filterWard = searchParams.get("ward") || "";
+  const filterStatus = searchParams.get("status") || "";
+  const filterPublished = searchParams.get("is_published") || "";
+
+  const page = pageUrl - 1;
+  const rowsPerPage = limitUrl;
+
+  // 🌟 2. ĐỒNG BỘ EFFECT: Chạy lại fetch khi bất kỳ thông số URL nào thay đổi
+  useEffect(() => {
+    const activeFilters = {
+      id: filterId,
+      ward: filterWard,
+      status: filterStatus,
+      is_published: filterPublished,
+    };
+
+    fetchLandsForAdmin(page, rowsPerPage, activeFilters);
+  }, [
+    fetchLandsForAdmin,
+    page,
+    rowsPerPage,
+    filterId,
+    filterWard,
+    filterStatus,
+    filterPublished,
+  ]);
+
+  // Giữ lại các filter cũ khi admin bấm chuyển trang
+  const handleChangePage = (event, newPage) => {
+    const currentParams = Object.fromEntries(searchParams.entries());
+    setSearchParams({
+      ...currentParams,
+      page: String(newPage + 1),
+      limit: String(rowsPerPage),
+    });
+  };
+
+  // Giữ lại các filter cũ khi đổi số dòng hiển thị
+  const handleChangeRowsPerPage = (event) => {
+    const currentParams = Object.fromEntries(searchParams.entries());
+    setSearchParams({
+      ...currentParams,
+      page: "1",
+      limit: String(event.target.value),
+    });
+  };
+
+  // 🌟 3. HÀM XỬ LÝ KHI ADMIN BẤM NÚT TÌM KIẾM
+  const handleFilterSubmit = (filters) => {
+    setSearchParams({
+      page: "1", // Trở về trang đầu tiên
+      limit: String(rowsPerPage),
+      ...filters, // Găm toàn bộ trường lọc { id, ward, status, is_published } lên thanh địa chỉ
+    });
   };
 
   const handleDeleteClick = (id) => {
@@ -56,12 +90,19 @@ export default function AdminLandList() {
     if (!selectedId) return;
     try {
       setIsDeleting(true);
-      // 🌟 ĐỒNG BỘ: Gọi hàm deleteLand từ store
       const result = await deleteLand(selectedId);
-
       if (result.success) {
-        setOpenConfirm(false); // Đóng Popup
+        setOpenConfirm(false);
         setSelectedId(null);
+
+        // Tải lại dữ liệu trang hiện tại kèm bộ lọc đang active
+        const activeFilters = {
+          id: filterId,
+          ward: filterWard,
+          status: filterStatus,
+          is_published: filterPublished,
+        };
+        fetchLandsForAdmin(page, rowsPerPage, activeFilters);
       } else {
         alert("Lỗi: " + result.error);
       }
@@ -74,8 +115,20 @@ export default function AdminLandList() {
 
   const PRIMARY_COLOR = "#ab8c5d";
 
+  // Định nghĩa cấu hình các trường lọc cần hiển thị cho mảng Đất nền
+  const adminFields = ["id", "ward", "status", "is_published"];
+
+  // Đồng bộ giá trị mặc định từ URL nạp vào ô input form
+  const currentDefaultValues = {
+    id: filterId,
+    ward: filterWard,
+    status: filterStatus,
+    is_published: filterPublished,
+  };
+
   return (
     <Box>
+      {/* HEADER SECTION */}
       <Box
         sx={{
           display: "flex",
@@ -87,7 +140,6 @@ export default function AdminLandList() {
         <Typography variant="h4" sx={{ fontWeight: 700, color: "#1e293b" }}>
           Danh sách Đất nền
         </Typography>
-        {/* 🌟 ĐỒNG BỘ: Đổi route sang trang tạo đất nền mới */}
         <Button
           component={Link}
           to="/admin/lands/create"
@@ -104,6 +156,26 @@ export default function AdminLandList() {
         </Button>
       </Box>
 
+      {/* 🌟 4. THANH BỘ LỌC TÌM KIẾM ĐẤT NỀN ĐỘNG */}
+      <Box
+        sx={{
+          mb: 4,
+          p: 2.5,
+          bgcolor: "#fafafa",
+          borderRadius: "12px",
+          border: "1px solid #e2e8f0",
+        }}
+      >
+        <FilterBarBase
+          isAdmin={true}
+          fields={adminFields}
+          options={LAND_OPTIONS}
+          defaultValues={currentDefaultValues}
+          onFilterSubmit={handleFilterSubmit}
+        />
+      </Box>
+
+      {/* VIEW STATES RENDER */}
       {isLoading && !isDeleting ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress sx={{ color: PRIMARY_COLOR }} />
@@ -117,7 +189,7 @@ export default function AdminLandList() {
             borderRadius: "8px",
           }}
         >
-          <Typography color="error" variant="body1">
+          <Typography color="error">
             ⚠️ Gặp lỗi khi tải danh sách: {error}
           </Typography>
         </Box>
@@ -132,217 +204,30 @@ export default function AdminLandList() {
           }}
         >
           <Typography color="textSecondary">
-            Danh sách trống. Bấm nút "Thêm đất nền mới" để đăng bài viết đầu
-            tiên.
+            Không tìm thấy bài đăng đất nền nào khớp với bộ lọc hiện tại.
           </Typography>
         </Box>
       ) : (
-        <TableContainer
-          component={Paper}
-          elevation={0}
-          sx={{ border: "1px solid #e2e8f0", borderRadius: "8px" }}
-        >
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead sx={{ bgcolor: "#f8fafc" }}>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Ảnh
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Tiêu đề lô đất
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Hình thức
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Khu vực
-                </TableCell>
-                {/* 🌟 ĐẶC THÙ ĐẤT NỀN: Thêm cột kích thước */}
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Kích thước
-                </TableCell>
-                {/* 🌟 ĐẶC THÙ ĐẤT NỀN: Thêm cột đường vào */}
-                <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
-                  Đường vào
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 600, color: "#475569" }}
-                  align="right"
-                >
-                  Giá
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 600, color: "#475569" }}
-                  align="right"
-                >
-                  Diện tích
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 600, color: "#475569" }}
-                  align="center"
-                >
-                  Hành động
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {lands.map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                    "&:hover": { bgcolor: "#fdfbf7" },
-                  }}
-                >
-                  <TableCell>
-                    <Avatar
-                      src={row.thumbnail}
-                      variant="rounded"
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        border: "1px solid #e2e8f0",
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: 240 }}>
-                    <Typography
-                      variant="body2"
-                      sx={{ fontWeight: 600, color: "#1e293b" }}
-                      className="line-clamp-2"
-                    >
-                      {row.title}
-                    </Typography>
-                    {/* 🌟 ĐỒNG BỘ: Hiển thị hướng đất thay vì số phòng */}
-                    <Typography
-                      variant="caption"
-                      color="textSecondary"
-                      sx={{ textTransform: "capitalize" }}
-                    >
-                      {formatLandType(row.land_type)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={row.status === "rent" ? "Cho thuê" : "Cần bán"}
-                      size="small"
-                      sx={{
-                        bgcolor: row.status === "rent" ? "#e6f4ea" : "#fce8e6",
-                        color: row.status === "rent" ? "#137333" : "#c5221f",
-                        fontWeight: 600,
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ textTransform: "capitalize" }}>
-                    {formatWard(row.ward)}
-                  </TableCell>
-                  {/* 🌟 ĐẶC THÙ ĐẤT NỀN: Khớp data kích thước */}
-                  <TableCell>{row.dimensions || "---"}</TableCell>
-                  {/* 🌟 ĐẶC THÙ ĐẤT NỀN: Khớp data đường vào rộng bao nhiêu m */}
-                  <TableCell
-                    sx={{
-                      maxWidth: 140,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {row.road_width || "---"}
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ fontWeight: 600, color: "#0f172a" }}
-                  >
-                    {Number(row.price).toLocaleString("vi-VN")} đ
-                  </TableCell>
-                  <TableCell align="right">{row.area} m²</TableCell>
-                  <TableCell align="center">
-                    <Box
-                      sx={{ display: "flex", justifyContent: "center", gap: 1 }}
-                    >
-                      {/* 🌟 ĐỒNG BỘ: Sửa đường dẫn Edit trỏ sang phân hệ lands */}
-                      <IconButton
-                        component={Link}
-                        to={`/admin/lands/edit/${row.id}`}
-                        size="small"
-                        sx={{
-                          color: "#3b82f6",
-                          "&:hover": { bgcolor: "#3b82f610" },
-                        }}
-                      >
-                        <FaRegEdit size={18} />
-                      </IconButton>
-
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteClick(row.id)}
-                        sx={{
-                          color: "#ef4444",
-                          "&:hover": { bgcolor: "#ef444410" },
-                        }}
-                      >
-                        <FaRegTrashAlt size={16} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <LandTable
+          data={lands}
+          total={total}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          onDeleteClick={handleDeleteClick}
+        />
       )}
 
-      {/* ==================== POPUP BOX XÁC NHẬN XÓA TOÀN DIỆN ==================== */}
-      <Dialog
+      {/* DIALOG XÁC NHẬN XÓA DÙNG CHUNG */}
+      <DeleteConfirmDialog
         open={openConfirm}
-        onClose={() => !isDeleting && setOpenConfirm(false)}
-        aria-labelledby="delete-dialog-title"
-      >
-        <DialogTitle
-          id="delete-dialog-title"
-          sx={{ fontWeight: 700, color: "#1e293b" }}
-        >
-          🚨 Xác nhận xóa bài viết đất nền?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ color: "#475569", fontSize: "14px" }}>
-            Bạn đang yêu cầu xóa dữ liệu lô đất nền có mã{" "}
-            <span style={{ fontWeight: 600, fontStyle: "italic" }}>
-              {selectedId}
-            </span>
-            . Hành động này sẽ gỡ bỏ hoàn toàn dữ liệu bài đăng trên Database,
-            đồng thời xóa vĩnh viễn toàn bộ file ảnh liên quan (sổ đỏ, thực tế)
-            trong hệ thống lưu trữ. Bạn có chắc chắn muốn tiếp tục?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ p: 2.5, pt: 1 }}>
-          <Button
-            onClick={() => setOpenConfirm(false)}
-            disabled={isDeleting}
-            sx={{ textTransform: "none", color: "#64748b", fontWeight: 600 }}
-          >
-            Hủy bỏ
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            disabled={isDeleting}
-            variant="contained"
-            color="error"
-            startIcon={
-              isDeleting ? <CircularProgress size={16} color="inherit" /> : null
-            }
-            sx={{
-              textTransform: "none",
-              fontWeight: 600,
-              bgcolor: "#ef4444",
-              "&:hover": { bgcolor: "#dc2626" },
-              minWidth: 110,
-            }}
-          >
-            {isDeleting ? "Đang xóa..." : "Xóa vĩnh viễn"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+        itemName="Lô đất nền bất động sản"
+        itemId={selectedId}
+      />
     </Box>
   );
 }

@@ -50,6 +50,7 @@ export default function AdminCreateHouse() {
       amenities: "",
       is_published: true,
       is_featured: false,
+      featured_at: null,
     },
   });
 
@@ -119,6 +120,7 @@ export default function AdminCreateHouse() {
         amenities: data.amenities || null,
         is_published: data.is_published,
         is_featured: data.is_featured,
+        featured_at: data.is_featured ? new Date().toISOString() : null,
         thumbnail: thumbnailUrl,
         images: slideUrls,
         category: "house",

@@ -103,7 +103,7 @@ export default function AdminSidebar({ primaryColor }) {
           variant="h5"
           sx={{ fontWeight: 700, color: primaryColor, letterSpacing: "1px" }}
         >
-          NSG REALTY
+          Dashboard
         </Typography>
       </Toolbar>
       <Divider sx={{ borderColor: "rgba(255,255,255,0.08)" }} />

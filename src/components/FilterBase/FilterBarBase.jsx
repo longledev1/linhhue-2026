@@ -7,9 +7,12 @@ import {
   Select,
   MenuItem,
   Button,
-  FormHelperText,
   Typography,
+  TextField,
+  FormHelperText,
+  Autocomplete, // 🌟 ĐÃ TÍCH HỢP: Import Autocomplete để xử lý mảng phường xã lớn
 } from "@mui/material";
+import { FiSearch, FiRefreshCw } from "react-icons/fi";
 
 export default function FilterBarBase({
   title,
@@ -17,8 +20,8 @@ export default function FilterBarBase({
   options,
   onFilterSubmit,
   defaultValues,
+  isAdmin = false,
 }) {
-  // 🌟 GIẢI PHÁP: Tính toán defaultValues bằng dữ liệu thô ngay từ đầu để ép React Hook Form ăn giá trị rỗng lập tức
   const initialDefaultValues = fields.reduce((acc, field) => {
     acc[field] = "";
     return acc;
@@ -27,9 +30,9 @@ export default function FilterBarBase({
   const { control, handleSubmit, reset, watch, setValue } = useForm({
     defaultValues: defaultValues || initialDefaultValues,
   });
+
   const currentStatus = watch("status");
 
-  // Tự động reset form đồng bộ lại nếu danh sách fields từ cha thay đổi bất ngờ
   useEffect(() => {
     if (defaultValues && Object.keys(defaultValues).length > 0) {
       reset({
@@ -39,14 +42,16 @@ export default function FilterBarBase({
     }
   }, [defaultValues, reset]);
 
-  // Tự động xóa giá trị ô khoảng giá khi đổi Hình thức
   useEffect(() => {
-    setValue("price", "");
-  }, [currentStatus, setValue]);
+    if (fields.includes("price")) {
+      setValue("price", "");
+    }
+  }, [currentStatus, setValue, fields]);
 
-  // Hàm cấu hình nhãn Tiếng Việt cho từng ô Label của MUI
   const getFieldLabel = (fieldName) => {
     const labels = {
+      id: "Mã bài đăng (ID)",
+      is_published: "Trạng thái hiển thị",
       ward: "Phường/Xã",
       status: "Hình thức",
       price: "Khoảng giá",
@@ -54,24 +59,27 @@ export default function FilterBarBase({
       bedroom: "Phòng ngủ",
       apartment_type: "Loại căn hộ",
       house_type: "Loại nhà",
-      landType: "Loại đất",
+      land_type: "Loại đất",
     };
     return labels[fieldName] || "Chọn thông số";
   };
 
-  // Logic lấy options động cho ô Khoảng giá
   const getDynamicOptions = (fieldName) => {
     if (fieldName === "price") {
       if (currentStatus === "rent") return options.priceRent || [];
       if (currentStatus === "sale") return options.priceSale || [];
-      return []; // Trả về mảng rỗng để khóa khi chưa chọn hình thức
+      return [];
     }
     return options[fieldName] || [];
   };
 
   const onSubmit = (data) => {
     const activeFilters = Object.keys(data).reduce((acc, key) => {
-      if (data[key]) acc[key] = data[key];
+      const value =
+        typeof data[key] === "string" ? data[key].trim() : data[key];
+      if (value !== "" && value !== undefined && value !== null) {
+        acc[key] = value;
+      }
       return acc;
     }, {});
 
@@ -80,31 +88,36 @@ export default function FilterBarBase({
 
   const handleClearFilters = () => {
     reset(initialDefaultValues);
-
     if (onFilterSubmit) {
       onFilterSubmit({});
     }
   };
 
-  // Mã màu thương hiệu của bạn
   const PRIMARY_COLOR = "#ab8c5d";
 
   return (
-    <Box className="w-full bg-white py-6">
-      <Box className="container space-y-4">
-        {/* 1. Hàng Tiêu Đề Breadcrumb */}
-        <Box className="flex flex-col gap-2">
-          <Typography className="text-base font-medium text-stone-500 md:text-lg">
-            Trang chủ / Bất động sản /{" "}
-            <span className="text-primary font-bold">{title}</span>
-          </Typography>
-        </Box>
+    <Box className="w-full bg-transparent">
+      {/* Khối bọc Container động */}
+      <Box
+        className={
+          isAdmin ? "w-full space-y-5" : "container mx-auto space-y-5 px-4"
+        }
+      >
+        {/* Breadcrumb Client */}
+        {!isAdmin && (
+          <Box className="mb-2 flex flex-col gap-2">
+            <Typography className="text-base font-medium text-stone-500 md:text-lg">
+              Trang chủ / Bất động sản /{" "}
+              <span className="text-primary font-bold">{title}</span>
+            </Typography>
+          </Box>
+        )}
 
-        {/* 2. Lưới Grid chứa các ô Select và Nút bấm lọc phối hợp */}
+        {/* Lưới Lọc Dữ Liệu */}
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <Box className="space-y-0">
+          <Box className="flex flex-col gap-5">
             <Box
-              className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 md:grid-cols-3"
+              className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
               sx={{
                 gridTemplateColumns: {
                   xl: `repeat(${fields.length}, minmax(0, 1fr))`,
@@ -112,6 +125,95 @@ export default function FilterBarBase({
               }}
             >
               {fields.map((fieldName) => {
+                // ================= TRƯỜNG HỢP 1: Ô INPUT TEXT TÌM KIẾM THEO ID =================
+                if (fieldName === "id") {
+                  return (
+                    <Controller
+                      key={fieldName}
+                      name={fieldName}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          size="medium"
+                          label={getFieldLabel(fieldName)}
+                          variant="outlined"
+                          placeholder="Nhập mã ID..."
+                          sx={{
+                            "& .MuiInputLabel-root": { fontSize: "14px" },
+                            "& .MuiInputLabel-root.Mui-focused": {
+                              color: PRIMARY_COLOR,
+                            },
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "8px",
+                              "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                {
+                                  borderColor: PRIMARY_COLOR,
+                                  borderWidth: "1.5px",
+                                },
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                  );
+                }
+
+                // ================= TRƯỜNG HỢP 2: Ô AUTOCOMPLETE PHƯỜNG XÃ CHỐNG LAG (VIOLATION) =================
+                if (fieldName === "ward") {
+                  return (
+                    <Controller
+                      key={fieldName}
+                      name={fieldName}
+                      control={control}
+                      render={({ field: { onChange, value, ref } }) => {
+                        const wardOptions = options.ward || [];
+                        const currentSelection =
+                          wardOptions.find(
+                            (opt) => String(opt.value) === String(value),
+                          ) || null;
+
+                        return (
+                          <Autocomplete
+                            size="medium"
+                            options={wardOptions}
+                            getOptionLabel={(option) => option.label || ""}
+                            value={currentSelection}
+                            onChange={(event, newValue) => {
+                              onChange(newValue ? newValue.value : "");
+                            }}
+                            disableScrollLock
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                inputRef={ref}
+                                label={getFieldLabel(fieldName)}
+                                placeholder="Gõ để tìm nhanh phường xã..."
+                                sx={{
+                                  "& .MuiInputLabel-root": { fontSize: "14px" },
+                                  "& .MuiInputLabel-root.Mui-focused": {
+                                    color: PRIMARY_COLOR,
+                                  },
+                                  "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                      {
+                                        borderColor: PRIMARY_COLOR,
+                                        borderWidth: "1.5px",
+                                      },
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                        );
+                      }}
+                    />
+                  );
+                }
+
+                // ================= TRƯỜNG HỢP 3: CÁC Ô SELECT BOX THÔNG THƯỜNG (CÒN LẠI) =================
                 const fieldOptions = getDynamicOptions(fieldName);
                 const isPriceDisabled = fieldName === "price" && !currentStatus;
 
@@ -119,14 +221,15 @@ export default function FilterBarBase({
                   <FormControl
                     key={fieldName}
                     fullWidth
-                    size="small"
+                    size="medium"
                     disabled={isPriceDisabled}
                     sx={{
+                      "& .MuiInputLabel-root": { fontSize: "14px" },
                       "& .MuiInputLabel-root.Mui-focused": {
                         color: PRIMARY_COLOR,
                       },
                       "& .MuiOutlinedInput-root": {
-                        borderRadius: "4px",
+                        borderRadius: "8px",
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: isPriceDisabled
                             ? "rgba(0, 0, 0, 0.26)"
@@ -142,7 +245,6 @@ export default function FilterBarBase({
                     <InputLabel id={`label-${fieldName}`}>
                       {getFieldLabel(fieldName)}
                     </InputLabel>
-
                     <Controller
                       name={fieldName}
                       control={control}
@@ -150,20 +252,22 @@ export default function FilterBarBase({
                         <Select
                           labelId={`label-${fieldName}`}
                           label={getFieldLabel(fieldName)}
-                          value={field.value || ""}
+                          value={field.value ?? ""}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
-                          MenuProps={{
-                            disableScrollLock: true,
-                          }}
+                          MenuProps={{ disableScrollLock: true }}
+                          sx={{ fontSize: "14px" }}
                         >
                           <MenuItem value="">
-                            <em>Mặc định</em>
+                            <em>Tất cả dữ liệu</em>
                           </MenuItem>
-
                           {fieldOptions.map((opt) => (
-                            <MenuItem key={opt.value} value={opt.value}>
+                            <MenuItem
+                              key={String(opt.value)}
+                              value={String(opt.value)}
+                              sx={{ fontSize: "14px" }}
+                            >
                               {opt.label}
                             </MenuItem>
                           ))}
@@ -171,8 +275,17 @@ export default function FilterBarBase({
                       )}
                     />
 
+                    {/* Dòng Note nhắc nhở động cho trường khoảng giá */}
                     {fieldName === "price" && isPriceDisabled && (
-                      <FormHelperText className="font-xs text-stone-400">
+                      <FormHelperText
+                        sx={{
+                          color: "#a8a29e",
+                          fontSize: "11px",
+                          mt: 0.5,
+                          ml: 1,
+                          fontStyle: "italic",
+                        }}
+                      >
                         * Vui lòng chọn hình thức trước khi chọn khoảng giá
                       </FormHelperText>
                     )}
@@ -181,41 +294,52 @@ export default function FilterBarBase({
               })}
             </Box>
 
-            <Box className="mt-[20px] flex justify-end gap-2">
+            {/* HỆ THỐNG NÚT BẤM TO KHỎE, ĐẦM TAY */}
+            <Box className="flex flex-col justify-end gap-3 border-t border-gray-100 pt-4 sm:flex-row">
               <Button
                 onClick={handleClearFilters}
                 variant="outlined"
-                className="h-[40px] whitespace-nowrap"
+                startIcon={<FiRefreshCw size={15} />}
                 sx={{
-                  fontFamily: "Montserrat, sans-serif",
-                  fontWeight: 500,
-                  borderColor: "#d1d5db",
-                  color: "#6b7280",
+                  height: "46px",
+                  px: 4,
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  borderRadius: "8px",
+                  color: "#475569",
+                  borderColor: "#cbd5e1",
+                  textTransform: "none",
                   "&:hover": {
-                    borderColor: "#9ca3af",
-                    backgroundColor: "#f9fafb",
+                    borderColor: "#94a3b8",
+                    backgroundColor: "#f8fafc",
+                    color: "#1e293b",
                   },
                 }}
               >
-                Xóa lọc
+                Xóa bộ lọc
               </Button>
 
               <Button
                 onClick={handleSubmit(onSubmit)}
                 variant="contained"
                 disableElevation
-                className="h-[40px] rounded-md text-sm font-bold tracking-wider whitespace-nowrap text-white normal-case transition-all duration-300"
+                startIcon={<FiSearch size={16} />}
                 sx={{
-                  fontFamily: "Montserrat, sans-serif",
-                  fontWeight: 500,
+                  height: "46px",
+                  px: 5,
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  borderRadius: "8px",
                   bgcolor: PRIMARY_COLOR,
-                  borderRadius: "4px",
+                  color: "white",
+                  textTransform: "none",
                   "&:hover": {
-                    bgcolor: `${PRIMARY_COLOR}e6`,
+                    bgcolor: "#967b51",
+                    boxShadow: "0 4px 12px rgba(171, 140, 93, 0.2)",
                   },
                 }}
               >
-                Lọc danh sách
+                Tìm kiếm kết quả
               </Button>
             </Box>
           </Box>

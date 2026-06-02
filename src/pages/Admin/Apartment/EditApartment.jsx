@@ -32,6 +32,7 @@ export default function AdminEditApartment() {
 
   const [loadingData, setLoadingData] = useState(true);
   const [isSubmittingState, setIsSubmittingState] = useState(false);
+  const [oldApartmentData, setOldApartmentData] = useState(null);
   const { updateApartment } = useApartmentStore();
 
   const {
@@ -60,6 +61,7 @@ export default function AdminEditApartment() {
         const data = await apartmentService.getById(id);
 
         if (data) {
+          setOldApartmentData(data);
           reset({
             title: data.title || "",
             price: data.price?.toString() || "",
@@ -190,11 +192,26 @@ export default function AdminEditApartment() {
         category: "apartment",
       };
 
+      if (oldApartmentData) {
+        const oldFeatured = oldApartmentData.is_featured;
+        const newFeatured = data.is_featured;
+
+        // false -> true
+        if (!oldFeatured && newFeatured) {
+          payload.featured_at = new Date().toISOString();
+        }
+
+        // true -> false
+        if (oldFeatured && !newFeatured) {
+          payload.featured_at = null;
+        }
+      }
+
       const result = await updateApartment(id, payload);
 
       if (result.success) {
         alert("🎉 Cập nhật thông tin căn hộ thành công mỹ mãn!");
-        navigate("/admin/apartments");
+        navigate(-1);
       } else {
         throw new Error(result.error);
       }

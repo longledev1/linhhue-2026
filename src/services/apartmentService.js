@@ -37,15 +37,61 @@ export const apartmentService = {
   /**
    * Danh sách tất cả căn hộ cho Admin
    */
-  getAllForAdmin: async () => {
-    const { data, error } = await supabase
-      .from("apartments")
-      .select("*")
-      .order("created_at", { ascending: false });
+  // src/services/apartmentService.js
 
-    if (error) throw error;
+  getAllForAdmin: async (page, limit, filters = {}) => {
+    try {
+      const from = page * limit;
+      const to = from + limit - 1;
 
-    return data;
+      // 1. Khởi tạo câu query gốc từ bảng apartments
+      let query = supabase.from("apartments").select("*", { count: "exact" });
+
+      // 🌟 2. KIỂM TRA VÀ ĐẮP BỘ LỌC ĐỘNG TỪ ĐÂY:
+
+      // Tìm kiếm chính xác theo mã ID bài đăng
+      if (filters.id) {
+        query = query.eq("id", filters.id);
+      }
+
+      // Lọc theo Phường/Xã
+      if (filters.ward) {
+        query = query.eq("ward", filters.ward);
+      }
+
+      // Lọc theo Hình thức (rent / sale)
+      if (filters.status) {
+        query = query.eq("status", filters.status);
+      }
+
+      // Lọc theo số lượng Phòng ngủ
+      if (filters.bedroom) {
+        query = query.eq("bedroom", filters.bedroom);
+      }
+
+      // Lọc theo trạng thái Ẩn / Hiện (is_published)
+      if (filters.is_published) {
+        // Ép chuỗi string "true"/"false" từ URL về kiểu Boolean của Database
+        const isPublishedBool = filters.is_published === "true";
+        query = query.eq("is_published", isPublishedBool);
+      }
+
+      // 3. Thực hiện phân trang và sắp xếp ngày tạo mới nhất
+      const { data, count, error } = await query
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      // Trả về đúng cấu trúc object mà store đang mong đợi nhận được
+      return {
+        data: data || [],
+        total: count || 0,
+      };
+    } catch (error) {
+      console.error("Lỗi getAllForAdmin Service:", error);
+      throw error;
+    }
   },
 
   /**
@@ -57,13 +103,14 @@ export const apartmentService = {
       .select("*")
       .eq("is_published", true)
       .eq("is_featured", true)
-      .order("created_at", { ascending: false });
+      .order("featured_at", {
+        ascending: false,
+      });
 
     if (error) throw error;
 
-    return data;
+    return data || [];
   },
-
   /**
    * Chi tiết căn hộ theo ID
    */

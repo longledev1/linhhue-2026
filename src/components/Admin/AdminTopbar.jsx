@@ -47,24 +47,18 @@ export default function AdminTopbar({
         </Typography>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <IconButton>
-            <Badge badgeContent={3} color="error">
-              <LuBell size={22} style={{ color: "#64748b" }} />
-            </Badge>
-          </IconButton>
-          <Divider orientation="vertical" variant="middle" flexItem />
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Avatar
+              src="/images/home/founder.png"
+              alt="Tên người dùng" // Nên thêm alt để tối ưu SEO/Accessibility
               sx={{
-                bgcolor: primaryColor,
+                bgcolor: primaryColor, // Vẫn giữ cái này phòng khi ảnh lỗi thì hiện màu nền + chữ
                 width: 36,
                 height: 36,
                 fontSize: "14px",
                 fontWeight: 600,
               }}
-            >
-              AD
-            </Avatar>
+            />
             <Typography
               variant="body2"
               sx={{
@@ -73,7 +67,7 @@ export default function AdminTopbar({
                 display: { xs: "none", sm: "block" },
               }}
             >
-              Hải Long
+              Linh Hue Nguyen
             </Typography>
           </Box>
         </Box>

@@ -48,6 +48,7 @@ export default function AdminCreateLand() {
       road_width: "", // Trường mới bổ sung
       is_published: true,
       is_featured: false,
+      featured_at: null,
     },
   });
 
@@ -115,6 +116,7 @@ export default function AdminCreateLand() {
         road_width: data.road_width,
         is_published: data.is_published,
         is_featured: data.is_featured,
+        featured_at: data.is_featured ? new Date().toISOString() : null,
         thumbnail: thumbnailUrl,
         images: slideUrls,
         category: "land",

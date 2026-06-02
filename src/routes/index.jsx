@@ -4,6 +4,9 @@ import { lazy } from "react";
 import { MainLayout } from "../layouts/MainLayout.jsx";
 import AdminLayout from "../layouts/AdminLayout.jsx";
 
+// 🌟 IMPORT TẤM KHIÊN BẢO VỆ ROUTE (Chỉnh lại đường dẫn chuẩn file của bạn)
+import ProtectedRoute from "../components/Admin/ProtectedRoute.jsx";
+
 // USER
 const HomePage = lazy(() => import("../pages/HomePage/index.jsx"));
 const EstatePage = lazy(() => import("../pages/Estate/index.jsx"));
@@ -14,103 +17,72 @@ const NotFound = lazy(() => import("../pages/NotFoundPage.jsx"));
 const ApartmentPage = lazy(
   () => import("../pages/EstateList/ApartmentPage.jsx"),
 );
-
 const HousePage = lazy(() => import("../pages/EstateList/HousePage.jsx"));
-
 const LandPage = lazy(() => import("../pages/EstateList/LandPage.jsx"));
 
 const ApartmentDetail = lazy(
   () => import("../pages/ProjectDetails/ApartmentDetailSection/index.jsx"),
 );
-
 const HouseDetailSection = lazy(
   () => import("../pages/ProjectDetails/HouseDetailSection/index.jsx"),
 );
-
 const LandDetailSection = lazy(
   () => import("../pages/ProjectDetails/LandDetailSection.jsx/index.jsx"),
 );
 
 // ADMIN
+const AdminLogin = lazy(() => import("../components/Admin/AdminLogin.jsx")); // 🌟 BỔ SUNG TRANG LOGIN ADMIN
 const AdminDashboard = lazy(() => import("../pages/Admin/Dashboard.jsx"));
 
 const AdminApartmentList = lazy(
   () => import("../pages/Admin/Apartment/ApartmentList.jsx"),
 );
-
 const AdminCreateApartment = lazy(
   () => import("../pages/Admin/Apartment/CreateApartment.jsx"),
 );
-
 const AdminApartmentEdit = lazy(
   () => import("../pages/Admin/Apartment/EditApartment.jsx"),
 );
 
 const AdminHouseList = lazy(() => import("../pages/Admin/House/HouseList.jsx"));
-
 const AdminCreateHouse = lazy(
   () => import("../pages/Admin/House/CreateHouse.jsx"),
 );
-
 const AdminHouseEdit = lazy(() => import("../pages/Admin/House/EditHouse.jsx"));
 
 const AdminLandList = lazy(() => import("../pages/Admin/Land/LandList.jsx"));
-
 const AdminCreateLand = lazy(
   () => import("../pages/Admin/Land/CreateLand.jsx"),
 );
-
 const AdminEditLand = lazy(() => import("../pages/Admin/Land/EditLand.jsx"));
 
 const router = createBrowserRouter([
+  // ======================== PHÂN HỆ USER KHÔNG KHÓA ========================
   {
     element: <MainLayout />,
     children: [
-      {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/ve-chung-toi",
-        element: <AboutUsPage />,
-      },
-      {
-        path: "/bat-dong-san",
-        element: <EstatePage />,
-      },
-      {
-        path: "/bat-dong-san/can-ho",
-        element: <ApartmentPage />,
-      },
-      {
-        path: "/bat-dong-san/can-ho/:id",
-        element: <ApartmentDetail />,
-      },
-      {
-        path: "/bat-dong-san/nha-o",
-        element: <HousePage />,
-      },
-      {
-        path: "/bat-dong-san/nha-o/:id",
-        element: <HouseDetailSection />,
-      },
-      {
-        path: "/bat-dong-san/dat-dai",
-        element: <LandPage />,
-      },
-      {
-        path: "/bat-dong-san/dat-dai/:id",
-        element: <LandDetailSection />,
-      },
-      {
-        path: "/fnb",
-        element: <FNBPage />,
-      },
+      { path: "/", element: <HomePage /> },
+      { path: "/ve-chung-toi", element: <AboutUsPage /> },
+      { path: "/bat-dong-san", element: <EstatePage /> },
+      { path: "/bat-dong-san/can-ho", element: <ApartmentPage /> },
+      { path: "/bat-dong-san/can-ho/:id", element: <ApartmentDetail /> },
+      { path: "/bat-dong-san/nha-o", element: <HousePage /> },
+      { path: "/bat-dong-san/nha-o/:id", element: <HouseDetailSection /> },
+      { path: "/bat-dong-san/dat-dai", element: <LandPage /> },
+      { path: "/bat-dong-san/dat-dai/:id", element: <LandDetailSection /> },
+      { path: "/fnb", element: <FNBPage /> },
     ],
   },
 
+  // ======================== TRANG LOGIN CỦA ADMIN (MỞ CÔNG KHAI) ========================
   {
-    element: <AdminLayout />,
+    path: "/admin/login",
+    element: <AdminLogin />, // 🌟 Trang này KHÔNG bọc để admin còn vào lấy OTP
+  },
+
+  // ======================== 🌟 VÙNG BẢO MẬT ADMIN (BỌC PROTECTEDROUTE) ========================
+  {
+    element: <ProtectedRoute children={<AdminLayout />} />, // 🔑 KHÓA CHÍNH: Cho ProtectedRoute làm cha bọc AdminLayout bên trong!
     children: [
       {
         path: "/admin/dashboard",
@@ -161,6 +133,7 @@ const router = createBrowserRouter([
     ],
   },
 
+  // TRANG LỖI 404
   {
     path: "*",
     element: <NotFound />,

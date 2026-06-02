@@ -83,21 +83,23 @@ export const useApartmentStore = create((set, get) => ({
     }
   },
 
-  fetchApartmentsForAdmin: async () => {
+  fetchApartmentsForAdmin: async (page, limit, filters = {}) => {
     set({ isLoading: true, error: null });
-
     try {
-      const data = await apartmentService.getAllForAdmin();
+      // 🌟 ĐÃ CẬP NHẬT: Truyền thêm filters vào hàm của service
+      const result = await apartmentService.getAllForAdmin(
+        page,
+        limit,
+        filters,
+      );
 
       set({
-        apartments: data,
+        apartments: result.data,
+        total: result.total,
         isLoading: false,
       });
     } catch (err) {
-      set({
-        error: err.message,
-        isLoading: false,
-      });
+      set({ error: err.message, isLoading: false });
     }
   },
 

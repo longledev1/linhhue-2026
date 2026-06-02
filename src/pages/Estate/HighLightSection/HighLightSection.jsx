@@ -1,66 +1,65 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ProjectCard from "../../../components/Card/ProjectCard";
+import FeaturedProjectCard from "../../../components/Card/FeaturedProjectCard";
+import { apartmentService } from "../../../services/apartmentService";
+import { houseService } from "../../../services/houseService";
+import { landService } from "../../../services/landService";
+import { stripHtmlAndEntities } from "../../../utils/format";
 
 const HighLightSection = () => {
-  // ================= API DATA MOCK =================
-  // Sau này chỉ cần thay bằng API thật
-  const projectsData = [
-    {
-      id: 1,
-      title:
-        "VINHOMES ROYAL ISLAND – THÀNH PHỐ ĐẢO ĐẲNG CẤP QUỐC TẾ TẠI VŨ YÊN, HẢI PHÒNG",
-      description:
-        "Không gian sống hiện đại được quy hoạch đồng bộ với hệ thống tiện ích cao cấp, mật độ xây dựng tối ưu và định hướng phát triển bền vững dành cho cộng đồng cư dân mới.",
-      image:
-        "https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=1400",
-      tags: ["Hoạt động", "Nổi bật"],
-      isFeatured: true,
-      slug: "vinhomes-royal-island",
-    },
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
-    {
-      id: 2,
-      title: "The Sun Residence – Quận 7",
-      description:
-        "Không gian sống hiện đại với thiết kế tối giản và hệ tiện ích đầy đủ dành cho cư dân trẻ.",
-      image:
-        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=800",
-      tags: ["Hoạt động", "Nổi bật"],
-      slug: "the-sun-residence",
-    },
+  useEffect(() => {
+    const fetchFeaturedProjects = async () => {
+      try {
+        const [apartments, houses, lands] = await Promise.all([
+          apartmentService.getFeatured(),
+          houseService.getFeatured(),
+          landService.getFeatured(),
+        ]);
 
-    {
-      id: 3,
-      title: "The Lusso – Thảo Điền",
-      description:
-        "Dự án cao cấp sở hữu vị trí chiến lược cùng không gian sống xanh chuẩn quốc tế.",
-      image:
-        "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=800",
-      tags: ["Hoạt động", "Nổi bật"],
-      slug: "the-lusso",
-    },
+        const merged = [...apartments, ...houses, ...lands];
+        console.log("APARTMENTS", apartments);
+        console.log("HOUSES", houses);
+        console.log("LANDS", lands);
+        merged.sort(
+          (a, b) =>
+            new Date(b.featured_at).getTime() -
+            new Date(a.featured_at).getTime(),
+        );
 
-    {
-      id: 4,
-      title: "Eco Smart City",
-      description:
-        "Kiến tạo môi trường sống hiện đại kết hợp công nghệ và hệ sinh thái bền vững.",
-      image:
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=800",
-      tags: ["Hoạt động", "Nổi bật"],
-      slug: "eco-smart-city",
-    },
-  ];
+        setProjects(merged);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // ================= FEATURED PROJECT =================
-  const featuredProject =
-    projectsData.find((item) => item.isFeatured) || projectsData[0];
+    fetchFeaturedProjects();
+  }, []);
 
-  // ================= NORMAL PROJECTS =================
-  const normalProjects = projectsData.filter(
-    (item) => item.id !== featuredProject.id,
-  );
+  const featuredProject = projects[0];
+  console.log("Featured Project:", featuredProject);
+  const normalProjects = projects.slice(1);
+  const visibleProjects = showAll ? normalProjects : normalProjects.slice(0, 3);
+
+  if (loading) {
+    return (
+      <section className="mb-[100px]">
+        <div className="container">
+          <div className="h-[500px] animate-pulse rounded-[28px] bg-gray-100" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!featuredProject) {
+    return null;
+  }
 
   return (
     <section className="mb-[100px] w-full font-sans">
@@ -91,67 +90,24 @@ const HighLightSection = () => {
             an cư khác nhau.
           </motion.p>
         </div>
-
         {/* ================= FEATURED PROJECT ================= */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
-          className="mb-10 overflow-hidden rounded-[28px] border border-black/5 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
-            {/* IMAGE */}
-            <div className="relative h-[320px] overflow-hidden lg:h-full">
-              <img
-                src={featuredProject.image}
-                alt={featuredProject.title}
-                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-
-              {/* TAGS */}
-              <div className="absolute top-5 left-5 flex gap-2">
-                {featuredProject.tags?.map((tag, index) => (
-                  <span
-                    key={index}
-                    className={`rounded-xl px-4 py-2 text-xs font-medium ${
-                      index === 0
-                        ? "bg-[#dff5e8] text-green-600"
-                        : "bg-[#fff1c9] text-yellow-700"
-                    }`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* CONTENT */}
-            <div className="flex flex-col justify-center p-8 lg:p-12">
-              <h3 className="mb-5 text-2xl leading-snug font-bold text-[#1c1c1a] uppercase">
-                {featuredProject.title}
-              </h3>
-
-              <p className="text-secondary mb-8 leading-relaxed font-light">
-                {featuredProject.description}
-              </p>
-
-              <button className="group flex w-fit items-center gap-2 border-b border-[#ab8c5d] pb-1 text-sm font-semibold tracking-wide text-[#ab8c5d] transition-all hover:opacity-70">
-                Xem chi tiết dự án
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
+        <FeaturedProjectCard project={featuredProject} />
         {/* ================= PROJECT GRID ================= */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-          {normalProjects.map((project, index) => (
+          {visibleProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
+        {normalProjects.length > 3 && !showAll && (
+          <div className="mt-12 flex justify-center">
+            <button
+              onClick={() => setShowAll(true)}
+              className="bg-primary rounded-xl px-8 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              Xem thêm dự án
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

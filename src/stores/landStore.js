@@ -89,14 +89,18 @@ export const useLandStore = create((set, get) => ({
   /**
    * 🌟 ACTION: Tải toàn bộ danh sách đất nền cho trang quản trị Admin
    */
-  fetchLandsForAdmin: async () => {
+  // src/stores/landStore.js
+
+  fetchLandsForAdmin: async (page, limit, filters = {}) => {
     set({ isLoading: true, error: null });
 
     try {
-      const data = await landService.getAllForAdmin();
+      // 🌟 ĐÃ CẬP NHẬT: Truyền page, limit, filters vào trong service
+      const result = await landService.getAllForAdmin(page, limit, filters);
 
       set({
-        lands: data,
+        lands: result.data,
+        total: result.total, // Lưu tổng số dòng phục vụ phân trang
         isLoading: false,
       });
     } catch (err) {

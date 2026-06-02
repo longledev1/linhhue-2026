@@ -7,4 +7,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error("⚠️ Thiếu cấu hình Supabase trong file .env.local rồi bạn ơi!");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    storage: window.sessionStorage,
+    autoRefreshToken: true,
+  },
+});

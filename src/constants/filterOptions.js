@@ -33,6 +33,11 @@ export const APARTMENT_OPTIONS = {
     { value: "rent", label: "Cho thuê" },
     { value: "sale", label: "Cần bán" },
   ],
+
+  is_published: [
+    { value: "true", label: "Đang hiển thị" },
+    { value: "false", label: "Đang ẩn" },
+  ],
 };
 // 2. DATA OPTIONS CHO TRANG NHÀ Ở (Sau này viết tiếp vào đây)
 export const HOUSE_OPTIONS = {
@@ -110,5 +115,10 @@ export const LAND_OPTIONS = {
   status: [
     { value: "rent", label: "Cho thuê" },
     { value: "sale", label: "Cần bán" },
+  ],
+
+  is_published: [
+    { value: "true", label: "Đang hiển thị" },
+    { value: "false", label: "Đang ẩn" },
   ],
 };

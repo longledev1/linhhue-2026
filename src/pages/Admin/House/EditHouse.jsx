@@ -32,6 +32,7 @@ export default function AdminEditHouse() {
 
   const [loadingData, setLoadingData] = useState(true);
   const [isSubmittingState, setIsSubmittingState] = useState(false);
+  const [oldHouseData, setOldHouseData] = useState(null);
   const { updateHouse } = useHouseStore();
 
   const {
@@ -60,6 +61,7 @@ export default function AdminEditHouse() {
         const data = await houseService.getById(id);
 
         if (data) {
+          setOldHouseData(data);
           reset({
             title: data.title || "",
             price: data.price?.toString() || "",
@@ -161,7 +163,7 @@ export default function AdminEditHouse() {
 
       if (slides.length > 0) {
         const uploadedNewSlideUrls = await uploadMultipleImages(
-          thumbnail,
+          slides,
           "apartments",
           "houses",
         );
@@ -176,7 +178,7 @@ export default function AdminEditHouse() {
         bathroom: parseInt(data.bathroom, 10),
         floor: data.floor ? parseInt(data.floor, 10) : null,
         direction: data.direction,
-        apartment_type: data.apartment_type,
+        house_type: data.house_type,
         status: data.status,
         ward: data.ward,
         address_detail: data.address_detail,
@@ -187,8 +189,23 @@ export default function AdminEditHouse() {
         is_featured: data.is_featured,
         thumbnail: thumbnailUrl,
         images: slideUrls,
-        category: "apartment",
+        category: "house",
       };
+
+      if (oldHouseData) {
+        const oldFeatured = oldHouseData.is_featured;
+        const newFeatured = data.is_featured;
+
+        // false -> true
+        if (!oldFeatured && newFeatured) {
+          payload.featured_at = new Date().toISOString();
+        }
+
+        // true -> false
+        if (oldFeatured && !newFeatured) {
+          payload.featured_at = null;
+        }
+      }
 
       const result = await updateHouse(id, payload);
 
@@ -283,7 +300,7 @@ export default function AdminEditHouse() {
           <div className="mt-auto flex justify-end gap-3 pt-6">
             <Button
               variant="outlined"
-              onClick={() => navigate("/admin/apartments")}
+              onClick={() => navigate("/admin/houses")}
               sx={{ textTransform: "none" }}
               disabled={isSubmittingState}
             >

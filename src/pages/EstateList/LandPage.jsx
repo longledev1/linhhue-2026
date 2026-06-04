@@ -156,7 +156,7 @@ export default function LandPage() {
       {/* 2. Khối nội dung chính */}
       <div className="container mx-auto mt-8 px-4">
         <p className="mt-2 mb-2 text-sm text-gray-500 md:hidden">
-          Trang chủ / Bất động sản /{" "}
+          Bất động sản /{" "}
           <span className="text-primary font-semibold">Danh mục đất nền</span>
         </p>
         <div className="mb-6 flex items-center justify-between">

@@ -162,7 +162,7 @@ export default function LandDetailSection() {
   const wardLabel = formatWard(project.ward) || "Chưa xác định";
   console.log(project);
   return (
-    <div className="mt-[140px] flex w-full flex-col bg-stone-50/20 pb-16">
+    <div className="mt-[140px] flex w-full flex-col bg-stone-50/20">
       <div className="container">
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
           {/* CỘT TRÁI - TOÀN BỘ ALBUM ẢNH SỔ ĐỎ VÀ NỘI DUNG MÔ TẢ ĐẤT NỀN */}

@@ -165,7 +165,7 @@ export default function HouseDetailSection() {
   const provinceLabel = formatProvince(project.province) || "Chưa xác định";
 
   return (
-    <div className="mt-[140px] flex w-full flex-col bg-stone-50/20 pb-16">
+    <div className="mt-[140px] flex w-full flex-col bg-stone-50/20">
       <div className="container">
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
           {/* CỘT TRÁI - CHI TIẾT NỘI DUNG CHÍNH */}

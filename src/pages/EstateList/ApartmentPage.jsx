@@ -4,21 +4,24 @@ import ProjectCard from "../../components/Card/ProjectCard";
 import { APARTMENT_OPTIONS } from "../../constants/filterOptions";
 import { useApartmentStore } from "../../stores/apartmentStore";
 import { CircularProgress } from "@mui/material";
-import { FiPlusCircle } from "react-icons/fi";
 import { useSearchParams } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import { FiPlusCircle, FiX } from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 export default function ApartmentPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [openFilter, setOpenFilter] = useState(false);
   const apartmentFields = [
+    "province",
     "ward",
-    "status",
     "price",
     "area",
     "bedroom",
     "apartment_type",
   ];
+
   const handleFilterSubmit = async (formData) => {
     setCurrentFilters(formData);
-
     setSearchParams(formData);
 
     const hasFilter = Object.keys(formData).length > 0;
@@ -30,7 +33,8 @@ export default function ApartmentPage() {
 
     fetchFilteredApartments(formData, 0, INITIAL_LIMIT, false);
   };
-  // Bốc state totalApartments từ Zustand Store
+
+  // Bốc các action và state từ Zustand Store
   const {
     apartments,
     totalApartments,
@@ -46,26 +50,33 @@ export default function ApartmentPage() {
 
   useEffect(() => {
     const filtersFromUrl = {
-      ward: searchParams.get("ward") || "",
+      id: searchParams.get("id") || "",
       status: searchParams.get("status") || "",
       price: searchParams.get("price") || "",
+      province: searchParams.get("province") || "",
+      ward: searchParams.get("ward") || "",
       area: searchParams.get("area") || "",
       bedroom: searchParams.get("bedroom") || "",
       apartment_type: searchParams.get("apartment_type") || "",
     };
 
-    const hasFilter = Object.values(filtersFromUrl).some(Boolean);
+    const cleanFilters = Object.keys(filtersFromUrl).reduce((acc, key) => {
+      if (filtersFromUrl[key]) acc[key] = filtersFromUrl[key];
+      return acc;
+    }, {});
+
+    const hasFilter = Object.keys(cleanFilters).length > 0;
 
     if (hasFilter) {
-      setCurrentFilters(filtersFromUrl);
-
-      fetchFilteredApartments(filtersFromUrl, 0, INITIAL_LIMIT, false);
+      setCurrentFilters(cleanFilters);
+      fetchFilteredApartments(cleanFilters, 0, INITIAL_LIMIT, false);
     } else {
       fetchApartments(0, INITIAL_LIMIT, false);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
+
   const handleLoadMore = () => {
     const hasFilter = Object.keys(currentFilters).length > 0;
 
@@ -80,34 +91,94 @@ export default function ApartmentPage() {
       fetchApartments(apartments.length, LOAD_MORE_LIMIT, true);
     }
   };
+
   const hasMore = apartments.length < totalApartments;
 
   console.log("Danh sách căn hộ hiện có trên UI:", apartments);
 
   return (
-    <div className="min-h-screen pt-[140px] pb-16">
+    <div className="min-h-screen pt-[100px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
-      <FilterBarBase
-        title="Danh mục căn hộ"
-        fields={apartmentFields}
-        options={APARTMENT_OPTIONS}
-        onFilterSubmit={handleFilterSubmit}
-        defaultValues={currentFilters}
-      />
+      {/* Desktop */}
+      <div className="hidden md:block">
+        <FilterBarBase
+          title="Danh mục căn hộ"
+          fields={apartmentFields}
+          options={APARTMENT_OPTIONS}
+          onFilterSubmit={handleFilterSubmit}
+          defaultValues={currentFilters}
+        />
+      </div>
+
+      {/* Mobile Button */}
+      <div className="fixed right-4 bottom-6 z-50 md:hidden">
+        <button
+          onClick={() => setOpenFilter(true)}
+          className="flex items-center gap-2 rounded-full bg-[#ab8c5d] px-5 py-3 text-sm font-semibold text-white shadow-xl"
+        >
+          <FiFilter size={18} />
+          Bộ lọc
+        </button>
+      </div>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="bottom"
+        open={openFilter}
+        onClose={() => setOpenFilter(false)}
+        PaperProps={{
+          sx: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            maxHeight: "90vh",
+          },
+        }}
+      >
+        <div className="flex items-center justify-between border-b p-4">
+          <div className="flex items-center gap-2">
+            <FiFilter size={18} />
+            <h2 className="text-lg font-bold">Bộ lọc căn hộ</h2>
+          </div>
+
+          <button
+            onClick={() => setOpenFilter(false)}
+            className="rounded-full p-2 transition hover:bg-gray-100"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto p-4">
+          <FilterBarBase
+            title="Danh mục căn hộ"
+            fields={apartmentFields}
+            options={APARTMENT_OPTIONS}
+            onFilterSubmit={(data) => {
+              handleFilterSubmit(data);
+              setOpenFilter(false);
+            }}
+            defaultValues={currentFilters}
+          />
+        </div>
+      </Drawer>
+
       {/* 2. Khối nội dung chính */}
       <div className="container mx-auto mt-8 px-4">
-        {/* Số lượng danh mục căn hộ (Đếm real-time dựa trên tổng số đếm trong DB) */}
+        <p className="mt-2 mb-2 hidden text-sm text-gray-500">
+          Trang chủ / Bất động sản /{" "}
+          <span className="text-primary font-semibold">Danh mục căn hộ</span>
+        </p>
         <div className="mb-6 flex items-center justify-between">
           <p className="text-lg font-bold text-gray-800">
             Hiện có{" "}
-            <span className="text-xl text-[#ab8c5d]">
+            <span className="text-primary text-xl">
               {isLoading && apartments.length === 0 ? "..." : totalApartments}
             </span>{" "}
             danh mục căn hộ phù hợp
           </p>
         </div>
 
-        {/* 🌟 VÙNG ĐIỀU KHIỂN NỘI DUNG */}
+        {/* VÙNG ĐIỀU KHIỂN NỘI DUNG */}
         <div className="w-full space-y-10">
           {error && (
             <div className="my-10 rounded-xl border border-red-100 bg-red-50/50 p-6 text-center font-medium text-red-600">
@@ -122,7 +193,7 @@ export default function ApartmentPage() {
             </div>
           )}
 
-          {/* 🌟 RENDER GRID CARD KHI ĐÃ CÓ DATA SẠCH */}
+          {/* RENDER GRID CARD KHI ĐÃ CÓ DATA SẠCH */}
           {apartments && apartments.length > 0 && (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {apartments.map((apt) => (
@@ -148,7 +219,7 @@ export default function ApartmentPage() {
             <div className="flex w-full items-center justify-center pt-4">
               <button
                 onClick={handleLoadMore}
-                className="group flex items-center justify-center gap-2 rounded-xl border border-[#ab8c5d] bg-white px-8 py-3.5 text-xs font-bold tracking-widest text-[#ab8c5d] shadow-sm transition-all duration-300 hover:bg-[#ab8c5d] hover:text-white hover:shadow-md active:scale-[0.98]"
+                className="group text-primary flex items-center justify-center gap-2 rounded-xl border border-[#ab8c5d] bg-white px-8 py-3.5 text-xs font-bold tracking-widest shadow-sm transition-all duration-300 hover:bg-[#ab8c5d] hover:text-white hover:shadow-md active:scale-[0.98]"
               >
                 <FiPlusCircle
                   size={16}

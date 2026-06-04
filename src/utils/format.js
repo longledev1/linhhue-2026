@@ -1,6 +1,7 @@
 // src/utils/format.js
-import { WARD_OPTIONS } from "../constants/wardOptions";
-// 🌟 1. IMPORT hai mảng option của bạn vào đây (Nhớ sửa lại đường dẫn file cho đúng cấu trúc dự án nha)
+
+// 🌟 1. IMPORT mảng Tỉnh thành và Object Phường xã động mới của bạn vào đây
+import { PROVINCE_OPTIONS, LOCATION_DATA } from "../constants/wardOptions";
 import {
   HOUSE_DIRECTIONS,
   APARTMENT_TYPES,
@@ -16,10 +17,45 @@ export const formatPrice = (price) => {
   return `${(price / 1000000).toFixed(1).replace(".0", "")} Triệu`;
 };
 
-export const formatWard = (wardSlug) => {
+/**
+ * 🌟 MỚI: TRA CỨU TỈNH / THÀNH PHỐ
+ * @param {string} provinceCode - Ví dụ: "TPHCM", "HA_NOI"
+ * @returns {string} - Ví dụ: "Thành phố Hồ Chí Minh"
+ */
+export const formatProvince = (provinceCode) => {
+  if (!provinceCode) return "";
+  const foundProvince = PROVINCE_OPTIONS.find(
+    (item) => item.value === provinceCode,
+  );
+  return foundProvince ? foundProvince.label : provinceCode;
+};
+
+/**
+ * 🌟 ĐÃ FIX: TRA CỨU PHƯỜNG / XÃ ĐỘNG THEO THÀNH PHỐ
+ * Vì dữ liệu phường xã giờ nằm trong LOCATION_DATA[provinceCode], ta cần quét qua tất cả các tỉnh để tìm slug
+ * @param {string} wardSlug - Ví dụ: "phuong-an-phu"
+ * @param {string} [provinceCode] - Nếu truyền kèm mã tỉnh, tốc độ tìm kiếm sẽ nhanh hơn vượt trội
+ */
+export const formatWard = (wardSlug, provinceCode = null) => {
   if (!wardSlug) return "";
-  const foundWard = WARD_OPTIONS.find((item) => item.value === wardSlug);
-  return foundWard ? foundWard.label : wardSlug;
+
+  // Cách 1: Nếu component có sẵn và truyền kèm cả provinceCode (Tối ưu nhất)
+  if (provinceCode && LOCATION_DATA[provinceCode]) {
+    const foundWard = LOCATION_DATA[provinceCode].find(
+      (item) => item.value === wardSlug,
+    );
+    if (foundWard) return foundWard.label;
+  }
+
+  // Cách 2: Phương án dự phòng nếu component cũ chỉ truyền mỗi wardSlug (Quét xuyên tất cả các tỉnh)
+  for (const province in LOCATION_DATA) {
+    const foundWard = LOCATION_DATA[province].find(
+      (item) => item.value === wardSlug,
+    );
+    if (foundWard) return foundWard.label;
+  }
+
+  return wardSlug;
 };
 
 /**
@@ -77,6 +113,8 @@ export const stripHtmlAndEntities = (htmlString) => {
   if (!htmlString) return "Chưa có mô tả chi tiết...";
   let cleanText = htmlString.replace(/<[^>]*>/g, "");
   cleanText = cleanText.replace(/&nbsp;/g, " ");
+  // Kiểm tra môi trường Node.js (SSR của Next.js nếu có) tránh lỗi DOMParser undefined
+  if (typeof window === "undefined") return cleanText;
   const doc = new DOMParser().parseFromString(cleanText, "text/html");
   return doc.body.textContent || cleanText;
 };

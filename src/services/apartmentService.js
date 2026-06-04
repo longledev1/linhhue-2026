@@ -35,10 +35,8 @@ export const apartmentService = {
   },
 
   /**
-   * Danh sách tất cả căn hộ cho Admin
+   * Danh sách tất cả căn hộ cho Admin (Đã tích hợp lọc Province)
    */
-  // src/services/apartmentService.js
-
   getAllForAdmin: async (page, limit, filters = {}) => {
     try {
       const from = page * limit;
@@ -52,6 +50,11 @@ export const apartmentService = {
       // Tìm kiếm chính xác theo mã ID bài đăng
       if (filters.id) {
         query = query.eq("id", filters.id);
+      }
+
+      // 🌟 THÊM MỚI: Lọc theo Tỉnh / Thành phố cho Admin
+      if (filters.province) {
+        query = query.eq("province", filters.province);
       }
 
       // Lọc theo Phường/Xã
@@ -71,7 +74,6 @@ export const apartmentService = {
 
       // Lọc theo trạng thái Ẩn / Hiện (is_published)
       if (filters.is_published) {
-        // Ép chuỗi string "true"/"false" từ URL về kiểu Boolean của Database
         const isPublishedBool = filters.is_published === "true";
         query = query.eq("is_published", isPublishedBool);
       }
@@ -83,7 +85,6 @@ export const apartmentService = {
 
       if (error) throw error;
 
-      // Trả về đúng cấu trúc object mà store đang mong đợi nhận được
       return {
         data: data || [],
         total: count || 0,
@@ -111,6 +112,7 @@ export const apartmentService = {
 
     return data || [];
   },
+
   /**
    * Chi tiết căn hộ theo ID
    */
@@ -236,7 +238,7 @@ export const apartmentService = {
   },
 
   /**
-   * Bộ lọc căn hộ ngoài client nâng cao
+   * Bộ lọc căn hộ ngoài client nâng cao (Đã tích hợp lọc Province)
    */
   getFiltered: async (filters, offset = 0, limit = 12) => {
     const from = offset;
@@ -246,6 +248,11 @@ export const apartmentService = {
       .from("apartments")
       .select("*", { count: "exact" })
       .eq("is_published", true);
+
+    // 🌟 THÊM MỚI: Đắp bộ lọc tỉnh thành động ngoài Client công cộng
+    if (filters.province) {
+      query = query.eq("province", filters.province);
+    }
 
     if (filters.ward) {
       query = query.eq("ward", filters.ward);
@@ -286,7 +293,7 @@ export const apartmentService = {
       totalCount: count || 0,
     };
   },
-  // LẤY 10 CĂN HỘ MỚI NHẤT CHO TRANG CHỦ
+
   /**
    * 10 căn hộ mới nhất cho trang chủ
    */

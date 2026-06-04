@@ -15,8 +15,9 @@ import {
   IconButton,
   TablePagination,
 } from "@mui/material";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-import { WARD_OPTIONS } from "../../../../constants/wardOptions";
+import { FaRegEdit, FaRegEye, FaRegTrashAlt } from "react-icons/fa";
+
+import { formatWard, formatProvince } from "../../../../utils/format";
 
 export default function HouseTable({
   data,
@@ -27,14 +28,10 @@ export default function HouseTable({
   onRowsPerPageChange,
   onDeleteClick,
 }) {
-  const formatWard = (wardSlug) => {
-    if (!wardSlug) return "---";
-    const foundWard = WARD_OPTIONS.find((item) => item.value === wardSlug);
-    return foundWard ? foundWard.label : wardSlug;
-  };
+  const FONT_FAMILY = '"Montserrat", sans-serif'; // 🌟 BIẾN ĐỊNH DẠNG FONT CHỮ MONTSERRAT
 
   return (
-    <Box>
+    <Box sx={{ fontFamily: FONT_FAMILY }}>
       <TableContainer
         component={Paper}
         elevation={0}
@@ -43,33 +40,68 @@ export default function HouseTable({
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: "#f8fafc" }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Ảnh
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Tên căn hộ
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Hình thức
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Khu vực
               </TableCell>
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="right"
               >
                 Giá
               </TableCell>
-              {/* 🌟 ĐỒNG BỘ: Đổi cột Diện tích cũ thành cột Trạng thái hiển thị */}
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="center"
               >
                 Trạng thái
               </TableCell>
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="center"
               >
                 Hành động
@@ -95,13 +127,19 @@ export default function HouseTable({
                 <TableCell sx={{ maxWidth: 280 }}>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, color: "#1e293b" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "#1e293b",
+                      fontFamily: FONT_FAMILY,
+                    }}
                     className="line-clamp-2"
                   >
                     {row.title}
                   </Typography>
-                  {/* 🌟 ĐỒNG BỘ: Chèn thông số Diện tích vào dòng phụ (caption) */}
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "#64748b", fontFamily: FONT_FAMILY }}
+                  >
                     {row.bedroom} PN | {row.bathroom} WC | {row.area} m²
                   </Typography>
                 </TableCell>
@@ -113,19 +151,46 @@ export default function HouseTable({
                       bgcolor: row.status === "rent" ? "#e6f4ea" : "#fce8e6",
                       color: row.status === "rent" ? "#137333" : "#c5221f",
                       fontWeight: 600,
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
-                <TableCell sx={{ textTransform: "capitalize" }}>
-                  {formatWard(row.ward)}
+
+                {/* 🌟 ĐÃ SỬA: Đổi định dạng hiển thị thành: Thành phố Hồ Chí Minh - Phường An Phú */}
+                <TableCell
+                  sx={{
+                    color: "#334155",
+                    fontFamily: FONT_FAMILY,
+                    fontSize: "13px",
+                  }}
+                >
+                  {row.ward ? (
+                    <>
+                      {row.province && (
+                        <span className="font-semibold">
+                          {formatProvince(row.province)}
+                        </span>
+                      )}
+                      {row.province && <span>{" - "}</span>}
+                      <span className="text-gray-600">
+                        {formatWard(row.ward, row.province)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
+
                 <TableCell
                   align="right"
-                  sx={{ fontWeight: 600, color: "#0f172a" }}
+                  sx={{
+                    fontWeight: 600,
+                    color: "#0f172a",
+                    fontFamily: FONT_FAMILY,
+                  }}
                 >
                   {Number(row.price).toLocaleString("vi-VN")} đ
                 </TableCell>
-                {/* 🌟 ĐỒNG BỘ: Thêm ô hiển thị Ẩn/Hiện của bài đăng */}
                 <TableCell align="center">
                   <Chip
                     label={row.is_published ? "Đang hiển thị" : "Đang ẩn"}
@@ -139,7 +204,8 @@ export default function HouseTable({
                         ? "1px solid rgba(76, 175, 80, 0.25)"
                         : "1px solid rgba(148, 163, 184, 0.2)",
                       fontWeight: 600,
-                      fontSize: "12px",
+                      fontSize: "11px",
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
@@ -147,6 +213,21 @@ export default function HouseTable({
                   <Box
                     sx={{ display: "flex", justifyContent: "center", gap: 1 }}
                   >
+                    {/* 👁️ NÚT XEM CHI TIẾT BÀI VIẾT (MỚI THÊM) */}
+                    <IconButton
+                      component={Link}
+                      to={`/bat-dong-san/nha-o/${row.id}`}
+                      target="_blank" // Thêm target="_blank" nếu bạn muốn mở tab mới để xem bài viết, xóa đi nếu muốn chuyển trang trực tiếp
+                      size="small"
+                      sx={{
+                        color: "#64748b", // Màu xám
+                        "&:hover": { bgcolor: "#10b98110" },
+                      }}
+                    >
+                      <FaRegEye size={18} />
+                    </IconButton>
+
+                    {/* 📝 NÚT CHỈNH SỬA */}
                     <IconButton
                       component={Link}
                       to={`/admin/houses/edit/${row.id}`}
@@ -158,6 +239,8 @@ export default function HouseTable({
                     >
                       <FaRegEdit size={18} />
                     </IconButton>
+
+                    {/* 🗑️ NÚT XÓA */}
                     <IconButton
                       size="small"
                       onClick={() => onDeleteClick(row.id)}
@@ -195,6 +278,12 @@ export default function HouseTable({
           borderBottom: "1px solid #e2e8f0",
           borderRadius: "0 0 8px 8px",
           bgcolor: "#f8fafc",
+          fontFamily: FONT_FAMILY,
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-select":
+            {
+              fontFamily: FONT_FAMILY,
+              fontSize: "13px",
+            },
         }}
       />
     </Box>

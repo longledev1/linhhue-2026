@@ -24,6 +24,7 @@ import SuggestedProjectHome from "./SuggestedProjectHome";
 import {
   formatPrice,
   formatWard,
+  formatProvince,
   formatDirection,
   formatHouseType,
 } from "../../../utils/format";
@@ -150,17 +151,18 @@ export default function HouseDetailSection() {
     {
       icon: <BiBuildingHouse className="text-xl" />,
       label: "Khu tiện ích & Ghi chú:",
-      value: project.amenities || "Đầy đủ tiện ích nội khu cao cấp",
+      value: project.amenities || "Chưa cập nhật",
     },
     {
       icon: <FiBookOpen className="text-xl" />,
       label: "Pháp lý:",
-      value: `${isRent ? "Hợp đồng cho thuê rõ ràng" : "Sổ đỏ x Sổ hồng"}`,
+      value: `${isRent ? "Hợp đồng cho thuê rõ ràng" : "Pháp lý rõ ràng"}`,
     },
   ];
 
   const statusLabel = isRent ? "Cho thuê" : "Mua bán";
   const wardLabel = formatWard(project.ward) || "Chưa xác định";
+  const provinceLabel = formatProvince(project.province) || "Chưa xác định";
 
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20 pb-16">
@@ -176,8 +178,7 @@ export default function HouseDetailSection() {
             />
 
             <div className="pt-4 text-xs font-bold tracking-wide text-stone-500 uppercase md:text-sm">
-              {statusLabel} / Thành phố Hồ Chí Minh / {wardLabel} /{" "}
-              {typeLabel}{" "}
+              {statusLabel} / {provinceLabel} / {wardLabel} / {typeLabel}{" "}
             </div>
 
             <div className="block pt-2 lg:hidden">
@@ -188,6 +189,7 @@ export default function HouseDetailSection() {
               id={project.id} //
               title={project.title}
               description={project.description}
+              address={project.address_detail}
               mapIframe={project.map_iframe}
             />
             <SuggestedProjectHome currentId={project.id} />

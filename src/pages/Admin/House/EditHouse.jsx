@@ -62,6 +62,7 @@ export default function AdminEditHouse() {
 
         if (data) {
           setOldHouseData(data);
+          // 🔑 ĐỒNG BỘ: Reset dữ liệu bao gồm trường province
           reset({
             title: data.title || "",
             price: data.price?.toString() || "",
@@ -72,6 +73,7 @@ export default function AdminEditHouse() {
             direction: data.direction || "dong-nam",
             house_type: data.house_type || "nha-pho",
             status: data.status || "rent",
+            province: data.province || "",
             ward: data.ward || "",
             address_detail: data.address_detail || "",
             map_iframe: data.map_iframe || "",
@@ -90,8 +92,8 @@ export default function AdminEditHouse() {
           if (Array.isArray(data.images)) setSlidePreviews(data.images);
         }
       } catch (err) {
-        console.error("Lỗi lấy chi tiết căn hộ:", err.message);
-        alert("🔥 Không thể tải dữ liệu cũ của căn hộ này!");
+        console.error("Lỗi lấy chi tiết nhà:", err.message);
+        alert("🔥 Không thể tải dữ liệu cũ của ngôi nhà này!");
       } finally {
         setLoadingData(false);
       }
@@ -122,7 +124,6 @@ export default function AdminEditHouse() {
 
   const removeSlide = (index) => {
     const targetUrl = slidePreviews[index];
-
     setSlidePreviews((prev) => prev.filter((_, i) => i !== index));
 
     if (oldImages.images.includes(targetUrl)) {
@@ -180,6 +181,7 @@ export default function AdminEditHouse() {
         direction: data.direction,
         house_type: data.house_type,
         status: data.status,
+        province: data.province, // 🔑 ĐỒNG BỘ: Đóng gói province vào payload
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
@@ -195,22 +197,15 @@ export default function AdminEditHouse() {
       if (oldHouseData) {
         const oldFeatured = oldHouseData.is_featured;
         const newFeatured = data.is_featured;
-
-        // false -> true
-        if (!oldFeatured && newFeatured) {
+        if (!oldFeatured && newFeatured)
           payload.featured_at = new Date().toISOString();
-        }
-
-        // true -> false
-        if (oldFeatured && !newFeatured) {
-          payload.featured_at = null;
-        }
+        if (oldFeatured && !newFeatured) payload.featured_at = null;
       }
 
       const result = await updateHouse(id, payload);
 
       if (result.success) {
-        alert("🎉 Cập nhật thông tin nhà thành công mỹ mãn!");
+        alert("🎉 Cập nhật thông tin nhà thành công");
         navigate("/admin/houses");
       } else {
         throw new Error(result.error);
@@ -240,7 +235,7 @@ export default function AdminEditHouse() {
           color="textSecondary"
           className="animate-pulse"
         >
-          Đang truy xuất thông tin nhà nhà số {id}...
+          Đang truy xuất thông tin nhà số {id}...
         </Typography>
       </Box>
     );
@@ -248,21 +243,19 @@ export default function AdminEditHouse() {
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="w-full space-y-6">
-      {/* Thanh tiêu đề phía trên */}
       <div className="flex w-full items-center gap-3">
         <IconButton
-          onClick={() => navigate("/admin/apartments")}
+          onClick={() => navigate("/admin/houses")}
           sx={{ bgcolor: "white", border: "1px solid #e2e8f0" }}
         >
           <FiArrowLeft size={18} style={{ color: "#475569" }} />
         </IconButton>
         <div>
           <h1 className="text-3xl font-bold text-[#1e293b]">
-            Chỉnh Sửa Tin Căn Hộ #{id}
+            Chỉnh Sửa Tin Nhà ở #{id}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Cập nhật lại thông số kỹ thuật, chỉnh sửa nội dung mô tả hoặc thay
-            đổi album ảnh sản phẩm.
+            Cập nhật thông số kỹ thuật và hình ảnh.
           </p>
         </div>
       </div>
@@ -282,6 +275,7 @@ export default function AdminEditHouse() {
           <ConfigAndImageCardHouse
             register={register}
             control={control}
+            errors={errors}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}
             handleThumbnailChange={handleThumbnailChange}
@@ -296,7 +290,6 @@ export default function AdminEditHouse() {
             PRIMARY_COLOR={PRIMARY_COLOR}
           />
 
-          {/* Cụm nút bấm lưu thay đổi */}
           <div className="mt-auto flex justify-end gap-3 pt-6">
             <Button
               variant="outlined"

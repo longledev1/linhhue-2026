@@ -5,18 +5,18 @@ import { FiFacebook, FiLinkedin, FiYoutube } from "react-icons/fi";
 const Footer = () => {
   // Danh sách các liên kết hệ thống Footer
   const quickLinks = [
-    { text: "Giới thiệu", url: "#" },
-    { text: "Giá trị cốt lõi", url: "#" },
-    { text: "Tầm nhìn & Sứ mệnh", url: "#" },
+    { text: "Giới thiệu", url: "/ve-chung-toi" },
+    { text: "Giá trị cốt lõi", url: "/ve-chung-toi" },
+    { text: "Tầm nhìn & Sứ mệnh", url: "/ve-chung-toi" },
   ];
 
   const policyLinks = [
-    { text: "Danh mục nhà ở", url: "#" },
-    { text: "Danh mục căn hộ", url: "#" },
-    { text: "Danh mục đất đai", url: "#" },
+    { text: "Danh mục nhà ở", url: "/bat-dong-san/nha-o" },
+    { text: "Danh mục căn hộ", url: "/bat-dong-san/can-ho" },
+    { text: "Danh mục đất đai", url: "/bat-dong-san/dat-dai" },
   ];
 
-  const fnbLinks = [{ text: "Linh Huệ Coffee", url: "#" }];
+  const fnbLinks = [{ text: "Linh Huệ Coffee", url: "/fnb" }];
 
   return (
     // Đồng bộ màu nền và giữ mt-[100px] để tạo khoảng cách an toàn với section phía trên [cite: 248]
@@ -36,7 +36,7 @@ const Footer = () => {
 
           {/* CỘT 2: VỀ CHÚNG TÔI */}
           <div className="flex flex-col gap-4 pt-2">
-            <h4 className="border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider text-[#ab8c5d] uppercase">
+            <h4 className="text-primary border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider uppercase">
               VỀ CHÚNG TÔI
             </h4>
             <ul className="flex flex-col gap-2.5 text-xs font-light text-white md:text-sm">
@@ -44,7 +44,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     href={link.url}
-                    className="transition-colors duration-200 hover:text-[#ab8c5d]"
+                    className="hover:text-primary transition-colors duration-200"
                   >
                     {link.text}
                   </a>
@@ -55,7 +55,7 @@ const Footer = () => {
 
           {/* CỘT 3: FNB */}
           <div className="flex flex-col gap-4 pt-2">
-            <h4 className="border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider text-[#ab8c5d] uppercase">
+            <h4 className="text-primary border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider uppercase">
               FNB
             </h4>
             <ul className="flex flex-col gap-2.5 text-xs font-light text-white md:text-sm">
@@ -63,7 +63,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     href={link.url}
-                    className="transition-colors duration-200 hover:text-[#ab8c5d]"
+                    className="hover:text-primary transition-colors duration-200"
                   >
                     {link.text}
                   </a>
@@ -74,7 +74,7 @@ const Footer = () => {
 
           {/* CỘT 4: DỰ ÁN */}
           <div className="flex flex-col gap-4 pt-2">
-            <h4 className="border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider text-[#ab8c5d] uppercase">
+            <h4 className="text-primary border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider uppercase">
               DỰ ÁN
             </h4>
             <ul className="flex flex-col gap-2.5 text-xs font-light text-white md:text-sm">
@@ -82,7 +82,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     href={link.url}
-                    className="transition-colors duration-200 hover:text-[#ab8c5d]"
+                    className="hover:text-primary transition-colors duration-200"
                   >
                     {link.text}
                   </a>
@@ -94,7 +94,7 @@ const Footer = () => {
           {/* CỘT 5: THÔNG TIN DOANH NGHIỆP */}
           {/* ĐÃ SỬA: Loại bỏ col-span-2 để khối này tự động lấp đầy 1 ô grid mặc định, đứng ngang hàng hoàn hảo với Dự Án trên di động [cite: 259] */}
           <div className="flex flex-col gap-4 pt-2">
-            <h4 className="border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider text-[#ab8c5d] uppercase">
+            <h4 className="text-primary border-b border-neutral-800 pb-2 text-xs font-bold tracking-wider uppercase">
               THÔNG TIN DOANH NGHIỆP
             </h4>
             <div className="flex flex-col gap-2 text-xs font-light text-neutral-400 md:text-sm">
@@ -104,7 +104,7 @@ const Footer = () => {
               </p>
               <p>
                 <span className="font-medium text-neutral-300">Hotline:</span>{" "}
-                1900 xxxx (Hỗ trợ 24/7)
+                093.7175.384
               </p>
               <p>
                 <span className="font-medium text-neutral-300">Email:</span>{" "}
@@ -123,21 +123,21 @@ const Footer = () => {
           <div className="flex items-center gap-5 text-neutral-400">
             <a
               href="#"
-              className="transition-colors hover:text-[#ab8c5d]"
+              className="hover:text-primary transition-colors"
               aria-label="Facebook Link"
             >
               <FiFacebook className="text-sm" />
             </a>
             <a
               href="#"
-              className="transition-colors hover:text-[#ab8c5d]"
+              className="hover:text-primary transition-colors"
               aria-label="Linkedin Link"
             >
               <FiLinkedin className="text-sm" />
             </a>
             <a
               href="#"
-              className="transition-colors hover:text-[#ab8c5d]"
+              className="hover:text-primary transition-colors"
               aria-label="Youtube Link"
             >
               <FiYoutube className="text-sm" />

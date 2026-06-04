@@ -31,6 +31,7 @@ export default function AdminApartmentList() {
   const limitUrl = parseInt(searchParams.get("limit") || "10", 10);
 
   const filterId = searchParams.get("id") || "";
+  const filterProvince = searchParams.get("province") || "";
   const filterWard = searchParams.get("ward") || "";
   const filterStatus = searchParams.get("status") || "";
   const filterBedroom = searchParams.get("bedroom") || "";
@@ -43,6 +44,7 @@ export default function AdminApartmentList() {
   useEffect(() => {
     const activeFilters = {
       id: filterId,
+      province: filterProvince,
       ward: filterWard,
       status: filterStatus,
       bedroom: filterBedroom,
@@ -55,6 +57,7 @@ export default function AdminApartmentList() {
     page,
     rowsPerPage,
     filterId,
+    filterProvince,
     filterWard,
     filterStatus,
     filterBedroom,
@@ -126,7 +129,14 @@ export default function AdminApartmentList() {
   const PRIMARY_COLOR = "#ab8c5d";
 
   // Định nghĩa cấu hình 5 ô nhập/chọn mà Admin yêu cầu
-  const adminFields = ["id", "ward", "status", "bedroom", "is_published"];
+  const adminFields = [
+    "id",
+    "province",
+    "ward",
+    "status",
+    "bedroom",
+    "is_published",
+  ];
 
   // Đổ ngược dữ liệu từ URL về form để giữ nguyên trạng thái hiển thị của ô nhập
   const currentDefaultValues = {
@@ -135,6 +145,7 @@ export default function AdminApartmentList() {
     status: filterStatus,
     bedroom: filterBedroom,
     is_published: filterPublished,
+    province: filterProvince,
   };
 
   return (

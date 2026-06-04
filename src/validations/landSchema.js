@@ -36,6 +36,7 @@ export const landSchema = z.object({
   direction: z.string().min(1, "Vui lòng chọn hướng đất"),
 
   // 5. Vị trí địa lý & Bản đồ định vị
+  province: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
   ward: z.string().min(1, "Vui lòng chọn khu vực Phường / Xã"),
   address_detail: z
     .string()
@@ -44,7 +45,11 @@ export const landSchema = z.object({
 
   // 6. Nội dung mô tả Rich Text
   description: z.string().optional().nullable(),
-
+  amenities: z
+    .string()
+    .max(300, "Khu tiện ích không được vượt quá 300 ký tự")
+    .optional()
+    .or(z.literal("")), // Chấp nhận cả chuỗi rỗng "" nếu user không nhập gì
   // 7. Cấu hình trạng thái quản lý hệ thống (Nút gạt Boolean)
   is_published: z.boolean().default(true),
   is_featured: z.boolean().default(false),

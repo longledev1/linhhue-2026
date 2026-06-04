@@ -16,14 +16,14 @@ import {
   uploadMultipleImages,
 } from "../../../services/uploadService";
 
-// 🌟 ĐỒNG BỘ CHUẨN ĐẤT NỀN: Import đúng Service và Store của Đất
+// ĐỒNG BỘ CHUẨN ĐẤT NỀN: Import đúng Service và Store của Đất
 import { landService } from "../../../services/landService";
 import { useLandStore } from "../../../stores/landStore";
 
 import InfoFormCardLand from "./components/InfoFormCardLand";
 import ConFfigAndImageCardLand from "./components/ConfigAndImageCardLand";
 
-// 🌟 ĐỒNG BỘ CHUẨN ĐẤT NỀN: Import đúng Schema Validation của Đất
+// ĐỒNG BỘ CHUẨN ĐẤT NỀN: Import đúng Schema Validation của Đất
 import { zodResolver } from "@hookform/resolvers/zod";
 import { landSchema } from "../../../validations/landSchema";
 
@@ -73,12 +73,14 @@ export default function AdminEditLand() {
             direction: data.direction || "dong-nam",
             land_type: data.land_type || "dat-nen",
             status: data.status || "sale",
+            province: data.province || "", // 🔑 Đã nạp Tỉnh/Thành
+            amenities: data.amenities || "", // 🔑 Đã nạp tiện ích
             ward: data.ward || "",
             address_detail: data.address_detail || "",
             map_iframe: data.map_iframe || "",
             description: data.description || "",
-            dimensions: data.dimensions || "", // Khớp trường kích thước
-            road_width: data.road_width || "", // Khớp trường đường vào
+            dimensions: data.dimensions || "",
+            road_width: data.road_width || "",
             is_published: data.is_published ?? true,
             is_featured: data.is_featured ?? false,
           });
@@ -179,11 +181,13 @@ export default function AdminEditLand() {
         direction: data.direction,
         land_type: data.land_type,
         status: data.status,
+        province: data.province,
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
         description: data.description,
         dimensions: data.dimensions,
+        amenities: data.amenities || null,
         road_width: data.road_width,
         is_published: data.is_published,
         is_featured: data.is_featured,
@@ -192,16 +196,16 @@ export default function AdminEditLand() {
         category: "land",
       };
 
+      console.log("Payload gửi đi để cập nhật đất nền:", payload);
+
       if (oldLandData) {
         const oldFeatured = oldLandData.is_featured;
         const newFeatured = data.is_featured;
 
-        // false -> true
         if (!oldFeatured && newFeatured) {
           payload.featured_at = new Date().toISOString();
         }
 
-        // true -> false
         if (oldFeatured && !newFeatured) {
           payload.featured_at = null;
         }
@@ -210,8 +214,8 @@ export default function AdminEditLand() {
       const result = await updateLand(id, payload);
 
       if (result.success) {
-        alert("🎉 Cập nhật thông tin đất nền thành công mỹ mãn!");
-        navigate("/admin/lands"); // Quay về đúng trang danh sách quản lý đất nền
+        alert("Cập nhật thông tin đất nền thành công");
+        navigate("/admin/lands");
       } else {
         throw new Error(result.error);
       }
@@ -281,6 +285,7 @@ export default function AdminEditLand() {
           <ConFfigAndImageCardLand
             register={register}
             control={control}
+            errors={errors}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}
             handleThumbnailChange={handleThumbnailChange}
@@ -306,7 +311,6 @@ export default function AdminEditLand() {
             </Button>
             <Button
               type="submit"
-              onClick={handleSubmit(onFormSubmit)}
               variant="contained"
               disabled={isSubmittingState}
               sx={{

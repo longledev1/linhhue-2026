@@ -25,6 +25,7 @@ export default function AdminLandList() {
   const limitUrl = parseInt(searchParams.get("limit") || "10", 10);
 
   const filterId = searchParams.get("id") || "";
+  const filterProvince = searchParams.get("province") || "";
   const filterWard = searchParams.get("ward") || "";
   const filterStatus = searchParams.get("status") || "";
   const filterPublished = searchParams.get("is_published") || "";
@@ -36,6 +37,7 @@ export default function AdminLandList() {
   useEffect(() => {
     const activeFilters = {
       id: filterId,
+      province: filterProvince,
       ward: filterWard,
       status: filterStatus,
       is_published: filterPublished,
@@ -47,6 +49,7 @@ export default function AdminLandList() {
     page,
     rowsPerPage,
     filterId,
+    filterProvince,
     filterWard,
     filterStatus,
     filterPublished,
@@ -116,11 +119,12 @@ export default function AdminLandList() {
   const PRIMARY_COLOR = "#ab8c5d";
 
   // Định nghĩa cấu hình các trường lọc cần hiển thị cho mảng Đất nền
-  const adminFields = ["id", "ward", "status", "is_published"];
+  const adminFields = ["id", "province", "ward", "status", "is_published"];
 
   // Đồng bộ giá trị mặc định từ URL nạp vào ô input form
   const currentDefaultValues = {
     id: filterId,
+    province: filterProvince,
     ward: filterWard,
     status: filterStatus,
     is_published: filterPublished,

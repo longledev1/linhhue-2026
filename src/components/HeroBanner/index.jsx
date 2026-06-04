@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { Link } from "react-router-dom";
 const HeroBanner = () => {
   const propertySlides = [
     {
       id: 1,
-      title: "Ridge House",
-      price: "$2,450,000",
+      title: "Green View Residence",
+      price: "10.000.000 ₫",
       description:
         "Nơi hoàn hảo để an cư với không gian thiết kế hiện đại, tinh tế. Sở hữu tầm nhìn bao quát và tiện ích đẳng cấp dành cho giới thượng lưu.",
       bgImage: "/images/home/banner1.png",
@@ -15,24 +15,11 @@ const HeroBanner = () => {
     {
       id: 2,
       title: "Ocean View Villa",
-      price: "$3,200,000",
+      price: "18.000.000 ₫",
       description:
         "Biệt thự hướng biển tuyệt đẹp với hồ bơi vô cực. Không gian mở tối đa hóa ánh sáng tự nhiên và gió biển trong lành.",
-      bgImage:
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop",
-      thumbImage:
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Pine Forest Retreat",
-      price: "$1,850,000",
-      description:
-        "Ẩn mình giữa rừng thông lãng mạn. Ngôi nhà mang kiến trúc Bắc Âu mang lại sự ấm cúng, riêng tư và yên bình tuyệt đối.",
-      bgImage:
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop",
-      thumbImage:
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600&auto=format&fit=crop",
+      bgImage: "/images/home/banner2.jpg",
+      thumbImage: "/images/home/banner2.jpg",
     },
   ];
 
@@ -93,12 +80,20 @@ const HeroBanner = () => {
 
             {/* Khối nút bấm trên Desktop (Ẩn hoàn toàn khi về Mobile) */}
             <div className="hidden flex-wrap gap-4 lg:flex">
-              <button className="flex items-center gap-2 rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] px-8 py-3 font-medium text-white transition-all hover:brightness-110">
+              <Link
+                to="/bat-dong-san"
+                className="flex items-center gap-2 rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] px-8 py-3 font-medium text-white transition-all hover:brightness-110"
+              >
                 Xem chi tiết &rarr;
-              </button>
-              <button className="flex items-center gap-2 rounded-lg bg-[#1c1c1a]/80 px-8 py-3 font-medium text-white transition-all hover:bg-[#1c1c1a]">
+              </Link>
+
+              <Link
+                target="_blank"
+                to="https://zalo.me/0937175384"
+                className="flex items-center gap-2 rounded-lg bg-[#1c1c1a]/80 px-8 py-3 font-medium text-white transition-all hover:bg-[#1c1c1a]"
+              >
                 Liên hệ tư vấn &rarr;
-              </button>
+              </Link>
             </div>
           </motion.div>
 
@@ -140,7 +135,7 @@ const HeroBanner = () => {
                     <h3 className="mb-1 text-xl font-semibold text-white md:text-2xl">
                       {propertySlides[currentSlide].title}
                     </h3>
-                    <p className="mb-2 text-base font-bold text-[#ab8c5d] md:text-lg lg:mb-3">
+                    <p className="text-primary mb-2 text-base font-bold md:text-lg lg:mb-3">
                       {propertySlides[currentSlide].price}
                     </p>
                     <p className="line-clamp-3 text-xs leading-relaxed text-gray-300 sm:line-clamp-4 md:text-sm">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -62,6 +62,8 @@ export default function AdminEditApartment() {
 
         if (data) {
           setOldApartmentData(data);
+
+          // Đổ dữ liệu cũ từ API vào form bao gồm cả tỉnh thành (province) và phường xã (ward)
           reset({
             title: data.title || "",
             price: data.price?.toString() || "",
@@ -72,6 +74,7 @@ export default function AdminEditApartment() {
             direction: data.direction || "dong-nam",
             apartment_type: data.apartment_type || "chung-cu",
             status: data.status || "rent",
+            province: data.province || "",
             ward: data.ward || "",
             address_detail: data.address_detail || "",
             map_iframe: data.map_iframe || "",
@@ -180,6 +183,7 @@ export default function AdminEditApartment() {
         direction: data.direction,
         apartment_type: data.apartment_type,
         status: data.status,
+        province: data.province,
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
@@ -196,12 +200,10 @@ export default function AdminEditApartment() {
         const oldFeatured = oldApartmentData.is_featured;
         const newFeatured = data.is_featured;
 
-        // false -> true
         if (!oldFeatured && newFeatured) {
           payload.featured_at = new Date().toISOString();
         }
 
-        // true -> false
         if (oldFeatured && !newFeatured) {
           payload.featured_at = null;
         }
@@ -210,7 +212,7 @@ export default function AdminEditApartment() {
       const result = await updateApartment(id, payload);
 
       if (result.success) {
-        alert("🎉 Cập nhật thông tin căn hộ thành công mỹ mãn!");
+        alert("🎉 Cập nhật thông tin căn hộ thành công");
         navigate(-1);
       } else {
         throw new Error(result.error);
@@ -240,7 +242,7 @@ export default function AdminEditApartment() {
           color="textSecondary"
           className="animate-pulse"
         >
-          Đang truy xuất thông tin căn hộ căn hộ số {id}...
+          Đang truy xuất thông tin căn hộ số {id}...
         </Typography>
       </Box>
     );
@@ -281,6 +283,7 @@ export default function AdminEditApartment() {
         <div className="flex w-full flex-col justify-between lg:col-span-4">
           <ConfigAndImageCard
             register={register}
+            errors={errors}
             control={control}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}

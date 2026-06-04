@@ -40,7 +40,7 @@ export const landService = {
   },
 
   /**
-   * 🌟 Danh sách tất cả đất nền phục vụ trang quản trị Admin
+   * 🌟 Danh sách tất cả đất nền phục vụ trang quản trị Admin (Đã tích hợp lọc Province)
    */
   getAllForAdmin: async (page, limit, filters = {}) => {
     try {
@@ -55,6 +55,11 @@ export const landService = {
       // Tìm kiếm chính xác theo mã ID bài đăng
       if (filters.id) {
         query = query.eq("id", filters.id);
+      }
+
+      // 🌟 THÊM MỚI: Lọc theo Tỉnh / Thành phố cho Admin
+      if (filters.province) {
+        query = query.eq("province", filters.province);
       }
 
       // Lọc theo Phường/Xã
@@ -240,7 +245,7 @@ export const landService = {
   },
 
   /**
-   * 🌟 BỘ LỌC ĐẶC THÙ CHO ĐẤT NỀN
+   * 🌟 BỘ LỌC ĐẶC THÙ CHO ĐẤT NỀN (Đã tích hợp lọc Province)
    */
   getFiltered: async (filters, offset = 0, limit = 12) => {
     const from = offset;
@@ -250,6 +255,11 @@ export const landService = {
       .from("lands")
       .select("*", { count: "exact" })
       .eq("is_published", true);
+
+    // 🌟 THÊM MỚI: Đắp bộ lọc tỉnh thành động ngoài Client công cộng cho Đất nền
+    if (filters.province) {
+      query = query.eq("province", filters.province);
+    }
 
     if (filters.ward) {
       query = query.eq("ward", filters.ward);

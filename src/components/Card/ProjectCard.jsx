@@ -2,6 +2,7 @@ import React from "react";
 import {
   formatPrice,
   formatWard,
+  formatProvince, // 🌟 IMPORT THÊM: Để lấy nhãn Tỉnh/Thành phố có dấu
   stripHtmlAndEntities,
   formatApartmentType,
   formatHouseType,
@@ -27,13 +28,15 @@ const ProjectCard = ({ project, isDetail = false }) => {
     !!project.land_type;
 
   const detailUrl = getDetailLink(project);
+  const FONT_FAMILY = '"Montserrat", sans-serif'; // 🌟 BIẾN FONT MONTSERRAT ĐỒNG BỘ
 
   return (
     <a
       href={detailUrl}
-      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 select-none hover:shadow-xl"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white font-sans shadow-sm transition-all duration-300 select-none hover:shadow-xl"
+      style={{ fontFamily: FONT_FAMILY }}
     >
-      {/* 1. KHỐI HÌNH ẢNH BANNER */}
+      {/* 1. KHỐI HÌNH ẢNG BANNER */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
         <img
           src={
@@ -77,16 +80,17 @@ const ProjectCard = ({ project, isDetail = false }) => {
       </div>
 
       {/* 2. KHỐI THÔNG TIN BÊN TRONG CARD */}
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-5 text-sm">
         <div className="flex-1">
+          {/* 🌟 ĐÃ SỬA: Render chuỗi địa chỉ liên kết động đầy đủ kèm Tỉnh/Thành phố */}
           {project.ward && (
-            <p className="mb-1 text-[11px] font-bold tracking-wider text-[#ab8c5d]">
-              {formatWard(project.ward)}
+            <p className="mb-2 text-[12px] font-medium tracking-wide text-stone-500">
+              {formatWard(project.ward, project.province)}
+              {project.province && `, ${formatProvince(project.province)}`}
             </p>
           )}
-
           <h3
-            className={`mb-2 text-base leading-snug font-bold text-[#1c1c1a] transition-colors group-hover:text-[#ab8c5d] md:text-lg ${isDetail ? "" : "line-clamp-2"}`}
+            className={`group-hover:text-primary mb-2 text-base leading-snug font-bold text-[#1c1c1a] transition-colors md:text-lg ${isDetail ? "" : "line-clamp-2"}`}
           >
             {project.title}
           </h3>
@@ -114,25 +118,33 @@ const ProjectCard = ({ project, isDetail = false }) => {
               </>
             ) : (
               <>
-                <div className="h-3 w-[1px] bg-gray-200"></div>
-                <div>
-                  PN:{" "}
-                  <span className="font-bold text-gray-800">
-                    {project.bedroom}
-                  </span>
-                </div>
-                <div className="h-3 w-[1px] bg-gray-200"></div>
-                <div>
-                  WC:{" "}
-                  <span className="font-bold text-gray-800">
-                    {project.bathroom}
-                  </span>
-                </div>
+                {project.bedroom && (
+                  <>
+                    <div className="h-3 w-[1px] bg-gray-200"></div>
+                    <div>
+                      PN:{" "}
+                      <span className="font-bold text-gray-800">
+                        {project.bedroom}
+                      </span>
+                    </div>
+                  </>
+                )}
+                {project.bathroom && (
+                  <>
+                    <div className="h-3 w-[1px] bg-gray-200"></div>
+                    <div>
+                      WC:{" "}
+                      <span className="font-bold text-gray-800">
+                        {project.bathroom}
+                      </span>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
 
-          <p className="mb-3 text-base font-extrabold text-[#ab8c5d]">
+          <p className="text-primary mb-3 text-base font-extrabold">
             {formatPrice(project.price)}{" "}
             {project.status === "rent" ? "/ tháng" : ""}
           </p>
@@ -146,7 +158,7 @@ const ProjectCard = ({ project, isDetail = false }) => {
 
         {/* Nút Xem chi tiết dưới đáy Card */}
         <div className="mt-auto border-t border-gray-100 pt-3">
-          <div className="inline-flex items-center gap-1 text-[11px] font-bold tracking-wider text-[#ab8c5d] uppercase transition-all hover:gap-2">
+          <div className="text-primary inline-flex items-center gap-1 text-[11px] font-bold tracking-wider uppercase transition-all hover:gap-2">
             <span>Xem chi tiết</span>
             <span className="transition-transform duration-300 group-hover:translate-x-0.5">
               &rarr;

@@ -16,6 +16,7 @@ import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
 export default function ConfigAndImageCard({
   register,
   control,
+  errors,
   thumbnailPreview,
   slidePreviews,
   handleThumbnailChange,
@@ -87,6 +88,8 @@ export default function ConfigAndImageCard({
               multiline
               rows={3}
               placeholder="Ví dụ: Gần trung tâm thương mại, khu vực dân trí cao, có hồ bơi tràn bờ, phòng gym nội khu, sân nướng BBQ..."
+              error={!!errors?.amenities} // Nếu có lỗi -> Đổi khung viền input sang màu ĐỎ
+              helperText={errors?.amenities?.message} // Hiển thị dòng chữ "Không được vượt quá 100 ký tự"
               {...register("amenities")}
             />
           </div>

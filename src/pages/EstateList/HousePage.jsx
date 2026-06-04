@@ -4,11 +4,16 @@ import ProjectCard from "../../components/Card/ProjectCard";
 import { HOUSE_OPTIONS } from "../../constants/filterOptions";
 import { useHouseStore } from "../../stores/houseStore";
 import { CircularProgress } from "@mui/material";
-import { FiPlusCircle } from "react-icons/fi";
+import { FiPlusCircle, FiX } from "react-icons/fi";
 import { useSearchParams } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import { FiFilter } from "react-icons/fi";
 export default function HousePage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [openFilter, setOpenFilter] = useState(false);
+
   const houseFields = [
+    "province",
     "ward",
     "status",
     "price",
@@ -48,6 +53,7 @@ export default function HousePage() {
     const filtersFromUrl = {
       ward: searchParams.get("ward") || "",
       status: searchParams.get("status") || "",
+      province: searchParams.get("province") || "",
       price: searchParams.get("price") || "",
       area: searchParams.get("area") || "",
       bedroom: searchParams.get("bedroom") || "",
@@ -77,25 +83,80 @@ export default function HousePage() {
   };
   const hasMore = houses.length < totalHouses;
 
-  console.log("Danh sách nhà ở hiện có trên UI:", houses);
-
   return (
-    <div className="min-h-screen pt-[140px] pb-16">
+    <div className="min-h-screen pt-[100px] pb-16 md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
-      <FilterBarBase
-        title="Danh mục nhà ở"
-        fields={houseFields}
-        options={HOUSE_OPTIONS}
-        onFilterSubmit={handleFilterSubmit}
-        defaultValues={currentFilters}
-      />
-      {/* 2. Khối nội dung chính */}
+      <div className="hidden md:block">
+        <FilterBarBase
+          title="Danh mục nhà ở"
+          fields={houseFields}
+          options={HOUSE_OPTIONS}
+          onFilterSubmit={handleFilterSubmit}
+          defaultValues={currentFilters}
+        />
+      </div>
+
+      {/* Mobile Button */}
+      <div className="fixed right-4 bottom-6 z-50 md:hidden">
+        <button
+          onClick={() => setOpenFilter(true)}
+          className="flex items-center gap-2 rounded-full bg-[#ab8c5d] px-5 py-3 text-sm font-semibold text-white shadow-xl"
+        >
+          <FiFilter size={18} />
+          Bộ lọc
+        </button>
+      </div>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="bottom"
+        open={openFilter}
+        onClose={() => setOpenFilter(false)}
+        PaperProps={{
+          sx: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            maxHeight: "90vh",
+          },
+        }}
+      >
+        <div className="flex items-center justify-between border-b p-4">
+          <div className="flex items-center gap-2">
+            <FiFilter size={18} />
+            <h2 className="text-lg font-bold">Bộ lọc nhà ở</h2>
+          </div>
+
+          <button
+            onClick={() => setOpenFilter(false)}
+            className="rounded-full p-2 transition hover:bg-gray-100"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto p-4">
+          <FilterBarBase
+            title="Danh mục nhà ở"
+            fields={houseFields}
+            options={HOUSE_OPTIONS}
+            onFilterSubmit={(data) => {
+              handleFilterSubmit(data);
+              setOpenFilter(false);
+            }}
+            defaultValues={currentFilters}
+          />
+        </div>
+      </Drawer>
+
       <div className="container mx-auto mt-8 px-4">
-        {/* Số lượng danh mục căn hộ (Đếm real-time dựa trên tổng số đếm trong DB) */}
+        <p className="mt-2 mb-2 text-sm text-gray-500">
+          Trang chủ / Bất động sản /{" "}
+          <span className="text-primary font-semibold">Danh mục nhà ở</span>
+        </p>
         <div className="mb-6 flex items-center justify-between">
           <p className="text-lg font-bold text-gray-800">
             Hiện có{" "}
-            <span className="text-xl text-[#ab8c5d]">
+            <span className="text-primary text-xl">
               {isLoading && houses.length === 0 ? "..." : totalHouses}
             </span>{" "}
             danh mục nhà ở phù hợp
@@ -143,13 +204,13 @@ export default function HousePage() {
             <div className="flex w-full items-center justify-center pt-4">
               <button
                 onClick={handleLoadMore}
-                className="group flex items-center justify-center gap-2 rounded-xl border border-[#ab8c5d] bg-white px-8 py-3.5 text-xs font-bold tracking-widest text-[#ab8c5d] shadow-sm transition-all duration-300 hover:bg-[#ab8c5d] hover:text-white hover:shadow-md active:scale-[0.98]"
+                className="group text-primary flex items-center justify-center gap-2 rounded-xl border border-[#ab8c5d] bg-white px-8 py-3.5 text-xs font-bold tracking-widest shadow-sm transition-all duration-300 hover:bg-[#ab8c5d] hover:text-white hover:shadow-md active:scale-[0.98]"
               >
                 <FiPlusCircle
                   size={16}
                   className="transition-transform duration-300 group-hover:rotate-90"
                 />
-                XEM THÊM CĂN HỘ KHÁC
+                XEM THÊM NHÀ Ở KHÁC
               </button>
             </div>
           )}

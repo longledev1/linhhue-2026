@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import {
   Card,
@@ -9,11 +9,20 @@ import {
 } from "@mui/material";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { WARD_OPTIONS } from "../../../../constants/wardOptions";
+
+// 🌟 IMPORT BỘ DATA TỈNH THÀNH VÀ LOGIC PHƯỜNG XÃ LIÊN KẾT ĐỘNG
+import {
+  PROVINCE_OPTIONS,
+  LOCATION_DATA,
+} from "../../../../constants/wardOptions";
 import {
   APARTMENT_TYPES,
   HOUSE_DIRECTIONS,
 } from "../../../../constants/estateOptions";
+import {
+  QUILL_FORMATS,
+  QUILL_MODULES,
+} from "../../../../constants/quillConfig";
 
 export default function InfoFormCard({
   register,
@@ -22,6 +31,33 @@ export default function InfoFormCard({
   watch,
   setValue,
 }) {
+  // Lắng nghe giá trị của cả Province và Ward trên Form theo thời gian thực
+  const selectedProvince = watch("province");
+  const selectedWard = watch("ward");
+
+  // 🌟 FIX CHÍ MẠNG TRANG EDIT: Logic chống ghi đè xóa nhầm phường xã khi load dữ liệu cũ
+  useEffect(() => {
+    // Nếu Form chưa có dữ liệu Tỉnh/Thành phố, không xử lý gì cả
+    if (!selectedProvince) return;
+
+    // Lấy danh sách các phường/xã thuộc Tỉnh/Thành phố đang được chọn
+    const provinceWards = LOCATION_DATA[selectedProvince] || [];
+
+    // Kiểm tra xem giá trị ward hiện tại trên Form có nằm trong danh sách của Tỉnh này không
+    const isValidWard = provinceWards.some((opt) => opt.value === selectedWard);
+
+    // Hệ thống CHỈ reset ô Phường/Xã về rỗng khi Admin chủ động click đổi sang Tỉnh/Thành khác
+    if (selectedWard && !isValidWard) {
+      setValue("ward", "");
+    }
+  }, [selectedProvince, selectedWard, setValue]);
+
+  // Lọc dữ liệu phường xã theo tỉnh thành động để render ra giao diện Menu
+  const currentWardOptions = selectedProvince
+    ? LOCATION_DATA[selectedProvince] || []
+    : [];
+  const cleanWardOptions = currentWardOptions.filter((opt) => opt.value !== "");
+
   return (
     <Card
       elevation={0}
@@ -32,7 +68,7 @@ export default function InfoFormCard({
           Thông tin chi tiết
         </Typography>
 
-        {/* Tên căn hộ - Trường text thông thường sử dụng register an toàn */}
+        {/* Tên căn hộ */}
         <div className="mt-[16px] mb-[16px]">
           <TextField
             label="Tên căn hộ / Tiêu đề tin đăng"
@@ -42,18 +78,25 @@ export default function InfoFormCard({
             helperText={errors.title?.message}
           />
         </div>
+
         {/* Khối Giá & Diện tích */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
-            label="Giá tiền thực tế (VND - Ví dụ: 15000000)"
-            type="number"
+            label="Giá tiền thực tế (VND)"
             fullWidth
-            {...register("price")}
+            value={
+              watch("price")
+                ? Number(watch("price")).toLocaleString("vi-VN")
+                : ""
+            }
+            onChange={(e) => {
+              const raw = e.target.value.replace(/\D/g, "");
+              setValue("price", raw);
+            }}
             error={!!errors.price}
             helperText={errors.price?.message}
           />
 
-          {/* 🌟 FIX CHI TIẾT 1: Dùng Controller cho trường Diện tích để chống lỗi xung đột inputProps */}
           <Controller
             name="area"
             control={control}
@@ -103,7 +146,6 @@ export default function InfoFormCard({
             helperText={errors.floor?.message}
           />
 
-          {/* 🌟 FIX CHI TIẾT 2: Sử dụng Controller bọc trường Select để dập tắt lỗi primaryTypographyProps */}
           <Controller
             name="direction"
             control={control}
@@ -177,30 +219,68 @@ export default function InfoFormCard({
           />
         </div>
 
-        {/* Phường Xã */}
-        <Controller
-          name="ward"
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <TextField
-              select
-              label="Khu vực Phường / Xã"
-              fullWidth
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value ?? ""}
-              inputRef={ref}
-              error={!!errors.ward}
-              helperText={errors.ward?.message}
-            >
-              {WARD_OPTIONS.filter((opt) => opt.value !== "").map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
-        />
+        {/* Khối Khu vực: Tỉnh/Thành phố & Phường xã liên kết */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Tỉnh / Thành phố */}
+          <Controller
+            name="province"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <TextField
+                select
+                label="Tỉnh / Thành phố"
+                fullWidth
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value ?? ""}
+                inputRef={ref}
+                error={!!errors.province}
+                helperText={errors.province?.message}
+              >
+                {PROVINCE_OPTIONS.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+
+          {/* Ô Phường / Xã tự động mở/khóa và thay đổi mảng lựa chọn dynamic dựa theo tỉnh chọn */}
+          <Controller
+            name="ward"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => {
+              const isWardDisabled = !selectedProvince;
+              return (
+                <TextField
+                  select
+                  disabled={isWardDisabled}
+                  label="Khu vực Phường / Xã"
+                  fullWidth
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value ?? ""}
+                  inputRef={ref}
+                  error={!!errors.ward}
+                  helperText={errors.ward?.message}
+                >
+                  {isWardDisabled ? (
+                    <MenuItem value="">
+                      <em>Vui lòng chọn Tỉnh/Thành trước</em>
+                    </MenuItem>
+                  ) : (
+                    cleanWardOptions.map((opt) => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))
+                  )}
+                </TextField>
+              );
+            }}
+          />
+        </div>
 
         {/* Địa chỉ cụ thể */}
         <div className="mt-[16px]">
@@ -243,6 +323,8 @@ export default function InfoFormCard({
                 theme="snow"
                 value={field.value ?? ""}
                 onChange={field.onChange}
+                modules={QUILL_MODULES}
+                formats={QUILL_FORMATS}
                 style={{ height: "220px", marginBottom: "45px" }}
               />
             )}

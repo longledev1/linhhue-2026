@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- 1. MOCKUP DATA ---
 const PRODUCT_DATA = {
   coffee: [
     {
@@ -116,7 +115,7 @@ const ShowCaseSection = () => {
             viewport={{ once: true }}
             className="text-center lg:text-left"
           >
-            <h2 className="text-[26px] leading-tight font-bold tracking-[4px] text-[#ab8c5d] uppercase sm:text-[32px] lg:text-[38px] lg:tracking-[6px] xl:text-[42px]">
+            <h2 className="text-primary text-[26px] leading-tight font-bold tracking-[4px] uppercase sm:text-[32px] lg:text-[38px] lg:tracking-[6px] xl:text-[42px]">
               GÓI TRỌN HƯƠNG VỊ
             </h2>
 

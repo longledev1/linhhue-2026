@@ -21,11 +21,12 @@ export default function AdminHouseList() {
   // Cấu hình phân trang đồng bộ thẳng lên thanh URL trình duyệt
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // 🌟 1. ĐỌC THÔNG SỐ PHÂN TRANG VÀ BỘ LỌC TỪ URL XUỐNG
+  // 🌟 1. ĐỌC THÔNG SỐ PHÂN TRANG VÀ BỘ LỌC TỪ URL XUỐNG (ĐÃ BỔ SUNG PROVINCE)
   const pageUrl = parseInt(searchParams.get("page") || "1", 10);
   const limitUrl = parseInt(searchParams.get("limit") || "10", 10);
 
   const filterId = searchParams.get("id") || "";
+  const filterProvince = searchParams.get("province") || "";
   const filterWard = searchParams.get("ward") || "";
   const filterStatus = searchParams.get("status") || "";
   const filterBedroom = searchParams.get("bedroom") || "";
@@ -34,10 +35,11 @@ export default function AdminHouseList() {
   const page = pageUrl - 1;
   const rowsPerPage = limitUrl;
 
-  // 🌟 2. ĐỒNG BỘ EFFECT: Tải lại dữ liệu khi URL thay đổi
+  // 🌟 2. ĐỒNG BỘ EFFECT: Tải lại dữ liệu khi URL thay đổi (ĐÃ BỔ SUNG PROVINCE)
   useEffect(() => {
     const activeFilters = {
       id: filterId,
+      province: filterProvince, // 🔑 ĐẨY PROVINCE VÀO BỘ LỌC ĐỂ GỬI LÊN STORE/API
       ward: filterWard,
       status: filterStatus,
       bedroom: filterBedroom,
@@ -50,6 +52,7 @@ export default function AdminHouseList() {
     page,
     rowsPerPage,
     filterId,
+    filterProvince, // 🔑 THÊM VÀO MẢNG DEPENDENCIES ĐỂ THEO DÕI SỰ THAY ĐỔI URL
     filterWard,
     filterStatus,
     filterBedroom,
@@ -102,6 +105,7 @@ export default function AdminHouseList() {
         // Gọi tải lại dữ liệu kèm filter đang kích hoạt
         const activeFilters = {
           id: filterId,
+          province: filterProvince, // 🔑 Đồng bộ biến tỉnh thành khi reload sau xóa
           ward: filterWard,
           status: filterStatus,
           bedroom: filterBedroom,
@@ -120,12 +124,20 @@ export default function AdminHouseList() {
 
   const PRIMARY_COLOR = "#ab8c5d";
 
-  // Định nghĩa danh sách các trường cần hiển thị bộ lọc cho mảng Nhà ở
-  const adminFields = ["id", "ward", "status", "bedroom", "is_published"];
+  // 🌟 CẬP NHẬT: Thêm "province" đứng trước "ward" để giao diện thanh lọc xếp chuẩn thứ tự
+  const adminFields = [
+    "id",
+    "province", // 🔑 CHÈN VÀO ĐÂY
+    "ward",
+    "status",
+    "bedroom",
+    "is_published",
+  ];
 
-  // Đổ ngược dữ liệu từ URL về form để giữ nguyên trạng thái hiển thị của ô nhập
+  // 🌟 CẬP NHẬT: Đổ ngược province từ URL về Form để giữ nguyên trạng thái select khi F5
   const currentDefaultValues = {
     id: filterId,
+    province: filterProvince, // 🔑 GÁN GIÁ TRỊ MẶC ĐỊNH CHO FORM
     ward: filterWard,
     status: filterStatus,
     bedroom: filterBedroom,
@@ -161,7 +173,7 @@ export default function AdminHouseList() {
         </Button>
       </Box>
 
-      {/* 🌟 4. THANH BỘ LỌC TÌM KIẾM CHUYÊN NGHIỆP CỦA ADMIN */}
+      {/* 🌟 4. THANH BỘ LỌC TÌM KIẾM CHUYÊN NGHIỆP CỦA ADMIN (ĐÃ NHẬN DIỆN PROVINCE ĐỘNG) */}
       <Box
         sx={{
           mb: 4,

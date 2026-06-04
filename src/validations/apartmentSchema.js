@@ -55,7 +55,7 @@ export const apartmentSchema = z.object({
   apartment_type: z.string().nonempty("Vui lòng chọn loại căn hộ"),
   status: z.string().nonempty("Vui lòng chọn hình thức giao dịch"),
   ward: z.string().nonempty("Vui lòng chọn khu vực Phường / Xã"),
-
+  province: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
   address_detail: z
     .string()
     .nonempty("Vui lòng nhập địa chỉ cụ thể số nhà, tên đường"),
@@ -69,7 +69,11 @@ export const apartmentSchema = z.object({
     }),
 
   description: z.string().optional(),
-  amenities: z.string().optional(),
+  amenities: z
+    .string()
+    .max(300, "Khu tiện ích không được vượt quá 300 ký tự")
+    .optional()
+    .or(z.literal("")), // Chấp nhận cả chuỗi rỗng "" nếu user không nhập gì
   is_published: z.boolean().default(true),
   is_featured: z.boolean().default(false),
 });

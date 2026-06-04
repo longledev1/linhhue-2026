@@ -15,10 +15,13 @@ import {
   IconButton,
   TablePagination,
 } from "@mui/material";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-import { WARD_OPTIONS } from "../../../../constants/wardOptions";
-import { formatLandType } from "../../../../utils/format";
+import { FaRegEdit, FaRegEye, FaRegTrashAlt } from "react-icons/fa";
 
+import {
+  formatWard,
+  formatProvince,
+  formatLandType,
+} from "../../../../utils/format";
 export default function LandTable({
   data,
   total,
@@ -28,14 +31,9 @@ export default function LandTable({
   onRowsPerPageChange,
   onDeleteClick,
 }) {
-  const formatWard = (wardSlug) => {
-    if (!wardSlug) return "---";
-    const foundWard = WARD_OPTIONS.find((item) => item.value === wardSlug);
-    return foundWard ? foundWard.label : wardSlug;
-  };
-
+  const FONT_FAMILY = '"Montserrat", sans-serif'; //
   return (
-    <Box>
+    <Box sx={{ fontFamily: FONT_FAMILY }}>
       <TableContainer
         component={Paper}
         elevation={0}
@@ -44,39 +42,81 @@ export default function LandTable({
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: "#f8fafc" }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Ảnh
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Tiêu đề lô đất
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Hình thức
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Khu vực
               </TableCell>
+
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
                 align="right"
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
               >
                 Giá
               </TableCell>
-              {/* 🌟 ĐỒNG BỘ: Thay thế các cột kích thước/diện tích cũ bằng cột Trạng thái hiển thị */}
+
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
                 align="center"
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
               >
                 Trạng thái
               </TableCell>
+
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
                 align="center"
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
               >
                 Hành động
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {data.map((row) => (
               <TableRow
@@ -90,22 +130,35 @@ export default function LandTable({
                   <Avatar
                     src={row.thumbnail}
                     variant="rounded"
-                    sx={{ width: 56, height: 56, border: "1px solid #e2e8f0" }}
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      border: "1px solid #e2e8f0",
+                    }}
                   />
                 </TableCell>
+
                 <TableCell sx={{ maxWidth: 300 }}>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, color: "#1e293b" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "#1e293b",
+                      fontFamily: FONT_FAMILY,
+                    }}
                     className="line-clamp-2"
                   >
                     {row.title}
                   </Typography>
-                  {/* 🌟 ĐỒNG BỘ: Gom gọn Loại đất, Diện tích, Kích thước, Đường vào xuống dòng caption phụ */}
+
                   <Typography
                     variant="caption"
-                    color="textSecondary"
-                    sx={{ display: "block", mt: 0.5 }}
+                    sx={{
+                      display: "block",
+                      mt: 0.5,
+                      color: "#64748b",
+                      fontFamily: FONT_FAMILY,
+                    }}
                   >
                     <span className="capitalize">
                       {formatLandType(row.land_type)}
@@ -115,6 +168,7 @@ export default function LandTable({
                     {row.road_width && ` | Đường: ${row.road_width}`}
                   </Typography>
                 </TableCell>
+
                 <TableCell>
                   <Chip
                     label={row.status === "rent" ? "Cho thuê" : "Cần bán"}
@@ -123,19 +177,48 @@ export default function LandTable({
                       bgcolor: row.status === "rent" ? "#e6f4ea" : "#fce8e6",
                       color: row.status === "rent" ? "#137333" : "#c5221f",
                       fontWeight: 600,
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
-                <TableCell sx={{ textTransform: "capitalize" }}>
-                  {formatWard(row.ward)}
+
+                <TableCell
+                  sx={{
+                    color: "#334155",
+                    fontFamily: FONT_FAMILY,
+                    fontSize: "13px",
+                  }}
+                >
+                  {row.ward ? (
+                    <>
+                      {row.province && (
+                        <span className="font-semibold">
+                          {formatProvince(row.province)}
+                        </span>
+                      )}
+
+                      {row.province && <span>{" - "}</span>}
+
+                      <span className="text-gray-600">
+                        {formatWard(row.ward, row.province)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
+
                 <TableCell
                   align="right"
-                  sx={{ fontWeight: 600, color: "#0f172a" }}
+                  sx={{
+                    fontWeight: 600,
+                    color: "#0f172a",
+                    fontFamily: FONT_FAMILY,
+                  }}
                 >
                   {Number(row.price).toLocaleString("vi-VN")} đ
                 </TableCell>
-                {/* 🌟 ĐỒNG BỘ: Thêm ô hiển thị trạng thái Ẩn/Hiện chuẩn hệ thống */}
+
                 <TableCell align="center">
                   <Chip
                     label={row.is_published ? "Đang hiển thị" : "Đang ẩn"}
@@ -149,14 +232,31 @@ export default function LandTable({
                         ? "1px solid rgba(76, 175, 80, 0.25)"
                         : "1px solid rgba(148, 163, 184, 0.2)",
                       fontWeight: 600,
-                      fontSize: "12px",
+                      fontSize: "11px",
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
+
                 <TableCell align="center">
                   <Box
                     sx={{ display: "flex", justifyContent: "center", gap: 1 }}
                   >
+                    {/* 👁️ NÚT XEM CHI TIẾT BÀI VIẾT (MỚI THÊM) */}
+                    <IconButton
+                      component={Link}
+                      to={`/bat-dong-san/dat-dai/${row.id}`}
+                      target="_blank" // Thêm target="_blank" nếu bạn muốn mở tab mới để xem bài viết, xóa đi nếu muốn chuyển trang trực tiếp
+                      size="small"
+                      sx={{
+                        color: "#64748b", // Màu xám
+                        "&:hover": { bgcolor: "#10b98110" },
+                      }}
+                    >
+                      <FaRegEye size={18} />
+                    </IconButton>
+
+                    {/* 📝 NÚT CHỈNH SỬA */}
                     <IconButton
                       component={Link}
                       to={`/admin/lands/edit/${row.id}`}
@@ -168,6 +268,8 @@ export default function LandTable({
                     >
                       <FaRegEdit size={18} />
                     </IconButton>
+
+                    {/* 🗑️ NÚT XÓA */}
                     <IconButton
                       size="small"
                       onClick={() => onDeleteClick(row.id)}
@@ -205,6 +307,12 @@ export default function LandTable({
           borderBottom: "1px solid #e2e8f0",
           borderRadius: "0 0 8px 8px",
           bgcolor: "#f8fafc",
+          fontFamily: FONT_FAMILY,
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-select":
+            {
+              fontFamily: FONT_FAMILY,
+              fontSize: "13px",
+            },
         }}
       />
     </Box>

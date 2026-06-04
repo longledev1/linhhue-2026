@@ -16,15 +16,17 @@ import ImageSlider from "../ApartmentDetailSection/ImageSlider";
 import LandInfoSidebar from "./LandInfoSidebar";
 import ImageModal from "../ApartmentDetailSection/ImageModal";
 import LandDescription from "./LandDescription";
-import SuggestedProjects from "../ApartmentDetailSection/SuggestedProject";
+import SuggestedProjectsLand from "./SuggestedProjectLand";
 
 import {
   formatPrice,
   formatWard,
+  formatProvince,
   formatDirection,
 } from "../../../utils/format";
 import { formatLandType } from "../../../utils/format";
 import { CircularProgress } from "@mui/material";
+import { BiBuildingHouse } from "react-icons/bi";
 
 export default function LandDetailSection() {
   const { id } = useParams();
@@ -108,6 +110,7 @@ export default function LandDetailSection() {
 
   const isRent = project.status === "rent";
   const typeLabel = formatLandType(project.land_type) || "Đất nền";
+  const provinceLabel = formatProvince(project.province) || "Chưa xác định";
 
   const SPEC_ITEMS = [
     {
@@ -144,15 +147,20 @@ export default function LandDetailSection() {
         : "Chưa xác định hướng",
     },
     {
+      icon: <BiBuildingHouse className="text-xl" />,
+      label: "Khu tiện ích & Ghi chú:",
+      value: project.amenities || "Chưa cập nhật",
+    },
+    {
       icon: <FiBookOpen className="text-xl" />,
       label: "Pháp lý:",
-      value: `${isRent ? "Hợp đồng cho thuê mặt bằng lâu dài" : "Sổ đỏ / Sổ hồng riêng chính chủ"}`,
+      value: `${isRent ? "Hợp đồng cho thuê mặt bằng lâu dài" : "Pháp lý rõ ràng"}`,
     },
   ];
 
   const statusLabel = isRent ? "Cho thuê mặt bằng" : "Mua bán đất nền";
   const wardLabel = formatWard(project.ward) || "Chưa xác định";
-
+  console.log(project);
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20 pb-16">
       <div className="container">
@@ -167,8 +175,7 @@ export default function LandDetailSection() {
             />
 
             <div className="pt-4 text-xs font-bold tracking-wide text-stone-500 uppercase md:text-sm">
-              {statusLabel} / Thành phố Hồ Chí Minh / {wardLabel} /{" "}
-              {typeLabel}{" "}
+              {statusLabel} / {provinceLabel} / {wardLabel} / {typeLabel}{" "}
             </div>
 
             {/* Hiển thị Responsive Mobile Sidebar */}
@@ -181,10 +188,11 @@ export default function LandDetailSection() {
               title={project.title}
               description={project.description}
               mapIframe={project.map_iframe}
+              address={project.address_detail}
             />
 
             {/* Thanh chứa các dự án gợi ý ngẫu nhiên */}
-            <SuggestedProjects currentId={project.id} />
+            <SuggestedProjectsLand currentId={project.id} />
           </div>
 
           {/* CỘT PHẢI - SIDEBAR STICKY THÔNG SỐ ĐẶC THÙ ĐẤT NỀN TRÊN DESKTOP */}

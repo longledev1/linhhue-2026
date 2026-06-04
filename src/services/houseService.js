@@ -18,7 +18,7 @@ export const houseService = {
 
     const { data, error, count } = await supabase
       .from("houses")
-      .select("*", { count: "exact" }) // <-- Thêm mới đếm chính xác số tổng dòng
+      .select("*", { count: "exact" })
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .range(from, to);
@@ -27,15 +27,13 @@ export const houseService = {
 
     return {
       data: data || [],
-      totalCount: count || 0, // <-- Gán biến đếm chính xác thay cho data.length
+      totalCount: count || 0,
     };
   },
 
   /**
-   * Danh sách tất cả nhà cho Admin
+   * Danh sách tất cả nhà cho Admin (Đã tích hợp lọc Province)
    */
-  // src/services/houseService.js
-
   getAllForAdmin: async (page, limit, filters = {}) => {
     try {
       const from = page * limit;
@@ -49,6 +47,11 @@ export const houseService = {
       // Tìm kiếm chính xác theo mã ID bài đăng
       if (filters.id) {
         query = query.eq("id", filters.id);
+      }
+
+      // 🌟 THÊM MỚI: Lọc theo Tỉnh / Thành phố cho Admin
+      if (filters.province) {
+        query = query.eq("province", filters.province);
       }
 
       // Lọc theo Phường/Xã
@@ -232,7 +235,7 @@ export const houseService = {
   },
 
   /**
-   * Bộ lọc nâng cao nhà ở bên ngoài Client
+   * Bộ lọc nâng cao nhà ở bên ngoài Client (Đã tích hợp lọc Province)
    */
   getFiltered: async (filters, offset = 0, limit = 12) => {
     const from = offset;
@@ -242,6 +245,11 @@ export const houseService = {
       .from("houses")
       .select("*", { count: "exact" })
       .eq("is_published", true);
+
+    // 🌟 THÊM MỚI: Đắp bộ lọc tỉnh thành động ngoài Client công cộng
+    if (filters.province) {
+      query = query.eq("province", filters.province);
+    }
 
     if (filters.ward) {
       query = query.eq("ward", filters.ward);
@@ -256,7 +264,6 @@ export const houseService = {
     }
 
     if (filters.bedroom) {
-      // Tránh ép kiểu chuỗi trống sang 0 sai mục đích
       query = query.eq("bedroom", Number(filters.bedroom));
     }
 

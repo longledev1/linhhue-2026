@@ -44,7 +44,7 @@ body {
 /* Thêm vào file CSS toàn cục của bạn, ví dụ: src/index.css hoặc src/styles/global.css */
 
 .rich-content {
-  line-height: 1.8;
+  line-height: 1.6;
   color: #2c2a29; /* Sửa nhẹ lại màu chữ stone-800 nhìn cho sang và dịu mắt */
 }
 

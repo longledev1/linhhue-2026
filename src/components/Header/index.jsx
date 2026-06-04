@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { Link } from "react-router-dom";
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,8 +16,8 @@ const Header = () => {
   const getNavLinkClass = ({ isActive }) => {
     return `transition-colors duration-200 tracking-wider text-xs md:text-sm font-sans outline-none ${
       isActive
-        ? "text-[#ab8c5d] font-semibold"
-        : "text-white font-light hover:text-[#ab8c5d]"
+        ? "text-primary font-semibold"
+        : "text-white font-light hover:text-primary"
     }`;
   };
 
@@ -61,15 +61,15 @@ const Header = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-1 font-sans text-xs tracking-wider transition-colors duration-200 outline-none md:text-sm ${
                     isActive
-                      ? "font-semibold text-[#ab8c5d]"
-                      : "font-light text-white hover:text-[#ab8c5d]"
+                      ? "text-primary font-semibold"
+                      : "hover:text-primary font-light text-white"
                   }`
                 }
               >
                 Bất động sản
                 <svg
                   className={`h-3 w-3 transition-transform duration-300 ${
-                    isDropdownOpen ? "rotate-180 text-[#ab8c5d]" : ""
+                    isDropdownOpen ? "text-primary rotate-180" : ""
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -102,8 +102,8 @@ const Header = () => {
                           className={({ isActive }) =>
                             `block rounded-lg px-4 py-2.5 text-sm transition-colors ${
                               isActive
-                                ? "bg-[#ab8c5d]/10 font-semibold text-[#ab8c5d]"
-                                : "text-gray-300 hover:bg-[#ab8c5d]/10 hover:text-[#ab8c5d]"
+                                ? "text-primary bg-[#ab8c5d]/10 font-semibold"
+                                : "hover:text-primary text-gray-300 hover:bg-[#ab8c5d]/10"
                             }`
                           }
                         >
@@ -117,12 +117,13 @@ const Header = () => {
             </div>
           </nav>
 
-          <a
-            href="https://zalo.me/0937175384"
+          <Link
+            to="https://zalo.me/0937175384"
+            target="_blank"
             className="hidden rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 md:block"
           >
             LIÊN HỆ NGAY
-          </a>
+          </Link>
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -199,11 +200,11 @@ const Header = () => {
                     onClick={() =>
                       setIsMobileDropdownOpen(!isMobileDropdownOpen)
                     }
-                    className="flex w-full items-center justify-between py-1 text-sm font-light tracking-wider text-white transition-colors outline-none hover:text-[#ab8c5d]"
+                    className="hover:text-primary flex w-full items-center justify-between py-1 text-sm font-light tracking-wider text-white transition-colors outline-none"
                   >
                     <span>Bất động sản</span>
                     <svg
-                      className={`h-4 w-4 transition-transform duration-300 ${isMobileDropdownOpen ? "rotate-180 text-[#ab8c5d]" : "text-gray-400"}`}
+                      className={`h-4 w-4 transition-transform duration-300 ${isMobileDropdownOpen ? "text-primary rotate-180" : "text-gray-400"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -233,8 +234,8 @@ const Header = () => {
                             className={({ isActive }) =>
                               `py-1.5 text-sm transition-colors ${
                                 isActive
-                                  ? "font-semibold text-[#ab8c5d]" // Active ở mobile menu con
-                                  : "text-gray-400 hover:text-[#ab8c5d]"
+                                  ? "text-primary font-semibold" // Active ở mobile menu con
+                                  : "hover:text-primary text-gray-400"
                               }`
                             }
                             onClick={() => {
@@ -252,6 +253,7 @@ const Header = () => {
 
                 <a
                   href="https://zalo.me/0906452689"
+                  target="_blank"
                   className="mt-2 w-full rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] py-3 text-center text-sm font-semibold text-white transition-all hover:brightness-110"
                 >
                   LIÊN HỆ NGAY

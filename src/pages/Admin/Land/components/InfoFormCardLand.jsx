@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import {
   Card,
@@ -9,11 +9,19 @@ import {
 } from "@mui/material";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { WARD_OPTIONS } from "../../../../constants/wardOptions";
+// 🌟 IMPORT BỘ DATA TỈNH THÀNH VÀ LOGIC PHƯỜNG XÃ LIÊN KẾT ĐỘNG
 import {
-  HOUSE_DIRECTIONS,
+  PROVINCE_OPTIONS,
+  LOCATION_DATA,
+} from "../../../../constants/wardOptions";
+import {
   LAND_TYPES,
+  HOUSE_DIRECTIONS,
 } from "../../../../constants/estateOptions";
+import {
+  QUILL_FORMATS,
+  QUILL_MODULES,
+} from "../../../../constants/quillConfig";
 
 // 🌟 ĐỒNG BỘ: Định nghĩa danh mục đất nền tương thích với DB
 
@@ -24,6 +32,22 @@ export default function InfoFormCardLand({
   watch,
   setValue,
 }) {
+  const selectedProvince = watch("province");
+  const selectedWard = watch("ward");
+
+  // 🌟 ĐỒNG BỘ: Chống xóa nhầm phường khi Edit
+  useEffect(() => {
+    if (!selectedProvince) return;
+    const provinceWards = LOCATION_DATA[selectedProvince] || [];
+    const isValidWard = provinceWards.some((opt) => opt.value === selectedWard);
+    if (selectedWard && !isValidWard) {
+      setValue("ward", "");
+    }
+  }, [selectedProvince, selectedWard, setValue]);
+
+  const cleanWardOptions = (
+    selectedProvince ? LOCATION_DATA[selectedProvince] || [] : []
+  ).filter((opt) => opt.value !== "");
   return (
     <Card
       elevation={0}
@@ -48,10 +72,17 @@ export default function InfoFormCardLand({
         {/* Khối Giá & Diện tích */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
-            label="Giá tiền thực tế (VND - Ví dụ: 3500000000)"
-            type="number"
+            label="Giá tiền thực tế (VND)"
             fullWidth
-            {...register("price")}
+            value={
+              watch("price")
+                ? Number(watch("price")).toLocaleString("vi-VN")
+                : ""
+            }
+            onChange={(e) => {
+              const raw = e.target.value.replace(/\D/g, "");
+              setValue("price", raw);
+            }}
             error={!!errors.price}
             helperText={errors.price?.message}
           />
@@ -174,29 +205,102 @@ export default function InfoFormCardLand({
           />
         </div>
 
+        {/* Khối Khu vực: 🌟 ĐÃ ĐỒNG BỘ: Tỉnh/Thành phố & Phường xã liên kết động */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Tỉnh / Thành phố */}
+          <Controller
+            name="province"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <TextField
+                select
+                label="Tỉnh / Thành phố"
+                fullWidth
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value ?? ""}
+                inputRef={ref}
+                error={!!errors.province}
+                helperText={errors.province?.message}
+              >
+                {PROVINCE_OPTIONS.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+
+          {/* Ô Phường / Xã tự động khóa/mở và thay đổi danh mục menu dynamic */}
+          <Controller
+            name="ward"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => {
+              const isWardDisabled = !selectedProvince;
+              return (
+                <TextField
+                  select
+                  disabled={isWardDisabled}
+                  label="Khu vực Phường / Xã"
+                  fullWidth
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value ?? ""}
+                  inputRef={ref}
+                  error={!!errors.ward}
+                  helperText={errors.ward?.message}
+                >
+                  {isWardDisabled ? (
+                    <MenuItem value="">
+                      <em>Vui lòng chọn Tỉnh/Thành trước</em>
+                    </MenuItem>
+                  ) : (
+                    cleanWardOptions.map((opt) => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))
+                  )}
+                </TextField>
+              );
+            }}
+          />
+        </div>
+
         {/* Khu vực Phường Xã */}
         <Controller
           name="ward"
           control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <TextField
-              select
-              label="Khu vực Phường / Xã"
-              fullWidth
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value ?? ""}
-              inputRef={ref}
-              error={!!errors.ward}
-              helperText={errors.ward?.message}
-            >
-              {WARD_OPTIONS.filter((opt) => opt.value !== "").map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+          render={({ field: { onChange, onBlur, value, ref } }) => {
+            const isWardDisabled = !selectedProvince;
+            return (
+              <TextField
+                select
+                disabled={isWardDisabled}
+                label="Khu vực Phường / Xã"
+                fullWidth
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value ?? ""}
+                inputRef={ref}
+                error={!!errors.ward}
+                helperText={errors.ward?.message}
+              >
+                {isWardDisabled ? (
+                  <MenuItem value="">
+                    <em>Vui lòng chọn Tỉnh/Thành trước</em>
+                  </MenuItem>
+                ) : (
+                  cleanWardOptions.map((opt) => (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </MenuItem>
+                  ))
+                )}
+              </TextField>
+            );
+          }}
         />
 
         {/* Địa chỉ cụ thể lô đất */}
@@ -241,6 +345,8 @@ export default function InfoFormCardLand({
                 theme="snow"
                 value={field.value ?? ""}
                 onChange={field.onChange}
+                modules={QUILL_MODULES}
+                formats={QUILL_FORMATS}
                 style={{ height: "220px", marginBottom: "45px" }}
               />
             )}

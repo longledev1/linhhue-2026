@@ -6,16 +6,17 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 const ExpandingProjectSlider = () => {
-  // Hover mặc định = null để chưa hover thì chưa hiện content
-  const [activeHover, setActiveHover] = useState(null);
+  // Mặc định hover slide đầu tiên (id: 0) để màn hình desktop không bị trống trải, tạo điểm nhấn ban đầu
+  const [activeHover, setActiveHover] = useState(0);
 
   const slidesData = [
     {
       id: 0,
       title: "Danh mục căn hộ",
-      category: "APARTMENT",
+      category: "Apartment",
       image: "/images/estate/apartment_banner.jpg",
       desc: "Không gian sống đẳng cấp với thiết kế tinh tế, tối ưu hóa công năng và tầm nhìn tuyệt đẹp.",
+      link: "/bat-dong-san/can-ho",
     },
     {
       id: 1,
@@ -23,28 +24,30 @@ const ExpandingProjectSlider = () => {
       category: "Residential",
       image: "/images/estate/home_banner.png",
       desc: "Nơi tôn vinh sự yên tĩnh tuyệt đối với các gam màu trung tính nhẹ nhàng, ấm cúng.",
+      link: "/bat-dong-san/nha-o",
     },
     {
       id: 2,
-      title: "LAND",
-      category: "Danh mục đất đai",
+      title: "Danh mục đất đai",
+      category: "Land",
       image: "/images/estate/land_banner.png",
       desc: "Thiết kế hệ tủ ẩn gọn gàng, mang lại cảm giác sạch sẽ và khơi nguồn cảm hứng.",
+      link: "/bat-dong-san/dat-dai",
     },
   ];
 
   return (
-    <section className="mb-[100px] h-screen w-full overflow-hidden bg-black font-sans text-white">
+    <section className="mb-[100px] h-screen w-full overflow-hidden bg-black font-sans text-white select-none">
       {/* ================= DESKTOP ================= */}
       <div className="hidden h-full w-full lg:flex">
         {slidesData.map((slide) => {
           const isExpanded = activeHover === slide.id;
 
           return (
-            <div
+            <a
+              href={slide.link}
               key={slide.id}
               onMouseEnter={() => setActiveHover(slide.id)}
-              onMouseLeave={() => setActiveHover(null)}
               className={`relative h-full cursor-pointer overflow-hidden transition-all duration-700 ease-out ${
                 isExpanded ? "flex-[4]" : "flex-1"
               }`}
@@ -62,7 +65,7 @@ const ExpandingProjectSlider = () => {
               {/* Overlay */}
               <div
                 className={`absolute inset-0 transition-all duration-500 ${
-                  isExpanded ? "bg-black/35" : "bg-black/60"
+                  isExpanded ? "bg-black/35" : "bg-black/70"
                 }`}
               />
 
@@ -70,7 +73,7 @@ const ExpandingProjectSlider = () => {
               {!isExpanded && (
                 <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2">
                   <h3
-                    className="text-lg font-medium tracking-[0.3em] whitespace-nowrap text-white uppercase"
+                    className="text-lg font-medium tracking-[0.3em] whitespace-nowrap text-stone-300 uppercase transition-colors hover:text-white"
                     style={{
                       writingMode: "vertical-rl",
                       transform: "rotate(180deg)",
@@ -89,19 +92,23 @@ const ExpandingProjectSlider = () => {
                     : "pointer-events-none translate-y-10 opacity-0"
                 }`}
               >
-                <span className="mb-4 block text-xs font-semibold tracking-[0.35em] text-[#ab8c5d] uppercase">
+                <span className="mb-4 block text-xs font-bold tracking-[0.35em] text-[#ab8c5d] uppercase">
                   {slide.category}
                 </span>
 
-                <h2 className="mb-5 max-w-xl text-5xl leading-tight font-semibold">
+                <h2 className="mb-5 max-w-xl text-5xl leading-tight font-semibold text-white drop-shadow-sm">
                   {slide.title}
                 </h2>
 
                 <p className="max-w-md text-sm leading-relaxed text-neutral-300">
                   {slide.desc}
                 </p>
+
+                <div className="mt-6 inline-flex items-center gap-2 border-b border-[#ab8c5d]/40 pb-1 text-xs font-bold tracking-wider text-[#ab8c5d] uppercase">
+                  Khám phá ngay &rarr;
+                </div>
               </div>
-            </div>
+            </a>
           );
         })}
       </div>
@@ -121,27 +128,37 @@ const ExpandingProjectSlider = () => {
         >
           {slidesData.map((slide) => (
             <SwiperSlide key={slide.id}>
-              <div className="relative h-screen overflow-hidden">
+              {/* Bọc thẻ <a> toàn bộ vùng slide trên mobile để tăng trải nghiệm bấm của user */}
+              <a
+                href={slide.link}
+                className="relative block h-screen w-full overflow-hidden"
+              >
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
 
-                <div className="absolute inset-0 bg-black/45" />
+                <div className="absolute inset-0 bg-black/50" />
 
-                <div className="absolute bottom-0 left-0 z-10 p-8">
-                  <span className="mb-2 block text-xs font-semibold tracking-[0.3em] text-[#ab8c5d] uppercase">
+                <div className="absolute bottom-16 left-0 z-10 w-full p-8 pb-12">
+                  <span className="mb-2 block text-xs font-bold tracking-[0.3em] text-[#ab8c5d] uppercase">
                     {slide.category}
                   </span>
 
-                  <h3 className="mb-3 text-3xl font-semibold">{slide.title}</h3>
+                  <h3 className="mb-3 text-3xl font-semibold text-white">
+                    {slide.title}
+                  </h3>
 
                   <p className="text-sm leading-relaxed text-neutral-300">
                     {slide.desc}
                   </p>
+
+                  <div className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#ab8c5d] uppercase">
+                    Xem danh mục &rarr;
+                  </div>
                 </div>
-              </div>
+              </a>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -162,7 +179,7 @@ const ExpandingProjectSlider = () => {
         }
 
         .project-swiper .swiper-pagination {
-          bottom: 24px !important;
+          bottom: 32px !important;
         }
       `}</style>
     </section>

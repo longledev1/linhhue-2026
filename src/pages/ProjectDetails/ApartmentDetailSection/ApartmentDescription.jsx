@@ -1,10 +1,11 @@
 import React from "react";
-
+import { FiMapPin } from "react-icons/fi";
 export default function ApartmentDescription({
   id,
   title,
   description,
   mapIframe,
+  address,
 }) {
   if (!title && !description) return null;
 
@@ -32,6 +33,13 @@ export default function ApartmentDescription({
         <h1 className="text-secondary text-2xl leading-snug font-bold md:text-3xl">
           {title}{" "}
         </h1>
+        <div className="flex items-start gap-2">
+          <FiMapPin size={22} className="text-primary mt-1 shrink-0" />
+
+          <h2 className="text-secondary text-lg leading-relaxed font-semibold md:text-xl">
+            {address}
+          </h2>
+        </div>
         {id && (
           <div className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-4 py-2">
             <span className="text-xs font-semibold tracking-wider text-stone-500 uppercase">

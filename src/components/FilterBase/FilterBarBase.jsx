@@ -14,6 +14,9 @@ import {
 } from "@mui/material";
 import { FiSearch, FiRefreshCw } from "react-icons/fi";
 
+// IMPORT THÊM BỘ DATA TỈNH THÀNH VÀ DANH SÁCH PHƯỜNG XÃ ĐỘNG CỦA BẠN
+import { PROVINCE_OPTIONS, LOCATION_DATA } from "../../constants/wardOptions";
+
 export default function FilterBarBase({
   title,
   fields,
@@ -22,10 +25,14 @@ export default function FilterBarBase({
   defaultValues,
   isAdmin = false,
 }) {
-  // 🌟 KHẮC PHỤC LỖI LOOP: Bọc reduce vào useMemo để cố định địa chỉ ô nhớ Object
+  // KHẮC PHỤC LỖI LOOP: Bọc reduce vào useMemo để cố định địa chỉ ô nhớ Object
   const initialDefaultValues = useMemo(() => {
     return fields.reduce((acc, field) => {
-      acc[field] = "";
+      if (field === "province") {
+        acc[field] = "TPHCM"; // value thực tế của TP.HCM
+      } else {
+        acc[field] = "";
+      }
       return acc;
     }, {});
   }, [fields]);
@@ -35,8 +42,9 @@ export default function FilterBarBase({
   });
 
   const currentStatus = watch("status");
+  const selectedProvince = watch("province"); // LẮNG NGHE BIẾN THÀNH PHỐ TRÊN URL/FORM
 
-  // 🌟 ĐỒNG BỘ DỮ LIỆU: Reset form an toàn không sợ kích hoạt vòng lặp vô hạn
+  // ĐỒNG BỘ DỮ LIỆU: Reset form an toàn khi nhận defaultValues từ URL parse về Trang cha
   useEffect(() => {
     if (defaultValues && Object.keys(defaultValues).length > 0) {
       reset({
@@ -54,10 +62,24 @@ export default function FilterBarBase({
     }
   }, [currentStatus, setValue, fields]);
 
+  // TỰ ĐỘNG RESET: Nếu đổi Thành phố thì xóa sạch Phường/Xã cũ để tránh râu ông nọ cắm cằm bà kia
+  useEffect(() => {
+    if (
+      fields.includes("ward") &&
+      defaultValues?.province === selectedProvince
+    ) {
+      return;
+    }
+    if (fields.includes("ward") && selectedProvince !== undefined) {
+      setValue("ward", "");
+    }
+  }, [selectedProvince, setValue, fields, defaultValues?.province]);
+
   const getFieldLabel = (fieldName) => {
     const labels = {
       id: "Mã bài đăng (ID)",
       is_published: "Trạng thái hiển thị",
+      province: "Tỉnh / Thành phố",
       ward: "Phường/Xã",
       status: "Hình thức",
       price: "Khoảng giá",
@@ -75,6 +97,9 @@ export default function FilterBarBase({
       if (currentStatus === "rent") return options.priceRent || [];
       if (currentStatus === "sale") return options.priceSale || [];
       return [];
+    }
+    if (fieldName === "province") {
+      return PROVINCE_OPTIONS;
     }
     return options[fieldName] || [];
   };
@@ -100,11 +125,10 @@ export default function FilterBarBase({
   };
 
   const PRIMARY_COLOR = "#ab8c5d";
-  const FONT_FAMILY = '"Montserrat", sans-serif'; // 🌟 BIẾN ĐỊNH DẠNG FONT CHỮ MONTSERRAT
+  const FONT_FAMILY = '"Montserrat", sans-serif';
 
   return (
     <Box className="w-full bg-transparent">
-      {/* Khối bọc Container động */}
       <Box
         className={
           isAdmin ? "w-full space-y-5" : "container mx-auto space-y-5 px-4"
@@ -178,8 +202,84 @@ export default function FilterBarBase({
                     />
                   );
                 }
+                // ================= TRƯỜNG HỢP 2: AUTOCOMPLETE TỈNH / THÀNH PHỐ =================
+                if (fieldName === "province") {
+                  return (
+                    <Controller
+                      key={fieldName}
+                      name={fieldName}
+                      control={control}
+                      render={({ field: { onChange, value, ref } }) => {
+                        const currentSelection =
+                          PROVINCE_OPTIONS.find(
+                            (opt) => String(opt.value) === String(value),
+                          ) || null;
 
-                // ================= TRƯỜNG HỢP 2: Ô AUTOCOMPLETE PHƯỜNG XÃ CHỐNG LAG =================
+                        return (
+                          <Autocomplete
+                            size="medium"
+                            options={PROVINCE_OPTIONS}
+                            getOptionLabel={(option) => option.label || ""}
+                            value={currentSelection}
+                            onChange={(event, newValue) => {
+                              onChange(newValue ? newValue.value : "");
+                            }}
+                            disableScrollLock
+                            ListboxProps={{
+                              style: {
+                                fontFamily: FONT_FAMILY,
+                                fontSize: "14px",
+                              },
+                            }}
+                            renderOption={(props, option) => {
+                              const { key, ...otherProps } = props;
+
+                              return (
+                                <li
+                                  key={option.value}
+                                  {...otherProps}
+                                  style={{
+                                    fontFamily: FONT_FAMILY,
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {option.label}
+                                </li>
+                              );
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                inputRef={ref}
+                                label="Tỉnh / Thành phố"
+                                placeholder="Gõ để tìm nhanh tỉnh thành..."
+                                sx={{
+                                  "& .MuiInputLabel-root": {
+                                    fontSize: "14px",
+                                    fontFamily: FONT_FAMILY,
+                                  },
+                                  "& .MuiInputLabel-root.Mui-focused": {
+                                    color: PRIMARY_COLOR,
+                                  },
+                                  "& .MuiOutlinedInput-root": {
+                                    borderRadius: "8px",
+                                    fontFamily: FONT_FAMILY,
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                      {
+                                        borderColor: PRIMARY_COLOR,
+                                        borderWidth: "1.5px",
+                                      },
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                        );
+                      }}
+                    />
+                  );
+                }
+                // ================= TRƯỜNG HỢP 2: Ô AUTOCOMPLETE PHƯỜNG XÃ LIÊN KẾT ĐỘNG CHỐNG LAG =================
                 if (fieldName === "ward") {
                   return (
                     <Controller
@@ -187,35 +287,63 @@ export default function FilterBarBase({
                       name={fieldName}
                       control={control}
                       render={({ field: { onChange, value, ref } }) => {
-                        const wardOptions = options.ward || [];
+                        const wardOptions = selectedProvince
+                          ? LOCATION_DATA[selectedProvince] || []
+                          : [];
+                        const cleanWardOptions = wardOptions.filter(
+                          (opt) => opt.value !== "",
+                        );
+
                         const currentSelection =
-                          wardOptions.find(
+                          cleanWardOptions.find(
                             (opt) => String(opt.value) === String(value),
                           ) || null;
+
+                        const isWardDisabled = !selectedProvince;
 
                         return (
                           <Autocomplete
                             size="medium"
-                            options={wardOptions}
+                            disabled={isWardDisabled}
+                            options={cleanWardOptions}
                             getOptionLabel={(option) => option.label || ""}
                             value={currentSelection}
                             onChange={(event, newValue) => {
                               onChange(newValue ? newValue.value : "");
                             }}
                             disableScrollLock
-                            // Ép font Montserrat cho danh sách đổ xuống của Autocomplete
                             ListboxProps={{
                               style: {
                                 fontFamily: FONT_FAMILY,
                                 fontSize: "14px",
                               },
                             }}
+                            // 🌟 VÁ LỖI 1: Ép dùng option.value làm key cho từng thẻ li đổ xuống, giải quyết triệt để lỗi trùng tên phường xã
+                            renderOption={(props, option) => {
+                              const { key, ...otherProps } = props;
+                              return (
+                                <li
+                                  key={option.value}
+                                  {...otherProps}
+                                  style={{
+                                    fontFamily: FONT_FAMILY,
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {option.label}
+                                </li>
+                              );
+                            }}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
                                 inputRef={ref}
                                 label={getFieldLabel(fieldName)}
-                                placeholder="Gõ để tìm nhanh phường xã..."
+                                placeholder={
+                                  isWardDisabled
+                                    ? "Vui lòng chọn Tỉnh/Thành trước"
+                                    : "Gõ để tìm nhanh phường xã..."
+                                }
                                 sx={{
                                   "& .MuiInputLabel-root": {
                                     fontSize: "14px",
@@ -243,7 +371,7 @@ export default function FilterBarBase({
                   );
                 }
 
-                // ================= TRƯỜNG HỢP 3: CÁC Ô SELECT BOX THÔNG THƯỜNG (CÒN LẠI) =================
+                // ================= TRƯỜNG HỢP 3: CÁC Ô SELECT BOX THÔNG THƯỜNG (CÓ CẢ PROVINCE) =================
                 const fieldOptions = getDynamicOptions(fieldName);
                 const isPriceDisabled = fieldName === "price" && !currentStatus;
 
@@ -290,10 +418,12 @@ export default function FilterBarBase({
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
-                          MenuProps={{
-                            disableScrollLock: true,
-                            // Ép font Montserrat cho Paper của Menu Popover
-                            PaperProps: { style: { fontFamily: FONT_FAMILY } },
+                          MenuProps={{ disableScrollLock: true }}
+                          // 🌟 VÁ LỖI 2: Dùng slotProps chuẩn thay vì lồng PaperProps thô bạo vào MenuProps gây lỗi DOM attribute
+                          slotProps={{
+                            paper: {
+                              style: { fontFamily: FONT_FAMILY },
+                            },
                           }}
                           sx={{ fontSize: "14px", fontFamily: FONT_FAMILY }}
                         >
@@ -336,7 +466,7 @@ export default function FilterBarBase({
             </Box>
 
             {/* HỆ THỐNG NÚT BẤM TO KHỎE, ĐẦM TAY VỚI FONT MONTSERRAT */}
-            <Box className="flex flex-col justify-end gap-3 border-t border-gray-100 pt-4 sm:flex-row">
+            <Box className="flex flex-wrap items-center justify-end gap-3">
               <Button
                 onClick={handleClearFilters}
                 variant="outlined"

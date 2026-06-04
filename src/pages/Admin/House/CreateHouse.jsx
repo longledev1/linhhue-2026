@@ -43,6 +43,7 @@ export default function AdminCreateHouse() {
       direction: "dong-nam",
       house_type: "nha-pho",
       status: "rent",
+      province: "",
       ward: "",
       address_detail: "",
       map_iframe: "",
@@ -113,6 +114,7 @@ export default function AdminCreateHouse() {
         direction: data.direction,
         house_type: data.house_type,
         status: data.status,
+        province: data.province,
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
@@ -129,7 +131,7 @@ export default function AdminCreateHouse() {
       const result = await addHouse(payload);
 
       if (result.success) {
-        alert("🎉 Đăng sản phẩm nhà ở thành công rực rỡ!");
+        alert("🎉 Đăng sản phẩm nhà ở thành công");
         navigate("/admin/houses");
       } else {
         throw new Error(result.error);
@@ -177,6 +179,7 @@ export default function AdminCreateHouse() {
           <ConfigAndImageCardHouse
             register={register}
             control={control}
+            errors={errors}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}
             handleThumbnailChange={handleThumbnailChange}

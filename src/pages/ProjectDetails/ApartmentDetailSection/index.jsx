@@ -24,6 +24,7 @@ import SuggestedProjects from "./SuggestedProject";
 import {
   formatPrice,
   formatWard,
+  formatProvince,
   formatDirection,
   formatApartmentType,
 } from "../../../utils/format";
@@ -156,13 +157,15 @@ export default function ApartmentDetailSection() {
     {
       icon: <FiBookOpen className="text-xl" />,
       label: "Pháp lý:",
-      value: `${isRent ? "Hợp đồng cho thuê rõ ràng" : "Sổ đỏ x Sổ hồng"}`,
+      value: `${isRent ? "Hợp đồng cho thuê rõ ràng" : "Pháp lý rõ ràng"}`,
     },
   ];
 
   const statusLabel = isRent ? "Cho thuê" : "Mua bán";
   const wardLabel = formatWard(project.ward) || "Chưa xác định";
+  const provinceLabel = formatProvince(project.province) || "Chưa xác định";
 
+  console.log("🚀 Dữ liệu căn hộ chi tiết:", project);
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20 pb-16">
       <div className="container">
@@ -178,8 +181,7 @@ export default function ApartmentDetailSection() {
 
             {/* Breadcrumb gán cứng nhãn danh mục là Căn hộ */}
             <div className="pt-4 text-xs font-bold tracking-wide text-stone-500 uppercase md:text-sm">
-              {statusLabel} / Thành phố Hồ Chí Minh / {wardLabel} /{" "}
-              {typeLabel}{" "}
+              {statusLabel} / {provinceLabel} / {wardLabel} / {typeLabel}{" "}
             </div>
 
             {/* VỊ TRÍ MOBILE */}
@@ -190,6 +192,7 @@ export default function ApartmentDetailSection() {
             <ApartmentDescription
               id={project.id} // 🌟 TRUYỀN ID SỐ THUẦN TÚY SANG ĐÂY
               title={project.title}
+              address={project.address_detail}
               description={project.description}
               mapIframe={project.map_iframe}
             />

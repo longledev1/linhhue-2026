@@ -15,8 +15,11 @@ import {
   IconButton,
   TablePagination,
 } from "@mui/material";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-import { WARD_OPTIONS } from "../../../../constants/wardOptions";
+// 🌟 ĐÃ THÊM FaRegEye VÀO ĐÂY
+import { FaRegEdit, FaRegTrashAlt, FaRegEye } from "react-icons/fa";
+
+// 🌟 IMPORT HÀM FORMAT CHUẨN ĐÃ ĐƯỢC ĐỒNG BỘ ĐỘNG THEO CẶP ĐỊA PHƯƠNG
+import { formatWard, formatProvince } from "../../../../utils/format";
 
 export default function ApartmentTable({
   data,
@@ -27,14 +30,10 @@ export default function ApartmentTable({
   onRowsPerPageChange,
   onDeleteClick,
 }) {
-  const formatWard = (wardSlug) => {
-    if (!wardSlug) return "---";
-    const foundWard = WARD_OPTIONS.find((item) => item.value === wardSlug);
-    return foundWard ? foundWard.label : wardSlug;
-  };
+  const FONT_FAMILY = '"Montserrat", sans-serif'; // 🌟 BIẾN ĐỊNH DẠNG FONT CHỮ MONTSERRAT
 
   return (
-    <Box>
+    <Box sx={{ fontFamily: FONT_FAMILY }}>
       <TableContainer
         component={Paper}
         elevation={0}
@@ -43,32 +42,68 @@ export default function ApartmentTable({
         <Table sx={{ minWidth: 650 }}>
           <TableHead sx={{ bgcolor: "#f8fafc" }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Ảnh
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Tên căn hộ
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Hình thức
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: "#475569" }}>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
+              >
                 Khu vực
               </TableCell>
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="right"
               >
                 Giá
               </TableCell>
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="center"
               >
                 Trạng thái
               </TableCell>
               <TableCell
-                sx={{ fontWeight: 600, color: "#475569" }}
+                sx={{
+                  fontWeight: 700,
+                  color: "#475569",
+                  fontFamily: FONT_FAMILY,
+                }}
                 align="center"
               >
                 Hành động
@@ -84,6 +119,7 @@ export default function ApartmentTable({
                   "&:hover": { bgcolor: "#fdfbf7" },
                 }}
               >
+                {/* 1. CỘT HÌNH ẢNH */}
                 <TableCell>
                   <Avatar
                     src={row.thumbnail}
@@ -91,18 +127,29 @@ export default function ApartmentTable({
                     sx={{ width: 56, height: 56, border: "1px solid #e2e8f0" }}
                   />
                 </TableCell>
+
+                {/* 2. CỘT TIÊU ĐỀ & THÔNG SỐ */}
                 <TableCell sx={{ maxWidth: 280 }}>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, color: "#1e293b" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "#1e293b",
+                      fontFamily: FONT_FAMILY,
+                    }}
                     className="line-clamp-2"
                   >
                     {row.title}
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "#64748b", fontFamily: FONT_FAMILY }}
+                  >
                     {row.bedroom} PN | {row.bathroom} WC | {row.area} m²
                   </Typography>
                 </TableCell>
+
+                {/* 3. CỘT HÌNH THỨC GIAO DỊCH */}
                 <TableCell>
                   <Chip
                     label={row.status === "rent" ? "Cho thuê" : "Cần bán"}
@@ -111,18 +158,54 @@ export default function ApartmentTable({
                       bgcolor: row.status === "rent" ? "#e6f4ea" : "#fce8e6",
                       color: row.status === "rent" ? "#137333" : "#c5221f",
                       fontWeight: 600,
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
-                <TableCell sx={{ textTransform: "capitalize" }}>
-                  {formatWard(row.ward)}
+
+                {/* 4. CỘT KHU VỰC ĐỊA LÝ (ĐÃ NÂNG CẤP LIÊN KẾT ĐỘNG) */}
+                <TableCell
+                  sx={{
+                    color: "#334155",
+                    fontFamily: FONT_FAMILY,
+                    fontSize: "13px",
+                  }}
+                >
+                  {row.ward ? (
+                    <>
+                      {/* 1. Hiển thị Tỉnh/Thành phố trước (nếu có) */}
+                      {row.province && (
+                        <span className="font-semibold">
+                          {formatProvince(row.province)}
+                        </span>
+                      )}
+
+                      {/* 2. Dấu gạch ngang nối giữa Tỉnh/Thành và Phường/Xã */}
+                      {row.province && <span>{" - "}</span>}
+
+                      {/* 3. Hiển thị Phường/Xã phía sau */}
+                      <span className="text-gray-600">
+                        {formatWard(row.ward, row.province)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
+
+                {/* 5. CỘT GIÁ TIỀN */}
                 <TableCell
                   align="right"
-                  sx={{ fontWeight: 600, color: "#0f172a" }}
+                  sx={{
+                    fontWeight: 600,
+                    color: "#0f172a",
+                    fontFamily: FONT_FAMILY,
+                  }}
                 >
                   {Number(row.price).toLocaleString("vi-VN")} đ
                 </TableCell>
+
+                {/* 6. CỘT TRẠNG THÁI HIỂN THỊ */}
                 <TableCell align="center">
                   <Chip
                     label={row.is_published ? "Đang hiển thị" : "Đang ẩn"}
@@ -136,14 +219,32 @@ export default function ApartmentTable({
                         ? "1px solid rgba(76, 175, 80, 0.25)"
                         : "1px solid rgba(148, 163, 184, 0.2)",
                       fontWeight: 600,
-                      fontSize: "12px",
+                      fontSize: "11px",
+                      fontFamily: FONT_FAMILY,
                     }}
                   />
                 </TableCell>
+
+                {/* 7. CỘT HÀNH ĐỘNG CONTROL BUTTONS */}
                 <TableCell align="center">
                   <Box
                     sx={{ display: "flex", justifyContent: "center", gap: 1 }}
                   >
+                    {/* 👁️ NÚT XEM CHI TIẾT BÀI VIẾT (MỚI THÊM) */}
+                    <IconButton
+                      component={Link}
+                      to={`/bat-dong-san/can-ho/${row.id}`}
+                      target="_blank" // Thêm target="_blank" nếu bạn muốn mở tab mới để xem bài viết, xóa đi nếu muốn chuyển trang trực tiếp
+                      size="small"
+                      sx={{
+                        color: "#64748b", // Màu xám
+                        "&:hover": { bgcolor: "#10b98110" },
+                      }}
+                    >
+                      <FaRegEye size={18} />
+                    </IconButton>
+
+                    {/* 📝 NÚT CHỈNH SỬA */}
                     <IconButton
                       component={Link}
                       to={`/admin/apartments/edit/${row.id}`}
@@ -155,6 +256,8 @@ export default function ApartmentTable({
                     >
                       <FaRegEdit size={18} />
                     </IconButton>
+
+                    {/* 🗑️ NÚT XÓA */}
                     <IconButton
                       size="small"
                       onClick={() => onDeleteClick(row.id)}
@@ -173,6 +276,7 @@ export default function ApartmentTable({
         </Table>
       </TableContainer>
 
+      {/* PHÂN TRANG TABLE PAGINATION */}
       <TablePagination
         component={Paper}
         elevation={0}
@@ -192,6 +296,12 @@ export default function ApartmentTable({
           borderBottom: "1px solid #e2e8f0",
           borderRadius: "0 0 8px 8px",
           bgcolor: "#f8fafc",
+          fontFamily: FONT_FAMILY,
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-select":
+            {
+              fontFamily: FONT_FAMILY,
+              fontSize: "13px",
+            },
         }}
       />
     </Box>

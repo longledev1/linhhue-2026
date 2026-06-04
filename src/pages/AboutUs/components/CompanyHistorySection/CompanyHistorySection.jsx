@@ -33,7 +33,7 @@ const CompanyHistory = () => {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-white py-16 font-sans lg:py-32">
+    <section className="relative w-full overflow-hidden bg-white pb-16 font-sans lg:py-32">
       <div className="pointer-events-none absolute inset-x-0 top-[50%] z-10 hidden w-full -translate-y-1/2 lg:block">
         <img
           src="/images/about/wave.svg"
@@ -68,7 +68,7 @@ const CompanyHistory = () => {
                   </div>
 
                   <div className="w-full max-w-[320px] text-center">
-                    <span className="mb-2 block text-lg font-bold tracking-wide text-[#ab8c5d]">
+                    <span className="text-primary mb-2 block text-lg font-bold tracking-wide">
                       {item.year}
                     </span>
                     <div className="mx-auto mb-3 h-[2px] w-8 bg-[#ab8c5d]/40" />
@@ -90,37 +90,64 @@ const CompanyHistory = () => {
           </div>
         </div>
 
-        <div className="block w-full space-y-6 lg:hidden">
-          {timelineData.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.15,
-                ease: "easeOut",
-              }}
-              className="flex flex-col items-center gap-4 rounded-2xl border border-neutral-800/40 bg-[#1c1c1a] p-6 text-center shadow-md"
-            >
-              <div className="h-28 w-28 overflow-hidden rounded-full border-2 border-white/10 shadow-md">
-                <img
-                  src={item.image}
-                  alt={item.year}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="mb-1 text-lg font-bold tracking-wide text-[#ab8c5d]">
-                  {item.year}
-                </span>
-                <p className="mt-2 max-w-sm text-xs leading-relaxed font-light text-neutral-300 sm:text-sm">
-                  {item.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-12 bg-gradient-to-b from-[#ab8c5d] to-[#453826] bg-clip-text text-center text-3xl font-bold tracking-wide text-transparent uppercase md:hidden lg:self-start lg:bg-none lg:text-left lg:text-[42px] lg:text-[#1c1c1a] lg:normal-case"
+        >
+          ĐỊNH HƯỚNG PHÁT TRIỂN
+        </motion.h2>
+
+        <div className="relative ml-[-15px] block w-full lg:hidden">
+          {/* Timeline Line */}
+          <div className="absolute top-0 left-5 h-full w-[2px] bg-[#ab8c5d]/20" />
+
+          <div className="space-y-8">
+            {timelineData.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.15,
+                  ease: "easeOut",
+                }}
+                className="relative flex gap-4"
+              >
+                {/* Dot */}
+                <div className="relative z-10 mt-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ab8c5d]/20 bg-white shadow-sm">
+                  <div className="h-3 w-3 rounded-full bg-[#ab8c5d]" />
+                </div>
+
+                {/* Card */}
+                <div className="flex-1 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+                  <div className="h-44 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.year}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+
+                  <div className="p-5">
+                    <span className="text-primary mb-2 block text-lg font-bold">
+                      {item.year}
+                    </span>
+
+                    <div className="mb-3 h-[2px] w-8 bg-[#ab8c5d]/30" />
+
+                    <p className="text-sm leading-relaxed text-neutral-600">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -36,7 +36,7 @@ const OurMissions = () => {
             >
               <div className="flex items-center gap-3">
                 <span className="hidden h-[2px] w-16 bg-[#ab8c5d] lg:block"></span>
-                <span className="hidden text-sm font-bold tracking-wider text-[#ab8c5d] uppercase md:flex">
+                <span className="text-primary hidden text-sm font-bold tracking-wider uppercase md:flex">
                   OUR MISSIONS
                 </span>
               </div>
@@ -66,12 +66,12 @@ const OurMissions = () => {
                   }}
                   className="group flex flex-col items-center gap-4 rounded-2xl border border-neutral-800/40 bg-[#1c1c1a] p-6 text-center shadow-md md:flex-row md:items-start md:border-none md:bg-transparent md:p-0 md:text-left md:shadow-none"
                 >
-                  <div className="flex flex-shrink-0 items-center justify-center rounded-xl bg-white/5 p-2 text-[#ab8c5d] transition-transform duration-300 group-hover:scale-110 md:bg-[#ab8c5d]/10 md:p-1.5">
+                  <div className="text-primary flex flex-shrink-0 items-center justify-center rounded-xl bg-white/5 p-2 transition-transform duration-300 group-hover:scale-110 md:bg-[#ab8c5d]/10 md:p-1.5">
                     <HiSparkles className="text-xl lg:text-xl" />
                   </div>
 
                   <div className="flex w-full flex-col gap-2">
-                    <h4 className="text-base font-bold tracking-widest text-[#ab8c5d] uppercase lg:text-lg">
+                    <h4 className="text-primary text-base font-bold tracking-widest uppercase lg:text-lg">
                       {item.title}
                     </h4>
                     <p className="text-center text-sm leading-relaxed font-normal text-neutral-300 md:text-justify md:text-neutral-600 lg:text-base">

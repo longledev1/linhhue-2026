@@ -1,6 +1,13 @@
 import React from "react";
+import { FiMapPin } from "react-icons/fi";
 
-export default function LandDescription({ id, title, description, mapIframe }) {
+export default function LandDescription({
+  id,
+  title,
+  description,
+  mapIframe,
+  address,
+}) {
   if (!title && !description) return null;
 
   const getCleanMapUrl = (rawInput) => {
@@ -27,10 +34,17 @@ export default function LandDescription({ id, title, description, mapIframe }) {
         <h1 className="text-secondary text-2xl leading-snug font-bold md:text-3xl">
           {title}{" "}
         </h1>
+        <div className="flex items-start gap-2">
+          <FiMapPin size={22} className="text-primary mt-1 shrink-0" />
+
+          <h2 className="text-secondary text-lg leading-relaxed font-semibold md:text-xl">
+            {address}
+          </h2>
+        </div>
         {id && (
           <div className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-4 py-2">
             <span className="text-xs font-semibold tracking-wider text-stone-500 uppercase">
-              Mã đất nền:
+              Mã đất:
             </span>
 
             <span className="mt-[-2px] text-sm font-bold text-stone-800">

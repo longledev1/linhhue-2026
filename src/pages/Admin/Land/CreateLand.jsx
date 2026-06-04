@@ -40,7 +40,9 @@ export default function AdminCreateLand() {
       direction: "dong-nam",
       land_type: "dat-nen",
       status: "sale",
+      province: "",
       ward: "",
+      amenities: "",
       address_detail: "",
       map_iframe: "",
       description: "",
@@ -108,6 +110,8 @@ export default function AdminCreateLand() {
         direction: data.direction,
         land_type: data.land_type,
         status: data.status,
+        province: data.province,
+        amenities: data.amenities,
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
@@ -122,12 +126,10 @@ export default function AdminCreateLand() {
         category: "land",
       };
 
-      console.log("=== 🚀 PAYLOAD ĐẤT NỀN BẮN QUA STORE ===", payload);
-
       const result = await addLand(payload);
 
       if (result.success) {
-        alert("🎉 Đăng tin bất động sản đất nền thành công rực rỡ!");
+        alert("Đăng tin bất động sản đất nền thành công");
         navigate("/admin/lands");
       } else {
         throw new Error(result.error);
@@ -174,6 +176,7 @@ export default function AdminCreateLand() {
           <ConFfigAndImageCardLand
             register={register}
             control={control}
+            errors={errors}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}
             handleThumbnailChange={handleThumbnailChange}

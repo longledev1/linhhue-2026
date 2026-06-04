@@ -43,6 +43,7 @@ export default function AdminCreateApartment() {
       direction: "dong-nam",
       apartment_type: "chung-cu",
       status: "rent",
+      province: "", // 🔑 1. THÊM BIẾN TRẠNG THÁI MẶC ĐỊNH
       ward: "",
       address_detail: "",
       map_iframe: "",
@@ -114,6 +115,7 @@ export default function AdminCreateApartment() {
         direction: data.direction,
         apartment_type: data.apartment_type,
         status: data.status,
+        province: data.province, // 🔑 2. ĐÓNG GÓI PROVINCE VÀO PAYLOAD GỬI DATABASE
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
@@ -132,7 +134,7 @@ export default function AdminCreateApartment() {
       const result = await addApartment(payload);
 
       if (result.success) {
-        alert("🎉 Đăng sản phẩm căn hộ thành công rực rỡ!");
+        alert("🎉 Đăng sản phẩm căn hộ thành công");
         navigate("/admin/apartments");
       } else {
         throw new Error(result.error);
@@ -145,7 +147,6 @@ export default function AdminCreateApartment() {
   };
 
   return (
-    // 🌟 Dùng form thuần của HTML kết hợp Tailwind w-full tràn viền
     <form onSubmit={handleSubmit(onFormSubmit)} className="w-full space-y-6">
       {/* Thanh tiêu đề phía trên */}
       <div className="flex w-full items-center gap-3">
@@ -181,6 +182,7 @@ export default function AdminCreateApartment() {
         <div className="flex w-full flex-col justify-between lg:col-span-4">
           <ConfigAndImageCard
             register={register}
+            errors={errors}
             control={control}
             thumbnailPreview={thumbnailPreview}
             slidePreviews={slidePreviews}

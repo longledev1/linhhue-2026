@@ -16,6 +16,7 @@ import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
 export default function ConfigAndImageCardHouse({
   register,
   control,
+  errors, // 🌟 NHẬN THÊM: Object errors từ file Page cha gửi xuống (formState: { errors })
   thumbnailPreview,
   slidePreviews,
   handleThumbnailChange,
@@ -87,6 +88,9 @@ export default function ConfigAndImageCardHouse({
               multiline
               rows={3}
               placeholder="Ví dụ: Gần trung tâm thương mại, khu vực dân trí cao, có hồ bơi tràn bờ, phòng gym nội khu, sân nướng BBQ..."
+              // 🌟 BẮT LỖI TẠI ĐÂY:
+              error={!!errors?.amenities} // Nếu có lỗi -> Đổi khung viền input sang màu ĐỎ
+              helperText={errors?.amenities?.message} // Hiển thị dòng chữ "Không được vượt quá 100 ký tự"
               {...register("amenities")}
             />
           </div>
@@ -132,7 +136,7 @@ export default function ConfigAndImageCardHouse({
               className="flex h-40 flex-col items-center justify-center border-dashed"
               sx={{
                 textTransform: "none",
-                "&:hover": { borderColor: PRIMARY_COLOR },
+                "& hover": { borderColor: PRIMARY_COLOR },
               }}
             >
               <FiUploadCloud
@@ -167,7 +171,7 @@ export default function ConfigAndImageCardHouse({
             className="flex h-24 flex-col items-center justify-center border-dashed"
             sx={{
               textTransform: "none",
-              "&:hover": { borderColor: PRIMARY_COLOR },
+              "& hover": { borderColor: PRIMARY_COLOR },
             }}
           >
             <FiUploadCloud
@@ -185,7 +189,6 @@ export default function ConfigAndImageCardHouse({
           </Button>
 
           {slidePreviews.length > 0 && (
-            // 🌟 Thay Grid MUI bằng Grid Tailwind cho ô hiển thị danh sách ảnh album cực mượt
             <div className="mt-2 grid grid-cols-3 gap-2">
               {slidePreviews.map((url, index) => (
                 <div

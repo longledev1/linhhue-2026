@@ -14,7 +14,7 @@ const CompanyHistory = () => {
     },
     {
       id: 2,
-      year: "2025 – 2026",
+      year: "2026 - 2028",
       image:
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600",
       description:
@@ -23,7 +23,7 @@ const CompanyHistory = () => {
     },
     {
       id: 3,
-      year: "2025 – 2026",
+      year: "2028 - 2035",
       image:
         "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600",
       description:

@@ -94,7 +94,7 @@ const OurMissions = () => {
               className="aspect-[4/6] w-full -translate-y-6 overflow-hidden rounded-[24px] bg-neutral-100 shadow-lg"
             >
               <img
-                src="/images/about/mission1.png"
+                src="https://image.tinnhanhchungkhoan.vn/w660/Uploaded/2026/aohuojr/2024_03_29/shutterstock-306860177-t-8404.jpg"
                 alt="Linh Huệ Mission Architecture Left"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-103"
               />
@@ -109,7 +109,7 @@ const OurMissions = () => {
               className="aspect-[4/6] w-full translate-y-6 overflow-hidden rounded-[24px] bg-neutral-100 shadow-lg"
             >
               <img
-                src="/images/about/mission2.png"
+                src="https://image.tinnhanhchungkhoan.vn/w660/Uploaded/2026/wpxlcdjwi/2024_07_23/a1-578.jpg"
                 alt="Linh Huệ Mission Architecture Right"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-103"
               />

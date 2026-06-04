@@ -9,7 +9,7 @@ const CompanyHistory = () => {
       image:
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=600",
       description:
-        "Bắt đầu tại khu vực trung tâm & phía Đông thành phố. Chuẩn hóa mô hình, xây dựng thương hiệu, tạo trải nghiệm đầu tiên thật tốt.",
+        "Bắt đầu tại khu vực trung tâm & phía Đông thành phố. Chuẩn hóa mô hình, xây dựng thương hiệu, tạo trải nghiệm thật tốt.",
       dotTopClass: "top-[130px]",
     },
     {
@@ -27,7 +27,7 @@ const CompanyHistory = () => {
       image:
         "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600",
       description:
-        "Phát triển sang khu vực phía Nam & ven trung tâm. Chuẩn hóa vận hành và tăng kết nối cộng đồng.",
+        "Mở rộng toàn TP.HCM và các tỉnh lân cận. Hướng tới hệ sinh thái co-living, mini apartment — không gian sống cộng đồng văn minh.",
       dotTopClass: "top-[195px]",
     },
   ];

@@ -268,41 +268,6 @@ export default function InfoFormCardLand({
           />
         </div>
 
-        {/* Khu vực Phường Xã */}
-        <Controller
-          name="ward"
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => {
-            const isWardDisabled = !selectedProvince;
-            return (
-              <TextField
-                select
-                disabled={isWardDisabled}
-                label="Khu vực Phường / Xã"
-                fullWidth
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value ?? ""}
-                inputRef={ref}
-                error={!!errors.ward}
-                helperText={errors.ward?.message}
-              >
-                {isWardDisabled ? (
-                  <MenuItem value="">
-                    <em>Vui lòng chọn Tỉnh/Thành trước</em>
-                  </MenuItem>
-                ) : (
-                  cleanWardOptions.map((opt) => (
-                    <MenuItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </MenuItem>
-                  ))
-                )}
-              </TextField>
-            );
-          }}
-        />
-
         {/* Địa chỉ cụ thể lô đất */}
         <div className="mt-[16px]">
           <TextField

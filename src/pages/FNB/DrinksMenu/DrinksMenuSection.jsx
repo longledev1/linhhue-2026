@@ -12,55 +12,49 @@ import "swiper/css/navigation";
 const DRINK_DATA = [
   {
     id: "nuoc-ep",
-    categoryName: "KOMBUCHA & NƯỚC ÉP TƯƠI",
+    categoryName: "KOMBUCHA",
     items: [
       {
         id: 1,
         name: "KOM ỔI",
         desc: "Sự kết hợp hoàn hảo giữa vị chua ngọt thanh mát của cam sành và dứa mật, giàu Vitamin C giúp tăng cường đề kháng.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=500",
+        image: "/images/fnb/komoi.webp",
       },
       {
         id: 2,
         name: "KOM TÁO",
         desc: "Thức uống thanh lọc cơ thể tuyệt vời từ cần tây hữu cơ kết hợp táo xanh vị ngọt dịu nhẹ, hỗ trợ giữ dáng, đẹp da.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1610970881699-44a55b4cfd87?w=500",
+        image: "/images/fnb/komtao.webp",
       },
       {
         id: 3,
         name: "KOM VẢI",
         desc: "Vị ngọt lịm tự nhiên của dưa hấu đỏ mọng quyện chút hương bạc hà sảng khoái, giải nhiệt tức thì cho ngày oi bức.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1546173159-315724a31696?w=500",
+        image: "/images/fnb/komvai.webp",
       },
       {
         id: 4,
         name: "KOM DÂU TÂY",
         desc: "Chiết xuất hoàn toàn từ những quả lựu đỏ mọng nước giàu chất chống oxy hóa, mang lại hương vị ngọt ngào, quý phái.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=500",
+        image: "/images/fnb/komdautay.webp",
       },
       {
         id: 5,
         name: "KOM HIBISCUS",
         desc: "Sự biến tấu độc đáo giữa ổi hồng xá lị thơm lừng và vị ngọt thanh của chà là, dồi dào chất xơ tự nhiên.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500",
+        image: "/images/fnb/komhibiscus.webp",
       },
       {
         id: 5,
         name: "KOM VIỆT QUẤT",
         desc: "Sự biến tấu độc đáo giữa ổi hồng xá lị thơm lừng và vị ngọt thanh của chà là, dồi dào chất xơ tự nhiên.",
         price: "39.000đ",
-        image:
-          "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500",
+        image: "/images/fnb/komvietquat.webp",
       },
     ],
   },
@@ -73,32 +67,28 @@ const DRINK_DATA = [
         name: "CÀ PHÊ SỮA ĐÁ",
         desc: "Hương vị đậm đà truyền thống từ hạt Robusta rang mộc, hòa quyện cùng sữa đặc sánh mịn.",
         price: "30.000đ",
-        image:
-          "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500",
+        image: "/images/fnb/cfsua.webp",
       },
       {
         id: 7,
-        name: "CÀ PHÊ TRỨNG",
-        desc: "Sự kết hợp hoàn hảo giữa vị đắng nhẹ của Espresso và lớp kem trứng đánh bông béo ngậy, ấm nồng.",
-        price: "40.000đ",
-        image:
-          "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500",
+        name: "CÀ PHÊ ĐÁ",
+        desc: "Cà phê đen nguyên bản pha loãng, giữ trọn hương thơm thanh khiết thoảng nhẹ cho ngày mới tỉnh táo.",
+        price: "25.000đ",
+        image: "/images/fnb/cfden.webp",
       },
       {
         id: 8,
         name: "BẠC SỈU ĐÁ",
         desc: "Thức uống ngọt ngào dành cho người yêu vị sữa thơm béo, nhấn nhá chút hương vị cà phê nhẹ nhàng.",
         price: "35.000đ",
-        image:
-          "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500",
+        image: "/images/fnb/bacsiu.webp",
       },
       {
         id: 9,
-        name: "AMERICANO",
-        desc: "Cà phê đen nguyên bản pha loãng, giữ trọn hương thơm thanh khiết thoảng nhẹ cho ngày mới tỉnh táo.",
-        price: "45.000đ",
-        image:
-          "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500",
+        name: "CÀ PHÊ LATTE",
+        desc: "Cà phê espresso đậm đà hòa quyện cùng sữa tươi thanh mát, tạo nên thức uống cân bằng hoàn hảo giữa vị cà phê và sữa.",
+        price: "35.000đ",
+        image: "/images/fnb/latte.webp",
       },
     ],
   },

@@ -3,15 +3,16 @@ import { motion } from "framer-motion";
 import ProjectCard from "../../../../components/Card/ProjectCard";
 import { houseService } from "../../../../services/houseService";
 import { useNavigate } from "react-router-dom";
+
 const ProjectGrid = () => {
   const [houses, setHouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchLatestHouses = async () => {
       try {
         const data = await houseService.getLatest(3);
-
         setHouses(data || []);
       } catch (error) {
         console.error(error);
@@ -22,7 +23,9 @@ const ProjectGrid = () => {
 
     fetchLatestHouses();
   }, []);
+
   console.log("Latest houses:", houses);
+
   return (
     <section className="l w-full overflow-hidden font-sans">
       {/* --- PHẦN 1: TIÊU ĐỀ SECTION VỚI TEXT GRADIENT --- */}
@@ -56,23 +59,56 @@ const ProjectGrid = () => {
               <ProjectCard key={house.id} project={house} index={index} />
             ))
           ) : (
-            <div className="col-span-3 py-10 text-center text-gray-400">
-              Hiện chưa có nhà ở nào được đăng tải.
+            /* Thêm giao diện Empty State cho Nhà Ở */
+            <div className="col-span-1 md:col-span-2 lg:col-span-3">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="border-primary flex flex-col items-center justify-center rounded-2xl border border-dashed bg-stone-50/50 px-4 py-16 text-center"
+              >
+                {/* Icon chiếc hộp rỗng tối giản vẽ bằng SVG */}
+                <svg
+                  className="mb-4 h-12 w-12 text-stone-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+                <h3 className="mb-1 text-base font-semibold text-stone-700">
+                  Chưa có dữ liệu hiển thị
+                </h3>
+                <p className="max-w-xs text-sm font-light text-stone-400">
+                  Hiện tại danh mục{" "}
+                  <span className="font-medium text-stone-500">
+                    dự án nhà ở
+                  </span>{" "}
+                  đang được cập nhật. Vui lòng quay lại sau!
+                </p>
+              </motion.div>
             </div>
           )}
         </div>
 
-        <div className="mt-16 flex w-full justify-center">
-          <motion.button
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            onClick={() => navigate("/bat-dong-san/nha-o")}
-            className="bg-primary cursor-pointer rounded-xl px-10 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98]"
-          >
-            XEM THÊM DỰ ÁN
-          </motion.button>
-        </div>
+        {/* Ẩn nút nếu không có nhà ở nào để tránh phá vỡ bố cục trải nghiệm */}
+        {houses.length > 0 && (
+          <div className="mt-16 flex w-full justify-center">
+            <motion.button
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              onClick={() => navigate("/bat-dong-san/nha-o")}
+              className="bg-primary cursor-pointer rounded-xl px-10 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all hover:brightness-110 active:scale-[0.98]"
+            >
+              XEM THÊM DỰ ÁN
+            </motion.button>
+          </div>
+        )}
       </div>
     </section>
   );

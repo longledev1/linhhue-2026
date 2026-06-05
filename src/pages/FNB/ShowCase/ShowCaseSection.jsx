@@ -41,22 +41,22 @@ const PRODUCT_DATA = {
   tea: [
     {
       id: 4,
-      name: "TRÀ ĐÀO CAM SẢ",
-      image: "/images/fnb/tea-pack.png",
+      name: "TRÀ THÁI NGUYÊN",
+      image: "/images/fnb/tra1.png",
       description:
-        "Hương trà thanh nhẹ kết hợp cùng vị trái cây tự nhiên, mang đến trải nghiệm thư giãn và tươi mới.",
+        "Được hái từ những đồi chè xanh mướt của Thái Nguyên, mang hương thơm đặc trưng và vị chát nhẹ tinh tế.",
     },
     {
       id: 5,
       name: "TRÀ HOA CÚC",
-      image: "/images/fnb/tea-pack.png",
+      image: "/images/fnb/tra1.png",
       description:
         "Được tuyển chọn từ những cánh hoa tự nhiên, mang hương thơm dịu nhẹ và hậu vị dễ chịu.",
     },
     {
       id: 6,
       name: "TRÀ BERRY",
-      image: "/images/fnb/tea-pack.png",
+      image: "/images/fnb/tra1.png",
       description:
         "Sự kết hợp hài hòa giữa trà và vị berry chua ngọt, thích hợp cho những buổi chiều thư giãn.",
     },
@@ -66,21 +66,21 @@ const PRODUCT_DATA = {
     {
       id: 7,
       name: "SET QUÀ TẶNG PREMIUM",
-      image: "/images/fnb/gift-box.png",
+      image: "/images/fnb/box.png",
       description:
         "Thiết kế sang trọng cùng những sản phẩm được tuyển chọn kỹ lưỡng dành cho những dịp đặc biệt.",
     },
     {
       id: 8,
       name: "SET QUÀ TẶNG DOANH NGHIỆP",
-      image: "/images/fnb/gift-box.png",
+      image: "/images/fnb/box.png",
       description:
         "Mang đậm dấu ấn thương hiệu và sự tinh tế dành cho đối tác và khách hàng doanh nghiệp.",
     },
     {
       id: 9,
       name: "SET QUÀ TẶNG TẾT",
-      image: "/images/fnb/gift-box.png",
+      image: "/images/fnb/box.png",
       description:
         "Sự kết hợp giữa cà phê, trà và đặc sản tuyển chọn tạo nên món quà đầy ý nghĩa.",
     },

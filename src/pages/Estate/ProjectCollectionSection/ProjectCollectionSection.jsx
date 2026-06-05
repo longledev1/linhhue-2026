@@ -131,7 +131,7 @@ const ProjectCollectionSection = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-200 bg-stone-50/50 px-4 py-16 text-center"
+            className="border-primary flex flex-col items-center justify-center rounded-2xl border border-dashed bg-stone-50/50 px-4 py-16 text-center"
           >
             {/* Icon chiếc hộp rỗng tối giản vẽ bằng SVG */}
             <svg

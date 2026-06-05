@@ -149,7 +149,7 @@ export default function HousePage() {
       </Drawer>
 
       <div className="container mx-auto mt-8 px-4">
-        <p className="mt-2 mb-2 text-sm text-gray-500">
+        <p className="mt-2 mb-2 text-sm text-gray-500 md:hidden">
           Bất động sản /{" "}
           <span className="text-primary font-semibold">Danh mục nhà ở</span>
         </p>

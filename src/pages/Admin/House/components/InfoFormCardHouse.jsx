@@ -131,7 +131,7 @@ export default function InfoFormCardHouse({
             helperText={errors.bathroom?.message}
           />
           <TextField
-            label="Vị trí Tầng"
+            label="Số tầng"
             type="number"
             fullWidth
             {...register("floor")}

@@ -34,7 +34,6 @@ export default function ApartmentPage() {
     fetchFilteredApartments(formData, 0, INITIAL_LIMIT, false);
   };
 
-  // Bốc các action và state từ Zustand Store
   const {
     apartments,
     totalApartments,

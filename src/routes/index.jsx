@@ -31,7 +31,9 @@ const LandDetailSection = lazy(
 );
 
 // ADMIN
-const AdminLogin = lazy(() => import("../components/Admin/AdminLogin.jsx")); // 🌟 BỔ SUNG TRANG LOGIN ADMIN
+// const AdminLogin = lazy(() => import("../components/Admin/AdminLogin.jsx"));
+const AdminLogin = lazy(() => import("../components/Admin/AdminLoginForm.jsx"));
+
 const AdminDashboard = lazy(() => import("../pages/Admin/Dashboard.jsx"));
 
 const AdminApartmentList = lazy(

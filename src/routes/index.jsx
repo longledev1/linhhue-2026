@@ -4,60 +4,99 @@ import { lazy } from "react";
 import { MainLayout } from "../layouts/MainLayout.jsx";
 import AdminLayout from "../layouts/AdminLayout.jsx";
 
-// 🌟 IMPORT TẤM KHIÊN BẢO VỆ ROUTE (Chỉnh lại đường dẫn chuẩn file của bạn)
+// 🌟 IMPORT TẤM KHIÊN BẢO VỆ ROUTE
 import ProtectedRoute from "../components/Admin/ProtectedRoute.jsx";
 
-// USER
-const HomePage = lazy(() => import("../pages/HomePage/index.jsx"));
-const EstatePage = lazy(() => import("../pages/Estate/index.jsx"));
-const AboutUsPage = lazy(() => import("../pages/AboutUs/index.jsx"));
-const FNBPage = lazy(() => import("../pages/FNB/index.jsx"));
-const NotFound = lazy(() => import("../pages/NotFoundPage.jsx"));
+// ============================================================================
+// 🛠️ HÀM BỌC LAZY TỰ ĐỘNG KHẮC PHỤC LỖI FETCH MODULE (CACHE/DEPLOY MỚI)
+// ============================================================================
+const lazyWithRetry = (componentImport) =>
+  lazy(() =>
+    componentImport().catch((error) => {
+      const isNetworkError =
+        error.message.includes("Failed to fetch dynamically imported module") ||
+        error.message.includes("is not a valid script");
 
-const ApartmentPage = lazy(
+      if (isNetworkError) {
+        // Tự động ép trình duyệt reload lại để nhận danh sách file build mới nhất từ server
+        window.location.reload();
+      }
+      throw error;
+    }),
+  );
+
+// ============================================================================
+// 📦 KHAI BÁO CÁC TRANG (ỨNG DỤNG LAZY WITH RETRY)
+// ============================================================================
+
+// USER
+const HomePage = lazyWithRetry(() => import("../pages/HomePage/index.jsx"));
+const EstatePage = lazyWithRetry(() => import("../pages/Estate/index.jsx"));
+const AboutUsPage = lazyWithRetry(() => import("../pages/AboutUs/index.jsx"));
+const FNBPage = lazyWithRetry(() => import("../pages/FNB/index.jsx"));
+const NotFound = lazyWithRetry(() => import("../pages/NotFoundPage.jsx"));
+
+const ApartmentPage = lazyWithRetry(
   () => import("../pages/EstateList/ApartmentPage.jsx"),
 );
-const HousePage = lazy(() => import("../pages/EstateList/HousePage.jsx"));
-const LandPage = lazy(() => import("../pages/EstateList/LandPage.jsx"));
+const HousePage = lazyWithRetry(
+  () => import("../pages/EstateList/HousePage.jsx"),
+);
+const LandPage = lazyWithRetry(
+  () => import("../pages/EstateList/LandPage.jsx"),
+);
 
-const ApartmentDetail = lazy(
+const ApartmentDetail = lazyWithRetry(
   () => import("../pages/ProjectDetails/ApartmentDetailSection/index.jsx"),
 );
-const HouseDetailSection = lazy(
+const HouseDetailSection = lazyWithRetry(
   () => import("../pages/ProjectDetails/HouseDetailSection/index.jsx"),
 );
-const LandDetailSection = lazy(
+const LandDetailSection = lazyWithRetry(
   () => import("../pages/ProjectDetails/LandDetailSection.jsx/index.jsx"),
 );
 
 // ADMIN
-// const AdminLogin = lazy(() => import("../components/Admin/AdminLogin.jsx"));
-const AdminLogin = lazy(() => import("../components/Admin/AdminLoginForm.jsx"));
+const AdminLogin = lazyWithRetry(
+  () => import("../components/Admin/AdminLoginForm.jsx"),
+);
+const AdminDashboard = lazyWithRetry(
+  () => import("../pages/Admin/Dashboard.jsx"),
+);
 
-const AdminDashboard = lazy(() => import("../pages/Admin/Dashboard.jsx"));
-
-const AdminApartmentList = lazy(
+const AdminApartmentList = lazyWithRetry(
   () => import("../pages/Admin/Apartment/ApartmentList.jsx"),
 );
-const AdminCreateApartment = lazy(
+const AdminCreateApartment = lazyWithRetry(
   () => import("../pages/Admin/Apartment/CreateApartment.jsx"),
 );
-const AdminApartmentEdit = lazy(
+const AdminApartmentEdit = lazyWithRetry(
   () => import("../pages/Admin/Apartment/EditApartment.jsx"),
 );
 
-const AdminHouseList = lazy(() => import("../pages/Admin/House/HouseList.jsx"));
-const AdminCreateHouse = lazy(
+const AdminHouseList = lazyWithRetry(
+  () => import("../pages/Admin/House/HouseList.jsx"),
+);
+const AdminCreateHouse = lazyWithRetry(
   () => import("../pages/Admin/House/CreateHouse.jsx"),
 );
-const AdminHouseEdit = lazy(() => import("../pages/Admin/House/EditHouse.jsx"));
+const AdminHouseEdit = lazyWithRetry(
+  () => import("../pages/Admin/House/EditHouse.jsx"),
+);
 
-const AdminLandList = lazy(() => import("../pages/Admin/Land/LandList.jsx"));
-const AdminCreateLand = lazy(
+const AdminLandList = lazyWithRetry(
+  () => import("../pages/Admin/Land/LandList.jsx"),
+);
+const AdminCreateLand = lazyWithRetry(
   () => import("../pages/Admin/Land/CreateLand.jsx"),
 );
-const AdminEditLand = lazy(() => import("../pages/Admin/Land/EditLand.jsx"));
+const AdminEditLand = lazyWithRetry(
+  () => import("../pages/Admin/Land/EditLand.jsx"),
+);
 
+// ============================================================================
+// 🗺️ ĐỊNH TUYẾN ROUTER
+// ============================================================================
 const router = createBrowserRouter([
   // ======================== PHÂN HỆ USER KHÔNG KHÓA ========================
   {
@@ -79,12 +118,12 @@ const router = createBrowserRouter([
   // ======================== TRANG LOGIN CỦA ADMIN (MỞ CÔNG KHAI) ========================
   {
     path: "/admin/login",
-    element: <AdminLogin />, // 🌟 Trang này KHÔNG bọc để admin còn vào lấy OTP
+    element: <AdminLogin />,
   },
 
   // ======================== 🌟 VÙNG BẢO MẬT ADMIN (BỌC PROTECTEDROUTE) ========================
   {
-    element: <ProtectedRoute children={<AdminLayout />} />, // 🔑 KHÓA CHÍNH: Cho ProtectedRoute làm cha bọc AdminLayout bên trong!
+    element: <ProtectedRoute children={<AdminLayout />} />,
     children: [
       {
         path: "/admin/dashboard",

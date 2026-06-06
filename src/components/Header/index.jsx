@@ -202,7 +202,7 @@ const Header = () => {
                     }
                     className="hover:text-primary flex w-full items-center justify-between py-1 text-sm font-light tracking-wider text-white transition-colors outline-none"
                   >
-                    <span>Bất động sản</span>
+                    <Link to="/bat-dong-san">Bất động sản</Link>
                     <svg
                       className={`h-4 w-4 transition-transform duration-300 ${isMobileDropdownOpen ? "text-primary rotate-180" : "text-gray-400"}`}
                       fill="none"

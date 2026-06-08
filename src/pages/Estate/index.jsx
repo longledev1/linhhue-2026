@@ -17,6 +17,12 @@ const EstatePage = () => {
       <IntroSection />
       <ExpandingProjectSlider />
       <HighLightSection />
+
+      {/* Đường gạch phân chia giữa 2 section */}
+      <div className="container mx-auto max-w-7xl">
+        <div className="via-primary mt-[-50px] h-px w-full bg-gradient-to-r from-transparent to-transparent" />
+      </div>
+
       <ProjectCollectionSection />
     </div>
   );

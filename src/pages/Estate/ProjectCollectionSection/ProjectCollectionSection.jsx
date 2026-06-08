@@ -75,13 +75,13 @@ const ProjectCollectionSection = () => {
       className="mb-[100px] w-full font-sans"
     >
       <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-        {/* ================= FILTER BUTTONS (FIXED RESPONSIVE) ================= */}
+        {/* ================= FILTER BUTTONS ================= */}
         <div className="mb-10 flex items-center justify-center gap-4">
           {/* Left Line - Ẩn hoàn toàn trên mobile, chỉ hiện từ md trở lên */}
           <div className="hidden h-px flex-1 bg-gray-300/70 md:block" />
 
-          {/* Filter Buttons Container - flex-wrap kết hợp justify-center giúp giữ hàng hoặc xuống hàng đều */}
-          <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:gap-3">
+          {/* Filter Buttons Container - Grid 3 cột đều trên mobile, chuyển sang Flex trên desktop */}
+          <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:items-center sm:justify-center sm:gap-3">
             {filters.map((filter) => {
               const isActive = activeFilter === filter.value;
 
@@ -89,7 +89,7 @@ const ProjectCollectionSection = () => {
                 <button
                   key={filter.value}
                   onClick={() => handleFilterChange(filter.value)}
-                  className={`rounded-lg border px-4 py-2 text-xs font-medium transition-all duration-300 sm:text-sm ${
+                  className={`rounded-lg border py-2.5 text-center text-xs font-medium transition-all duration-300 sm:px-4 sm:text-sm ${
                     isActive
                       ? "border-[#ab8c5d] bg-[#ab8c5d] text-white shadow-md shadow-[#ab8c5d]/20"
                       : "border-black/10 bg-white text-[#1c1c1a] hover:border-[#ab8c5d] hover:text-[#ab8c5d]"
@@ -124,7 +124,7 @@ const ProjectCollectionSection = () => {
             ))}
           </div>
         ) : (
-          /* 🌟 FIX EMPTY STATE: Đổi border-primary thành viền có mã màu cụ thể rõ nét hơn */
+          /* Empty State với màu border-dashed sắc nét ăn theo tone nâu vàng chủ đạo */
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

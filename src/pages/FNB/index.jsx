@@ -10,7 +10,7 @@ const FNBPage = () => {
   return (
     <div className="min-h-screen w-full bg-white">
       <PageHeader
-        title="TRỌN VẸN TỪ TỰ NHIÊN"
+        title="TRỌN VẸN TỰ NHIÊN"
         subtitle="Từ những rẫy cafe mộc mạc cho đến những quả tươi lành, chúng tôi chắt lọc tinh túy của đất trời vào từng sản phẩm. Dù là cafe di sản hay Kombucha thanh mát, tất cả đều mang đến cho bạn hương vị nguyên bản và thuần khiết nhất"
         backgroundImage="/images/fnb/coffee_banner.png"
       />

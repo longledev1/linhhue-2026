@@ -82,7 +82,7 @@ const PageHeader = ({
               delay: 0.2,
               ease: "easeOut",
             }}
-            className="mb-6 text-4xl leading-[0.95] font-extrabold tracking-tight text-white uppercase md:text-5xl lg:text-[58px] xl:text-[64px]"
+            className="mb-6 text-3xl leading-[0.95] font-extrabold tracking-tight text-white uppercase md:text-5xl lg:text-[58px] xl:text-[64px]"
           >
             {title || "KHỞI NGUỒN"}
           </motion.h1>

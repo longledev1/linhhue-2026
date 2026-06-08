@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -117,13 +117,14 @@ const Header = () => {
             </div>
           </nav>
 
-          <Link
-            to="https://zalo.me/0937175384"
+          <a
+            href="https://zalo.me/0937175384"
             target="_blank"
+            rel="noreferrer"
             className="hidden rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 md:block"
           >
             LIÊN HỆ NGAY
-          </Link>
+          </a>
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -162,6 +163,7 @@ const Header = () => {
           </button>
         </div>
 
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
@@ -195,28 +197,51 @@ const Header = () => {
                   F&B
                 </NavLink>
 
+                {/* Mobile Dropdown Container */}
                 <div className="flex flex-col">
-                  <button
-                    onClick={() =>
-                      setIsMobileDropdownOpen(!isMobileDropdownOpen)
-                    }
-                    className="hover:text-primary flex w-full items-center justify-between py-1 text-sm font-light tracking-wider text-white transition-colors outline-none"
-                  >
-                    <Link to="/bat-dong-san">Bất động sản</Link>
-                    <svg
-                      className={`h-4 w-4 transition-transform duration-300 ${isMobileDropdownOpen ? "text-primary rotate-180" : "text-gray-400"}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2.5"
+                  <div className="flex w-full items-center justify-between py-1">
+                    {/* Đổi Link thành NavLink để tự nhận active class */}
+                    <NavLink
+                      to="/bat-dong-san"
+                      className={({ isActive }) =>
+                        `text-sm tracking-wider transition-colors outline-none ${
+                          isActive
+                            ? "text-primary font-semibold"
+                            : "hover:text-primary font-light text-white"
+                        }`
+                      }
+                      onClick={() => setIsMobileMenuOpen(false)} // Tự đóng menu khi bấm thẳng vào chữ
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                      />
-                    </svg>
-                  </button>
+                      Bất động sản
+                    </NavLink>
+
+                    {/* Nút SVG chỉ làm nhiệm vụ toggle mở rộng danh mục con */}
+                    <button
+                      onClick={() =>
+                        setIsMobileDropdownOpen(!isMobileDropdownOpen)
+                      }
+                      className="p-1 outline-none"
+                      aria-label="Toggle Submenu"
+                    >
+                      <svg
+                        className={`h-4 w-4 transition-transform duration-300 ${
+                          isMobileDropdownOpen
+                            ? "text-primary rotate-180"
+                            : "text-gray-400"
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2.5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    </button>
+                  </div>
 
                   <AnimatePresence initial={false}>
                     {isMobileDropdownOpen && (
@@ -234,7 +259,7 @@ const Header = () => {
                             className={({ isActive }) =>
                               `py-1.5 text-sm transition-colors ${
                                 isActive
-                                  ? "text-primary font-semibold" // Active ở mobile menu con
+                                  ? "text-primary font-semibold"
                                   : "hover:text-primary text-gray-400"
                               }`
                             }
@@ -254,6 +279,7 @@ const Header = () => {
                 <a
                   href="https://zalo.me/0937175384"
                   target="_blank"
+                  rel="noreferrer"
                   className="mt-2 w-full rounded-lg bg-gradient-to-b from-[#ab8c5d] to-[#453826] py-3 text-center text-sm font-semibold text-white transition-all hover:brightness-110"
                 >
                   LIÊN HỆ NGAY

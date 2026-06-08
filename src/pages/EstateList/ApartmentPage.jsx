@@ -93,10 +93,8 @@ export default function ApartmentPage() {
 
   const hasMore = apartments.length < totalApartments;
 
-  console.log("Danh sách căn hộ hiện có trên UI:", apartments);
-
   return (
-    <div className="min-h-screen pt-[100px] md:pt-[140px]">
+    <div className="pt-[140px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
       {/* Desktop */}
       <div className="hidden md:block">
@@ -168,9 +166,9 @@ export default function ApartmentPage() {
           <span className="text-primary font-semibold">Danh mục căn hộ</span>
         </p>
         <div className="mb-6 flex items-center justify-between">
-          <p className="text-lg font-bold text-gray-800">
+          <p className="text-sm font-bold text-gray-800 sm:text-lg">
             Hiện có{" "}
-            <span className="text-primary text-xl">
+            <span className="text-primary text-xl sm:text-2xl">
               {isLoading && apartments.length === 0 ? "..." : totalApartments}
             </span>{" "}
             danh mục căn hộ phù hợp

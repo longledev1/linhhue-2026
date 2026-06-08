@@ -89,7 +89,7 @@ export default function LandPage() {
   console.log("Danh sách đất nền hiện có trên UI:", lands);
 
   return (
-    <div className="min-h-screen pt-[140px] md:pt-[140px]">
+    <div className="pt-[140px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
       <div className="hidden md:block">
         <FilterBarBase
@@ -161,11 +161,13 @@ export default function LandPage() {
         </p>
         <div className="mb-6 flex items-center justify-between">
           <p className="text-lg font-bold text-gray-800">
-            Hiện có{" "}
-            <span className="text-primary text-xl">
-              {isLoading && lands.length === 0 ? "..." : totalLands}
-            </span>{" "}
-            danh mục đất nền phù hợp
+            <p className="text-sm font-bold text-gray-800 sm:text-lg">
+              Hiện có{" "}
+              <span className="text-primary text-xl sm:text-2xl">
+                {isLoading && lands.length === 0 ? "..." : totalLands}
+              </span>{" "}
+              danh mục căn hộ phù hợp
+            </p>
           </p>
         </div>
 

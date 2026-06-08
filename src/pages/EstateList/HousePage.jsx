@@ -84,7 +84,7 @@ export default function HousePage() {
   const hasMore = houses.length < totalHouses;
 
   return (
-    <div className="min-h-screen pt-[140px] md:pt-[140px]">
+    <div className="pt-[140px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
       <div className="hidden md:block">
         <FilterBarBase
@@ -154,9 +154,9 @@ export default function HousePage() {
           <span className="text-primary font-semibold">Danh mục nhà ở</span>
         </p>
         <div className="mb-6 flex items-center justify-between">
-          <p className="text-lg font-bold text-gray-800">
+          <p className="text-sm font-bold text-gray-800 sm:text-lg">
             Hiện có{" "}
-            <span className="text-primary text-xl">
+            <span className="text-primary text-xl sm:text-2xl">
               {isLoading && houses.length === 0 ? "..." : totalHouses}
             </span>{" "}
             danh mục nhà ở phù hợp

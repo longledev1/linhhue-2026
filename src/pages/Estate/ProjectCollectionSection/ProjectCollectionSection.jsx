@@ -13,7 +13,7 @@ const ProjectCollectionSection = () => {
   const [apartmentProjects, setApartmentProjects] = useState([]);
   const [houseProjects, setHouseProjects] = useState([]);
   const [landProjects, setLandProjects] = useState([]);
-  const [loading, setLoading] = useState(true); // Thêm state loading để tránh bị nhấp nháy chữ "Không có dự án" khi đang fetch
+  const [loading, setLoading] = useState(true);
 
   const filters = [
     { label: "Căn hộ", value: "apartment" },
@@ -64,7 +64,6 @@ const ProjectCollectionSection = () => {
     setShowAll(false);
   };
 
-  // Lấy nhãn tiếng Việt của tab hiện tại để đưa vào câu thông báo trống cho thân thiện
   const currentFilterLabel =
     filters.find((f) => f.value === activeFilter)?.label || "dự án";
 
@@ -76,13 +75,13 @@ const ProjectCollectionSection = () => {
       className="mb-[100px] w-full font-sans"
     >
       <div className="container mx-auto max-w-7xl px-4 lg:px-8">
-        {/* ================= FILTER BUTTONS ================= */}
-        <div className="mb-10 flex items-center justify-center gap-5">
-          {/* Left Line */}
-          <div className="h-px flex-1 bg-gray-300/70" />
+        {/* ================= FILTER BUTTONS (FIXED RESPONSIVE) ================= */}
+        <div className="mb-10 flex items-center justify-center gap-4">
+          {/* Left Line - Ẩn hoàn toàn trên mobile, chỉ hiện từ md trở lên */}
+          <div className="hidden h-px flex-1 bg-gray-300/70 md:block" />
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          {/* Filter Buttons Container - flex-wrap kết hợp justify-center giúp giữ hàng hoặc xuống hàng đều */}
+          <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:gap-3">
             {filters.map((filter) => {
               const isActive = activeFilter === filter.value;
 
@@ -90,9 +89,9 @@ const ProjectCollectionSection = () => {
                 <button
                   key={filter.value}
                   onClick={() => handleFilterChange(filter.value)}
-                  className={`rounded-lg border px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                  className={`rounded-lg border px-4 py-2 text-xs font-medium transition-all duration-300 sm:text-sm ${
                     isActive
-                      ? "border-[#ab8c5d] bg-[#ab8c5d] text-white shadow-md"
+                      ? "border-[#ab8c5d] bg-[#ab8c5d] text-white shadow-md shadow-[#ab8c5d]/20"
                       : "border-black/10 bg-white text-[#1c1c1a] hover:border-[#ab8c5d] hover:text-[#ab8c5d]"
                   }`}
                 >
@@ -102,13 +101,12 @@ const ProjectCollectionSection = () => {
             })}
           </div>
 
-          {/* Right Line */}
-          <div className="h-px flex-1 bg-gray-300/70" />
+          {/* Right Line - Ẩn hoàn toàn trên mobile, chỉ hiện từ md trở lên */}
+          <div className="hidden h-px flex-1 bg-gray-300/70 md:block" />
         </div>
 
         {/* ================= PROJECT GRID & EMPTY STATE ================= */}
         {loading ? (
-          // Khối Loading giả lập (Skeleton) trong lúc đợi API
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {[...Array(3)].map((_, i) => (
               <div
@@ -118,7 +116,6 @@ const ProjectCollectionSection = () => {
             ))}
           </div>
         ) : filteredProjects.length > 0 ? (
-          // Nếu CÓ dự án -> Render danh sách như cũ
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {visibleProjects.map((project, index) => (
               <div key={project.id}>
@@ -127,15 +124,14 @@ const ProjectCollectionSection = () => {
             ))}
           </div>
         ) : (
-          // 🌟 Nếu KHÔNG CÓ dự án -> Hiện khối Empty State cực đẹp
+          /* 🌟 FIX EMPTY STATE: Đổi border-primary thành viền có mã màu cụ thể rõ nét hơn */
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="border-primary flex flex-col items-center justify-center rounded-2xl border border-dashed bg-stone-50/50 px-4 py-16 text-center"
+            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#ab8c5d]/40 bg-stone-50/60 px-6 py-16 text-center"
           >
-            {/* Icon chiếc hộp rỗng tối giản vẽ bằng SVG */}
             <svg
-              className="mb-4 h-12 w-12 text-stone-300"
+              className="mb-4 h-12 w-12 text-stone-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -147,12 +143,12 @@ const ProjectCollectionSection = () => {
                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"
               />
             </svg>
-            <h3 className="mb-1 text-base font-semibold text-stone-700">
+            <h3 className="mb-1.5 text-base font-semibold text-stone-700">
               Chưa có dữ liệu hiển thị
             </h3>
-            <p className="max-w-xs text-sm font-light text-stone-400">
+            <p className="max-w-xs text-sm leading-relaxed font-light text-stone-500">
               Hiện tại danh mục{" "}
-              <span className="font-medium text-stone-500">
+              <span className="font-semibold text-[#ab8c5d]">
                 {currentFilterLabel}
               </span>{" "}
               tiêu biểu đang được cập nhật. Vui lòng quay lại sau!
@@ -165,7 +161,7 @@ const ProjectCollectionSection = () => {
           <div className="mt-14 flex justify-center">
             <button
               onClick={() => setShowAll(true)}
-              className="bg-primary rounded-xl px-8 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="rounded-xl bg-[#ab8c5d] px-8 py-3 text-sm font-semibold text-white transition hover:opacity-90"
             >
               Xem thêm dự án
             </button>

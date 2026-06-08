@@ -89,7 +89,7 @@ export default function LandPage() {
   console.log("Danh sách đất nền hiện có trên UI:", lands);
 
   return (
-    <div className="min-h-screen pt-[100px] pb-16 md:pt-[140px]">
+    <div className="min-h-screen pt-[140px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}
       <div className="hidden md:block">
         <FilterBarBase

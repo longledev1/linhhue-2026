@@ -128,7 +128,7 @@ const ProjectCollectionSection = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#ab8c5d]/40 bg-stone-50/60 px-6 py-16 text-center"
+            className="border-primary flex flex-col items-center justify-center rounded-2xl border border-dashed bg-stone-50/60 px-6 py-16 text-center"
           >
             <svg
               className="mb-4 h-12 w-12 text-stone-400"
@@ -148,7 +148,7 @@ const ProjectCollectionSection = () => {
             </h3>
             <p className="max-w-xs text-sm leading-relaxed font-light text-stone-500">
               Hiện tại danh mục{" "}
-              <span className="font-semibold text-[#ab8c5d]">
+              <span className="font-semibold text-stone-500">
                 {currentFilterLabel}
               </span>{" "}
               tiêu biểu đang được cập nhật. Vui lòng quay lại sau!

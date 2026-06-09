@@ -164,7 +164,7 @@ export default function LandPage() {
               <span className="text-primary text-xl sm:text-2xl">
                 {isLoading && lands.length === 0 ? "..." : totalLands}
               </span>{" "}
-              danh mục căn hộ phù hợp
+              danh mục đất đai phù hợp
             </p>
           </p>
         </div>

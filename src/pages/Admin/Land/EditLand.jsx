@@ -196,8 +196,6 @@ export default function AdminEditLand() {
         category: "land",
       };
 
-      console.log("Payload gửi đi để cập nhật đất nền:", payload);
-
       if (oldLandData) {
         const oldFeatured = oldLandData.is_featured;
         const newFeatured = data.is_featured;

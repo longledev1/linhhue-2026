@@ -129,8 +129,6 @@ export default function AdminCreateApartment() {
         category: "apartment",
       };
 
-      console.log("=== 🚀 PAYLOAD THỰC TẾ BẮN QUA STORE ===", payload);
-
       const result = await addApartment(payload);
 
       if (result.success) {

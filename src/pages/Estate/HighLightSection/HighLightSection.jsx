@@ -21,9 +21,7 @@ const HighLightSection = () => {
         ]);
 
         const merged = [...apartments, ...houses, ...lands];
-        console.log("APARTMENTS", apartments);
-        console.log("HOUSES", houses);
-        console.log("LANDS", lands);
+
         merged.sort(
           (a, b) =>
             new Date(b.featured_at).getTime() -
@@ -42,7 +40,6 @@ const HighLightSection = () => {
   }, []);
 
   const featuredProject = projects[0];
-  console.log("Featured Project:", featuredProject);
   const normalProjects = projects.slice(1);
   const visibleProjects = showAll ? normalProjects : normalProjects.slice(0, 3);
 

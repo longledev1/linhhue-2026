@@ -24,8 +24,6 @@ const ProjectGrid = () => {
     fetchLatestHouses();
   }, []);
 
-  console.log("Latest houses:", houses);
-
   return (
     <section className="l w-full overflow-hidden font-sans">
       {/* --- PHẦN 1: TIÊU ĐỀ SECTION VỚI TEXT GRADIENT --- */}

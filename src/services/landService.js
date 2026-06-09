@@ -200,8 +200,6 @@ export const landService = {
         .from("apartments")
         .remove(filesToDelete);
 
-      console.log("✅ Kết quả dọn rác folder lands:", removedFiles);
-
       if (storageError) {
         console.error("❌ Lỗi Storage khi xóa đất nền:", storageError.message);
         throw storageError;

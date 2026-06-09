@@ -160,7 +160,6 @@ export default function LandDetailSection() {
 
   const statusLabel = isRent ? "Cho thuê mặt bằng" : "Mua bán đất nền";
   const wardLabel = formatWard(project.ward) || "Chưa xác định";
-  console.log(project);
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20">
       <div className="container">

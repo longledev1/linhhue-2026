@@ -86,8 +86,6 @@ export default function LandPage() {
 
   const hasMore = lands.length < totalLands;
 
-  console.log("Danh sách đất nền hiện có trên UI:", lands);
-
   return (
     <div className="pt-[140px] md:pt-[140px]">
       {/* 1. Thanh Filter Bar cố định đầu trang */}

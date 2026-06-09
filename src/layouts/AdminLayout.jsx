@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Drawer } from "@mui/material"; // Giữ lại Drawer cho Mobile/Desktop cố định
+import { Drawer } from "@mui/material";
 import AdminTopbar from "../components/Admin/AdminTopbar";
 import AdminSidebar from "../components/Admin/AdminSidebar";
 
@@ -15,9 +15,8 @@ export default function AdminLayout() {
   };
 
   return (
-    // 🌟 KHUNG NGOÀI CÙNG: Dùng Flexbox thuần của Tailwind tràn màn hình
-    <div className="flex min-h-screen bg-[#f4f5f7]">
-      {/* 1. TOP BAR (Giữ nguyên) */}
+    <div className="min-h-screen bg-[#f4f5f7]">
+      {/* 1. TOP BAR */}
       <AdminTopbar
         sidebarWidth={SIDEBAR_WIDTH}
         onDrawerToggle={handleDrawerToggle}
@@ -25,8 +24,9 @@ export default function AdminLayout() {
       />
 
       {/* 2. SIDEBAR NAVIGATION */}
-      <nav className="md:flex-shrink-0" style={{ width: `${SIDEBAR_WIDTH}px` }}>
-        {/* Bản Mobile bằng Drawer MUI */}
+      {/* Trên Mobile: Ẩn hoàn toàn khung nav (w-0) | Trên Desktop: Hiện cố định (md:w-[260px]) */}
+      <nav className="w-0 md:w-[260px] md:flex-shrink-0">
+        {/* Bản Mobile: Drawer vuốt từ cạnh ra */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -44,7 +44,7 @@ export default function AdminLayout() {
           <AdminSidebar primaryColor={PRIMARY_COLOR} />
         </Drawer>
 
-        {/* Bản Desktop cố định bằng Drawer MUI */}
+        {/* Bản Desktop: Ghim cố định bên trái */}
         <Drawer
           variant="permanent"
           sx={{
@@ -62,9 +62,14 @@ export default function AdminLayout() {
       </nav>
 
       {/* 3. VÙNG NỘI DUNG CHÍNH (MAIN CONTENT) */}
-      {/* 🌟 FIX CHÍ MẠNG: Dùng thẻ main thuần với w-full flex-1 và ép tràn viền bằng Tailwind */}
-      <main className="mt-[64px] box-border min-w-0 flex-1 overflow-x-hidden p-6">
-        <Outlet />
+      {/* 
+         - Trên Mobile: p-4 tràn 100% màn hình, không bị Sidebar chiếm chỗ.
+         - Trên Desktop: p-6 và thụt lề md:pl-[284px] (260px Sidebar + 24px padding-left).
+      */}
+      <main className="mt-[64px] box-border min-w-0 p-4 transition-all duration-300 md:p-6 md:pl-[284px]">
+        <div className="container mx-auto">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

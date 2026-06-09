@@ -164,8 +164,6 @@ export default function LandTable({
                       {formatLandType(row.land_type)}
                     </span>
                     {row.area && ` | ${row.area} m²`}
-                    {row.dimensions && ` | KC: ${row.dimensions}`}
-                    {row.road_width && ` | Đường: ${row.road_width}`}
                   </Typography>
                 </TableCell>
 

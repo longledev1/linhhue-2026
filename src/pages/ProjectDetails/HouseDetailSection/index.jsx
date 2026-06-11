@@ -182,7 +182,10 @@ export default function HouseDetailSection() {
             </div>
 
             <div className="block pt-2 lg:hidden">
-              <HouseInfoSidebar specs={SPEC_ITEMS} />
+              <HouseInfoSidebar
+                phone_number={project.phone_number}
+                specs={SPEC_ITEMS}
+              />
             </div>
 
             <HouseDescription
@@ -197,7 +200,10 @@ export default function HouseDetailSection() {
 
           {/* CỘT PHẢI - SIDEBAR STICKY DESKTOP */}
           <div className="hidden lg:sticky lg:top-6 lg:col-span-1 lg:block">
-            <HouseInfoSidebar specs={SPEC_ITEMS} />
+            <HouseInfoSidebar
+              phone_number={project.phone_number}
+              specs={SPEC_ITEMS}
+            />
           </div>
         </div>
       </div>

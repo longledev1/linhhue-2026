@@ -74,6 +74,7 @@ export default function AdminEditHouse() {
             house_type: data.house_type || "nha-pho",
             status: data.status || "rent",
             province: data.province || "",
+            phone_number: data.phone_number || "",
             ward: data.ward || "",
             address_detail: data.address_detail || "",
             map_iframe: data.map_iframe || "",
@@ -183,6 +184,7 @@ export default function AdminEditHouse() {
         status: data.status,
         province: data.province, // 🔑 ĐỒNG BỘ: Đóng gói province vào payload
         ward: data.ward,
+        phone_number: data.phone_number,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
         description: data.description,

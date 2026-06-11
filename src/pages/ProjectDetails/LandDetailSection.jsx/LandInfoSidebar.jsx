@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { formatPhoneNumber } from "../../../utils/format";
+import { FiPhoneCall } from "react-icons/fi";
 
-export default function LandInfoSidebar({ specs }) {
+export default function LandInfoSidebar({ specs, phone_number }) {
   const PRIMARY_COLOR = "#ab8c5d";
   const FONT_FAMILY = '"Montserrat", sans-serif';
 
@@ -112,21 +114,42 @@ export default function LandInfoSidebar({ specs }) {
             ))}
           </div>
         )}
+        {/* CỤM NÚT LIÊN HỆ TRÊN MOBILE (Đã chuyển sang flex-col và cỡ chữ text-sm) */}
+        <div className="mt-5 flex w-full flex-col gap-3">
+          {/* NÚT 1: CHAT QUA ZALO */}
+          <motion.a
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            href={`https://zalo.me/${phone_number}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white font-sans text-[9px] font-extrabold tracking-tighter text-[#0068ff]">
+              Zalo
+            </div>
+            <span className="font-semibold whitespace-nowrap">
+              Liên hệ Zalo
+            </span>
+          </motion.a>
 
-        {/* NÚT LIÊN HỆ ZALO MOBILE */}
-        <motion.a
-          whileTap={{ scale: 0.98 }}
-          href="https://zalo.me/0937175384"
-          target="_blank"
-          rel="noreferrer"
-          className="shadow-primary/10 mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-xs font-bold tracking-widest text-white shadow-md transition-colors"
-          style={{ backgroundColor: PRIMARY_COLOR }}
-        >
-          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white font-sans text-[8px] font-extrabold tracking-tighter text-[#0068ff]">
-            Zalo
-          </div>
-          LIÊN HỆ NHANH QUA ZALO
-        </motion.a>
+          {/* NÚT 2: SỐ ĐIỆN THOẠI */}
+          <motion.a
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            href={`tel:${phone_number}`}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold tracking-wide text-white shadow-lg transition-all"
+            style={{
+              backgroundColor: PRIMARY_COLOR,
+              boxShadow: "0 10px 25px -5px rgba(171, 140, 93, 0.3)",
+            }}
+          >
+            <FiPhoneCall className="h-4 w-4 shrink-0 animate-pulse" />
+            <span className="whitespace-nowrap">
+              {formatPhoneNumber(phone_number)}
+            </span>
+          </motion.a>
+        </div>
       </div>
 
       {/* ================= LAYOUT 2: HIỂN THỊ TRÊN DESKTOP (HỘP DỌC STICKY CHUẨN ĐẤT NỀN) ================= */}
@@ -165,24 +188,42 @@ export default function LandInfoSidebar({ specs }) {
             </div>
           ))}
         </div>
+        {/* CỤM NÚT LIÊN HỆ TRÊN DESKTOP (Hàng ngang flex-row) */}
+        <div className="mx-auto flex w-full max-w-md flex-row items-center justify-center gap-3">
+          {/* NÚT 1: CHAT QUA ZALO */}
+          <motion.a
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            href={`https://zalo.me/${phone_number}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white font-sans text-[9px] font-extrabold tracking-tighter text-[#0068ff]">
+              Zalo
+            </div>
+            <span className="font-semibold whitespace-nowrap">
+              Liên hệ Zalo
+            </span>
+          </motion.a>
 
-        <motion.a
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          href="https://zalo.me/0937175384"
-          target="_blank"
-          rel="noreferrer"
-          className="shadow-primary/20 flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl py-3.5 text-sm font-bold tracking-widest text-white shadow-lg transition-colors"
-          style={{
-            backgroundColor: PRIMARY_COLOR,
-            boxShadow: "0 10px 25px -5px rgba(171, 140, 93, 0.3)",
-          }}
-        >
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white font-sans text-[10px] font-extrabold tracking-tighter text-[#0068ff]">
-            Zalo
-          </div>
-          LIÊN HỆ NHANH QUA ZALO
-        </motion.a>
+          {/* NÚT 2: SỐ ĐIỆN THOẠI */}
+          <motion.a
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            href={`tel:${phone_number}`}
+            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 font-bold tracking-wide text-white shadow-lg transition-all"
+            style={{
+              backgroundColor: PRIMARY_COLOR,
+              boxShadow: "0 10px 25px -5px rgba(171, 140, 93, 0.3)",
+            }}
+          >
+            <FiPhoneCall className="h-4 w-4 shrink-0 animate-pulse" />
+            <span className="font-semibold whitespace-nowrap">
+              {formatPhoneNumber(phone_number)}
+            </span>
+          </motion.a>
+        </div>
       </div>
     </>
   );

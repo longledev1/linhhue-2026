@@ -83,6 +83,7 @@ export default function AdminEditLand() {
             road_width: data.road_width || "",
             is_published: data.is_published ?? true,
             is_featured: data.is_featured ?? false,
+            phone_number: data.phone_number || "",
           });
 
           setOldImages({
@@ -183,6 +184,7 @@ export default function AdminEditLand() {
         status: data.status,
         province: data.province,
         ward: data.ward,
+        phone_number: data.phone_number,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,
         description: data.description,

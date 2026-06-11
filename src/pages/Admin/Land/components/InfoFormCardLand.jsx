@@ -268,6 +268,21 @@ export default function InfoFormCardLand({
           />
         </div>
 
+        {/* Số điện thoại liên hệ */}
+
+        <div className="mt-[16px]">
+          <TextField
+            label="Số điện thoại liên hệ"
+            fullWidth
+            multiline
+            rows={1}
+            placeholder="Ví dụ: 0909 123 456"
+            {...register("phone_number")}
+            error={!!errors.phone_number}
+            helperText={errors.phone_number?.message}
+          />
+        </div>
+
         {/* Địa chỉ cụ thể lô đất */}
         <div className="mt-[16px]">
           <TextField
@@ -299,8 +314,7 @@ export default function InfoFormCardLand({
         {/* Khối mô tả chi tiết lô đất */}
         <div className="space-y-2 pt-2">
           <label className="block text-sm font-medium text-gray-600">
-            Mô tả thông tin chi tiết lô đất (Rich Text - Sổ đỏ, pháp lý, tiềm
-            năng...)
+            Mô tả thông tin chi tiết lô đất (Rich Text)
           </label>
           <Controller
             name="description"

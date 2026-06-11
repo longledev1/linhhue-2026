@@ -44,6 +44,7 @@ export default function AdminCreateApartment() {
       apartment_type: "chung-cu",
       status: "rent",
       province: "", // 🔑 1. THÊM BIẾN TRẠNG THÁI MẶC ĐỊNH
+      phone_number: "",
       ward: "",
       address_detail: "",
       map_iframe: "",
@@ -116,6 +117,7 @@ export default function AdminCreateApartment() {
         apartment_type: data.apartment_type,
         status: data.status,
         province: data.province, // 🔑 2. ĐÓNG GÓI PROVINCE VÀO PAYLOAD GỬI DATABASE
+        phone_number: data.phone_number,
         ward: data.ward,
         address_detail: data.address_detail,
         map_iframe: data.map_iframe,

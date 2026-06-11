@@ -118,3 +118,15 @@ export const stripHtmlAndEntities = (htmlString) => {
   const doc = new DOMParser().parseFromString(cleanText, "text/html");
   return doc.body.textContent || cleanText;
 };
+
+export const formatPhoneNumber = (value) => {
+  const numbers = value.replace(/\D/g, "");
+
+  if (numbers.length <= 4) return numbers;
+
+  if (numbers.length <= 7) {
+    return `${numbers.slice(0, 4)}${numbers.slice(4)}`;
+  }
+
+  return `${numbers.slice(0, 4)} ${numbers.slice(4, 7)} ${numbers.slice(7, 10)}`;
+};

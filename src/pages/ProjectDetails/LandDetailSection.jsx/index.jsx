@@ -179,7 +179,10 @@ export default function LandDetailSection() {
 
             {/* Hiển thị Responsive Mobile Sidebar */}
             <div className="block pt-2 lg:hidden">
-              <LandInfoSidebar specs={SPEC_ITEMS} />
+              <LandInfoSidebar
+                phone_number={project.phone_number}
+                specs={SPEC_ITEMS}
+              />
             </div>
 
             <LandDescription
@@ -196,7 +199,10 @@ export default function LandDetailSection() {
 
           {/* CỘT PHẢI - SIDEBAR STICKY THÔNG SỐ ĐẶC THÙ ĐẤT NỀN TRÊN DESKTOP */}
           <div className="hidden lg:sticky lg:top-6 lg:col-span-1 lg:block">
-            <LandInfoSidebar specs={SPEC_ITEMS} />
+            <LandInfoSidebar
+              phone_number={project.phone_number}
+              specs={SPEC_ITEMS}
+            />
           </div>
         </div>
       </div>

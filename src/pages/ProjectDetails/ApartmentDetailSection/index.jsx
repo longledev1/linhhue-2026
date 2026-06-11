@@ -185,7 +185,10 @@ export default function ApartmentDetailSection() {
 
             {/* VỊ TRÍ MOBILE */}
             <div className="block pt-2 lg:hidden">
-              <InfoSidebar specs={SPEC_ITEMS} />
+              <InfoSidebar
+                specs={SPEC_ITEMS}
+                phone_number={project.phone_number}
+              />
             </div>
 
             <ApartmentDescription
@@ -200,7 +203,10 @@ export default function ApartmentDetailSection() {
 
           {/* CỘT PHẢI - SIDEBAR STICKY DESKTOP */}
           <div className="hidden lg:sticky lg:top-6 lg:col-span-1 lg:block">
-            <InfoSidebar specs={SPEC_ITEMS} />
+            <InfoSidebar
+              specs={SPEC_ITEMS}
+              phone_number={project.phone_number}
+            />
           </div>
         </div>
       </div>

@@ -56,6 +56,10 @@ export const houseSchema = z.object({
   status: z.string().nonempty("Vui lòng chọn hình thức giao dịch"),
   ward: z.string().nonempty("Vui lòng chọn khu vực Phường / Xã"),
   province: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
+  phone_number: z
+    .string()
+    .nonempty("Số điện thoại không được để trống")
+    .regex(/^(?:\+84|84|0)(3|5|7|8|9)\d{8}$/, "Số điện thoại không hợp lệ"),
   address_detail: z
     .string()
     .nonempty("Vui lòng nhập địa chỉ cụ thể số nhà, tên đường"),

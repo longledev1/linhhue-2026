@@ -38,7 +38,7 @@ export default function LandDescription({
           <FiMapPin size={22} className="text-primary mt-1 shrink-0" />
 
           <h2 className="text-secondary text-lg leading-relaxed font-semibold md:text-xl">
-            {address}
+            {address || "Đang cập nhật địa chỉ"}
           </h2>
         </div>
         {id && (

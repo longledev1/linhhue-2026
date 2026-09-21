@@ -81,33 +81,52 @@ const ProjectCard = ({ project, isDetail = false }) => {
 
       {/* 2. KHỐI THÔNG TIN BÊN TRONG CARD */}
       <div className="flex flex-1 flex-col p-5 text-sm">
-        <div className="flex-1">
-          {/* 🌟 ĐÃ SỬA: Render chuỗi địa chỉ liên kết động đầy đủ kèm Tỉnh/Thành phố */}
-          {project.ward && (
-            <p className="mb-2 text-[12px] font-medium tracking-wide text-stone-500">
-              {formatWard(project.ward, project.province)}
-              {project.province && `, ${formatProvince(project.province)}`}
-            </p>
-          )}
+        <div className="flex flex-1 flex-col">
+          {/* 🌟 VÙNG VỊ TRÍ: Khóa đúng 1 dòng (truncate) để không bị lệch giữa card 1 dòng và 2 dòng */}
+          <p
+            className="mb-1.5 text-[12px] font-medium tracking-wide text-stone-500 truncate h-5 leading-5"
+            title={
+              project.ward || project.province
+                ? `${project.ward ? formatWard(project.ward, project.province) : ""}${project.ward && project.province ? ", " : ""}${project.province ? formatProvince(project.province) : ""}`
+                : "Đang cập nhật vị trí"
+            }
+          >
+            {project.ward || project.province ? (
+              <>
+                {project.ward
+                  ? `${formatWard(project.ward, project.province)}${project.province ? `, ${formatProvince(project.province)}` : ""}`
+                  : formatProvince(project.province)}
+              </>
+            ) : (
+              <span className="text-stone-400">Đang cập nhật vị trí</span>
+            )}
+          </p>
+
+          {/* TIÊU ĐỀ: Khóa đúng 2 dòng với line-height chuẩn, không bị cắt dấu tiếng Việt */}
           <h3
-            className={`group-hover:text-primary mb-2 text-base leading-snug font-bold text-[#1c1c1a] transition-colors md:text-lg ${isDetail ? "" : "line-clamp-2"}`}
+            className={`group-hover:text-primary mb-2.5 text-base leading-6 font-bold text-[#1c1c1a] transition-colors line-clamp-2 min-h-[48px]`}
+            title={project.title}
           >
             {project.title}
           </h3>
 
-          {/* VÙNG THÔNG SỐ KỸ THUẬT ĐƯỢC PHÂN LUỒNG THÔNG MINH */}
-          <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-gray-50 py-2 text-xs font-medium text-gray-500">
-            <div>
+          {/* VÙNG THÔNG SỐ KỸ THUẬT: Cố định chiều cao và fix triệt để lỗi in số 0 */}
+          <div className="mb-3 flex h-8 items-center gap-x-3 border-y border-gray-100 py-1.5 text-xs font-medium text-gray-500">
+            <div className="shrink-0">
               Diện tích:{" "}
-              <span className="font-bold text-gray-800">{project.area} m²</span>
+              <span className="font-bold text-gray-800">
+                {project.area && Number(project.area) > 0
+                  ? `${project.area} m²`
+                  : "Đang cập nhật"}
+              </span>
             </div>
 
             {isLand ? (
               <>
-                {project.dimensions && (
+                {Boolean(project.dimensions) && (
                   <>
-                    <div className="h-3 w-[1px] bg-gray-200"></div>
-                    <div>
+                    <div className="h-3 w-[1px] bg-gray-200 shrink-0"></div>
+                    <div className="truncate">
                       Kích thước:{" "}
                       <span className="font-bold text-gray-800">
                         {project.dimensions}
@@ -118,41 +137,43 @@ const ProjectCard = ({ project, isDetail = false }) => {
               </>
             ) : (
               <>
-                {project.bedroom && (
+                {Number(project.bedroom) > 0 ? (
                   <>
-                    <div className="h-3 w-[1px] bg-gray-200"></div>
-                    <div>
+                    <div className="h-3 w-[1px] bg-gray-200 shrink-0"></div>
+                    <div className="shrink-0">
                       PN:{" "}
                       <span className="font-bold text-gray-800">
                         {project.bedroom}
                       </span>
                     </div>
                   </>
-                )}
-                {project.bathroom && (
+                ) : null}
+                {Number(project.bathroom) > 0 ? (
                   <>
-                    <div className="h-3 w-[1px] bg-gray-200"></div>
-                    <div>
+                    <div className="h-3 w-[1px] bg-gray-200 shrink-0"></div>
+                    <div className="shrink-0">
                       WC:{" "}
                       <span className="font-bold text-gray-800">
                         {project.bathroom}
                       </span>
                     </div>
                   </>
-                )}
+                ) : null}
               </>
             )}
           </div>
 
-          <p className="text-primary mb-3 text-base font-extrabold">
+          {/* GIÁ TIỀN: Cố định chiều cao */}
+          <p className="text-primary mb-2.5 text-base font-extrabold h-6 leading-6 truncate">
             {formatPrice(project.price)}{" "}
-            {project.status === "rent" ? "/ tháng" : ""}
+            {project.price && project.status === "rent" ? "/ tháng" : ""}
           </p>
 
+          {/* MÔ TẢ: line-clamp-3 với line-height chuẩn (leading-5) để không bị cắt chữ / mất nửa chữ ở dòng 3 */}
           <p
-            className={`mb-4 text-left text-xs leading-relaxed text-gray-400 md:text-sm ${isDetail ? "whitespace-pre-line text-gray-600" : "line-clamp-3"}`}
+            className={`mb-4 text-left text-xs leading-5 text-gray-400 md:text-sm md:leading-5 line-clamp-3 min-h-[60px]`}
           >
-            {stripHtmlAndEntities(project.description)}
+            {stripHtmlAndEntities(project.description) || "Chưa có thông tin mô tả chi tiết..."}
           </p>
         </div>
 

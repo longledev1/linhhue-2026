@@ -41,11 +41,22 @@ body {
   }
 }
 
-/* Thêm vào file CSS toàn cục của bạn, ví dụ: src/index.css hoặc src/styles/global.css */
+/* 🌟 ĐỒNG BỘ FONT MONTSERRAT CHO TOÀN BỘ NỘI DUNG RICH TEXT (ĐÈ TẤT CẢ INLINE FONT KHI COPY/PASTE) */
+.rich-content,
+.rich-content * {
+  font-family: "Montserrat", sans-serif !important;
+}
 
 .rich-content {
   line-height: 1.6;
   color: #2c2a29; /* Sửa nhẹ lại màu chữ stone-800 nhìn cho sang và dịu mắt */
+}
+
+/* 🌟 ĐỒNG BỘ TRONG TRÌNH SOẠN THẢO REACT-QUILL ADMIN */
+.ql-container,
+.ql-editor,
+.ql-editor * {
+  font-family: "Montserrat", sans-serif !important;
 }
 
 /* 🌟 TỐI ƯU TIÊU ĐỀ: Chỉ gom các thẻ hay dùng từ h1 đến h3 để tránh loãng */

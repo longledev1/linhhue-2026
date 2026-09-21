@@ -56,9 +56,11 @@ export default function InfoSidebar({ specs, phone_number }) {
     return upperVal.replace("PHÒNG NGỦ", "PN").replace("PHÒNG", "PN");
   };
 
+  const contactPhone = phone_number ? phone_number.replace(/\D/g, "") : "0937175384";
+
   return (
     <>
-      {/* ================= LAYOUT 1: HIỂN THỊ TRÊN MOBILE (THIẾT KẾ XẾP TẦNG SANG TRỌNG) ================= */}
+      {/* ================= LAYOUT 1: HIỂN THỊ TRÊN MOBILE (ĐỒNG BỘ ĐÔI NÚT VỚI DESKTOP) ================= */}
       <div
         className="block w-full space-y-3.5 rounded-2xl border border-stone-100 bg-white p-5 font-sans shadow-sm md:hidden"
         style={{ fontFamily: FONT_FAMILY }}
@@ -77,7 +79,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           </div>
         )}
 
-        {/* KHỐI 1B: Hướng nhà */}
+        {/* KHỐI 1B: Hướng ban công / Hướng cửa */}
         {directionSpec && (
           <div className="flex w-full items-center justify-between rounded-xl border border-stone-100 bg-stone-50/60 p-3.5">
             <span className="text-[11px] font-bold tracking-wider text-stone-400 uppercase">
@@ -91,7 +93,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           </div>
         )}
 
-        {/* KHỐI 1C: Diện tích, Tầng, Vệ sinh, Phòng ngủ (Giữ nguyên cấu trúc ngang hai bên vì data rất ngắn) */}
+        {/* KHỐI 1C: Diện tích, Số tầng, Vệ sinh, Phòng ngủ */}
         {coreShortSpecs.length > 0 && (
           <div className="w-full space-y-3.5">
             {coreShortSpecs.map((item, idx) => (
@@ -110,7 +112,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           </div>
         )}
 
-        {/* KHỐI 2: 🌟 THAY ĐỔI: Tái cấu trúc bất đối xứng xếp tầng cho Tiện ích & Pháp lý */}
+        {/* KHỐI 2: Tiện ích nội khu & Ghi chú nhà ở dài (Xếp tầng chống vỡ khung) */}
         {longSpecs.length > 0 && (
           <div className="w-full space-y-3.5">
             {longSpecs.map((item, idx) => (
@@ -137,7 +139,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`https://zalo.me/${phone_number}`}
+            href={`https://zalo.me/${contactPhone}`}
             target="_blank"
             rel="noreferrer"
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
@@ -154,7 +156,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`tel:${phone_number}`}
+            href={`tel:${contactPhone}`}
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold tracking-wide text-white shadow-lg transition-all"
             style={{
               backgroundColor: PRIMARY_COLOR,
@@ -169,7 +171,7 @@ export default function InfoSidebar({ specs, phone_number }) {
         </div>
       </div>
 
-      {/* ================= LAYOUT 2: HIỂN THỊ TRÊN DESKTOP (HỘP DỌC STICKY - GIỮ NGUYÊN 100%) ================= */}
+      {/* ================= LAYOUT 2: HIỂN THỊ TRÊN DESKTOP (HỘP DỌC STICKY CHUẨN NHÀ Ở) ================= */}
       <div
         className="hidden flex-col rounded-3xl border border-stone-100 bg-white p-6 shadow-xl shadow-stone-200/50 md:flex md:p-8"
         style={{ fontFamily: FONT_FAMILY }}
@@ -212,7 +214,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`https://zalo.me/${phone_number}`}
+            href={`https://zalo.me/${contactPhone}`}
             target="_blank"
             rel="noreferrer"
             className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
@@ -229,7 +231,7 @@ export default function InfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`tel:${phone_number}`}
+            href={`tel:${contactPhone}`}
             className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 font-bold tracking-wide text-white shadow-lg transition-all"
             style={{
               backgroundColor: PRIMARY_COLOR,

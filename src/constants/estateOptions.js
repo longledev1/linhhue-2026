@@ -7,6 +7,7 @@ export const APARTMENT_TYPES = [
 ];
 
 export const HOUSE_DIRECTIONS = [
+  { value: "chua-xac-dinh", label: "Chưa xác định" },
   { value: "dong", label: "Hướng Đông" },
   { value: "tay", label: "Hướng Tây" },
   { value: "nam", label: "Hướng Nam" },

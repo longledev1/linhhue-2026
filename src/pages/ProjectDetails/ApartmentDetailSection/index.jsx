@@ -27,6 +27,7 @@ import {
   formatProvince,
   formatDirection,
   formatApartmentType,
+  formatDisplayAddress,
 } from "../../../utils/format";
 import { CircularProgress } from "@mui/material";
 
@@ -119,35 +120,35 @@ export default function ApartmentDetailSection() {
     {
       icon: <FiDollarSign className="text-xl" />,
       label: "Khoảng giá:",
-      value: `${formatPrice(project.price)}${isRent ? "/tháng" : ""}`,
+      value: `${formatPrice(project.price)}${project.price && isRent ? "/tháng" : ""}`,
       isBoldLabel: true,
     },
     {
       icon: <FiMaximize className="text-lg" />,
       label: "Diện tích:",
-      value: project.area ? `${project.area} m²` : "Chưa cập nhật",
+      value: project.area && Number(project.area) > 0 ? `${project.area} m²` : "Đang cập nhật",
     },
     {
       icon: <FiLayers className="text-lg" />,
       label: "Tầng:",
-      value: project.floor ? `${project.floor}` : "Chưa cập nhật",
+      value: project.floor && Number(project.floor) > 0 ? `${project.floor}` : "Đang cập nhật",
     },
     {
       icon: <FiCompass className="text-lg" />,
       label: "Hướng nhà:",
       value: project.direction
         ? `${formatDirection(project.direction)}`
-        : "Chưa cập nhật",
+        : "Đang cập nhật",
     },
     {
       icon: <FiDroplet className="text-lg" />,
       label: "Số phòng vệ sinh:",
-      value: project.bathroom ? `${project.bathroom} phòng` : "Chưa cập nhật",
+      value: project.bathroom && Number(project.bathroom) > 0 ? `${project.bathroom} phòng` : "Đang cập nhật",
     },
     {
       icon: <BiBed className="text-xl" />,
       label: "Số phòng ngủ:",
-      value: project.bedroom ? `${project.bedroom} phòng` : "Chưa cập nhật",
+      value: project.bedroom && Number(project.bedroom) > 0 ? `${project.bedroom} phòng` : "Đang cập nhật",
     },
     {
       icon: <BiBuildingHouse className="text-xl" />,
@@ -162,8 +163,8 @@ export default function ApartmentDetailSection() {
   ];
 
   const statusLabel = isRent ? "Cho thuê" : "Mua bán";
-  const wardLabel = formatWard(project.ward) || "Chưa xác định";
-  const provinceLabel = formatProvince(project.province) || "Chưa xác định";
+  const wardLabel = formatWard(project.ward, project.province) || "Đang cập nhật";
+  const provinceLabel = formatProvince(project.province) || "Đang cập nhật";
 
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20">
@@ -194,7 +195,11 @@ export default function ApartmentDetailSection() {
             <ApartmentDescription
               id={project.id} // 🌟 TRUYỀN ID SỐ THUẦN TÚY SANG ĐÂY
               title={project.title}
-              address={project.address_detail}
+              address={formatDisplayAddress(
+                project.address_detail,
+                project.ward,
+                project.province,
+              )}
               description={project.description}
               mapIframe={project.map_iframe}
             />

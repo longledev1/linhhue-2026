@@ -1,84 +1,97 @@
-// src/validations/apartmentSchema.js
+// src/validations/houseSchema.js
 import { z } from "zod";
 
 export const houseSchema = z.object({
   title: z
     .string()
     .nonempty("Tên nhà ở không được bỏ trống")
-    .min(10, "Tiêu đề quá ngắn (Tối thiểu 10 ký tự)")
-    .max(120, "Tiêu đề quá dài (Tối đa 120 ký tự)"),
+    .min(5, "Tiêu đề quá ngắn (Tối thiểu 5 ký tự)")
+    .max(150, "Tiêu đề quá dài (Tối đa 150 ký tự)"),
 
-  // 🌟 FIX TRƯỜNG GIÁ: Ép kiểu và bắt lỗi tiếng Việt
-  price: z.coerce
-    .number({
-      invalid_type_error: "Vui lòng nhập giá tiền bằng số thực tế",
-      required_error: "Giá tiền không được để trống",
-    })
-    .positive("Giá tiền phải lớn hơn 0đ"),
+  // Giá tiền: Tùy chọn (để trống hoặc >= 0)
+  price: z.preprocess(
+    (val) =>
+      val === "" || val === undefined || val === null
+        ? null
+        : typeof val === "string"
+          ? parseFloat(val.replace(/\D/g, "")) || null
+          : Number(val),
+    z.number().min(0, "Giá tiền không được là số âm").nullable().optional(),
+  ),
 
-  // 🌟 FIX TRƯỜNG DIỆN TÍCH: Ép kiểu và bắt lỗi tiếng Việt
-  area: z.coerce
-    .number({
-      invalid_type_error: "Vui lòng nhập diện tích bằng số hợp lệ",
-      required_error: "Diện tích không được để trống",
-    })
-    .positive("Diện tích phải lớn hơn 0 m²"),
+  // Diện tích: Tùy chọn (để trống hoặc > 0)
+  area: z.preprocess(
+    (val) =>
+      val === "" || val === undefined || val === null
+        ? null
+        : parseFloat(val),
+    z.number().min(0, "Diện tích không được là số âm").nullable().optional(),
+  ),
 
-  // 🌟 FIX TRƯỜNG PHÒNG NGỦ: Ép kiểu số nguyên >= 0
-  bedroom: z.coerce
-    .number({
-      invalid_type_error: "Số phòng ngủ phải là số",
-      required_error: "Vui lòng nhập số phòng ngủ",
-    })
-    .int("Số phòng ngủ phải là số nguyên")
-    .min(0, "Số phòng ngủ không được là số âm"),
+  // Số phòng ngủ: Tùy chọn (>= 0)
+  bedroom: z.preprocess(
+    (val) =>
+      val === "" || val === undefined || val === null
+        ? null
+        : parseInt(val, 10),
+    z.number().min(0, "Số phòng ngủ không được là số âm").nullable().optional(),
+  ),
 
-  // 🌟 FIX TRƯỜNG WC: Ép kiểu số nguyên >= 0
-  bathroom: z.coerce
-    .number({
-      invalid_type_error: "Số phòng vệ sinh phải là số",
-      required_error: "Vui lòng nhập số phòng vệ sinh",
-    })
-    .int("Số phòng vệ sinh phải là số nguyên")
-    .min(0, "Số phòng vệ sinh không được là số âm"),
+  // Số phòng vệ sinh: Tùy chọn (>= 0)
+  bathroom: z.preprocess(
+    (val) =>
+      val === "" || val === undefined || val === null
+        ? null
+        : parseInt(val, 10),
+    z.number().min(0, "Số phòng vệ sinh không được là số âm").nullable().optional(),
+  ),
 
-  // Vị trí tầng (Cho phép để trống, nếu nhập thì phải >= 0)
+  // Vị trí tầng (Tùy chọn)
   floor: z.preprocess(
     (val) =>
       val === "" || val === undefined || val === null
         ? null
         : parseInt(val, 10),
-    z.number().min(0, "Số tầng không được là số âm").nullable(),
+    z.number().min(0, "Số tầng không được là số âm").nullable().optional(),
   ),
 
-  direction: z.string().nonempty("Vui lòng chọn hướng nhà"),
-  house_type: z.string().nonempty("Vui lòng chọn loại nhà ở"),
-  status: z.string().nonempty("Vui lòng chọn hình thức giao dịch"),
-  ward: z.string().nonempty("Vui lòng chọn khu vực Phường / Xã"),
-  province: z.string().min(1, "Vui lòng chọn Tỉnh/Thành phố"),
+  direction: z.string().optional().nullable().or(z.literal("")),
+  house_type: z.string().optional().nullable().or(z.literal("")),
+  status: z.string().optional().nullable().or(z.literal("")),
+  ward: z.string().optional().nullable().or(z.literal("")),
+  province: z.string().optional().nullable().or(z.literal("")),
+
   phone_number: z
     .string()
-    .nonempty("Số điện thoại không được để trống")
-    .regex(/^(?:\+84|84|0)(3|5|7|8|9)\d{8}$/, "Số điện thoại không hợp lệ"),
-  address_detail: z
-    .string()
-    .nonempty("Vui lòng nhập địa chỉ cụ thể số nhà, tên đường"),
+    .optional()
+    .nullable()
+    .refine(
+      (val) =>
+        !val ||
+        /^(?:\+84|84|0)(3|5|7|8|9)\d{8}$/.test(val.replace(/[\s.-]/g, "")),
+      {
+        message: "Số điện thoại không đúng định dạng (Ví dụ: 0909123456)",
+      },
+    ),
+
+  address_detail: z.string().optional().nullable().or(z.literal("")),
 
   map_iframe: z
     .string()
     .optional()
-    .refine((val) => !val || val.includes("<iframe"), {
+    .nullable()
+    .refine((val) => !val || val.includes("<iframe") || val.startsWith("http"), {
       message:
         "Mã nhúng bản đồ không hợp lệ. Vui lòng copy đúng đoạn mã <iframe> từ Google Maps",
     }),
 
-  description: z.string().optional(),
-  // giới hạn ký tự
+  description: z.string().optional().nullable(),
   amenities: z
     .string()
     .max(300, "Khu tiện ích không được vượt quá 300 ký tự")
     .optional()
-    .or(z.literal("")), // Chấp nhận cả chuỗi rỗng "" nếu user không nhập gì
+    .nullable()
+    .or(z.literal("")),
   is_published: z.boolean().default(true),
   is_featured: z.boolean().default(false),
 });

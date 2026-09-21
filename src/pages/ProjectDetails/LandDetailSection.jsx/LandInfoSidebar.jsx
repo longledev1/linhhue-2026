@@ -40,6 +40,8 @@ export default function LandInfoSidebar({ specs, phone_number }) {
     return label.replace(":", "").trim();
   };
 
+  const contactPhone = phone_number ? phone_number.replace(/\D/g, "") : "0937175384";
+
   return (
     <>
       {/* ================= LAYOUT 1: HIỂN THỊ TRÊN MOBILE (THIẾT KẾ XẾP TẦNG SANG TRỌNG) ================= */}
@@ -75,7 +77,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
           </div>
         )}
 
-        {/* KHỐI 1C: Diện tích, Kích thước, Loại đất nền khác (Cấu trúc ngang song song tối giản) */}
+        {/* KHỐI 1C: Diện tích, Kích thước, Phân loại đất... */}
         {coreShortSpecs.length > 0 && (
           <div className="w-full space-y-3.5">
             {coreShortSpecs.map((item, idx) => (
@@ -87,9 +89,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
                   {formatLabelText(item.label)}
                 </span>
                 <span className="text-[14px] font-bold whitespace-nowrap text-stone-900">
-                  {typeof item.value === "string"
-                    ? item.value.toUpperCase()
-                    : item.value}
+                  {item.value}
                 </span>
               </div>
             ))}
@@ -120,7 +120,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`https://zalo.me/${phone_number}`}
+            href={`https://zalo.me/${contactPhone}`}
             target="_blank"
             rel="noreferrer"
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
@@ -137,7 +137,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`tel:${phone_number}`}
+            href={`tel:${contactPhone}`}
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold tracking-wide text-white shadow-lg transition-all"
             style={{
               backgroundColor: PRIMARY_COLOR,
@@ -194,7 +194,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`https://zalo.me/${phone_number}`}
+            href={`https://zalo.me/${contactPhone}`}
             target="_blank"
             rel="noreferrer"
             className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gray-300 bg-[#0068ff] py-3.5 font-medium text-white shadow-sm transition-colors hover:bg-[#0056cc]"
@@ -211,7 +211,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
           <motion.a
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            href={`tel:${phone_number}`}
+            href={`tel:${contactPhone}`}
             className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 font-bold tracking-wide text-white shadow-lg transition-all"
             style={{
               backgroundColor: PRIMARY_COLOR,
@@ -219,7 +219,7 @@ export default function LandInfoSidebar({ specs, phone_number }) {
             }}
           >
             <FiPhoneCall className="h-4 w-4 shrink-0 animate-pulse" />
-            <span className="font-semibold whitespace-nowrap">
+            <span className="whitespace-nowrap">
               {formatPhoneNumber(phone_number)}
             </span>
           </motion.a>

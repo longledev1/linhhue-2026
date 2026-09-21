@@ -91,10 +91,15 @@ const FeaturedProjectCard = ({ project }) => {
         {/* 2. KHỐI THÔNG TIN CHI TIẾT */}
         <div className="flex flex-col justify-center p-8 text-sm lg:p-12">
           {/* 🌟 ĐÃ THÊM: Khu vực hiển thị địa chỉ Tỉnh/Thành Phố đồng bộ */}
-          {project.ward && (
+          {(project.ward || project.province) ? (
             <p className="mb-2 text-[12px] font-medium tracking-wide text-stone-500">
-              {formatWard(project.ward, project.province)}
-              {project.province && `, ${formatProvince(project.province)}`}
+              {project.ward
+                ? `${formatWard(project.ward, project.province)}${project.province ? `, ${formatProvince(project.province)}` : ""}`
+                : formatProvince(project.province)}
+            </p>
+          ) : (
+            <p className="mb-2 text-[12px] font-medium tracking-wide text-stone-400">
+              Đang cập nhật vị trí
             </p>
           )}
 
@@ -106,12 +111,16 @@ const FeaturedProjectCard = ({ project }) => {
           <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-gray-100 py-2.5 text-xs font-medium text-gray-500">
             <div>
               Diện tích:{" "}
-              <span className="font-bold text-gray-800">{project.area} m²</span>
+              <span className="font-bold text-gray-800">
+                {project.area && Number(project.area) > 0
+                  ? `${project.area} m²`
+                  : "Đang cập nhật"}
+              </span>
             </div>
 
             {isLand ? (
               <>
-                {project.dimensions && (
+                {Boolean(project.dimensions) && (
                   <>
                     <div className="h-3 w-[1px] bg-gray-200"></div>
                     <div>
@@ -125,7 +134,7 @@ const FeaturedProjectCard = ({ project }) => {
               </>
             ) : (
               <>
-                {project.bedroom && (
+                {Number(project.bedroom) > 0 ? (
                   <>
                     <div className="h-3 w-[1px] bg-gray-200"></div>
                     <div>
@@ -135,8 +144,8 @@ const FeaturedProjectCard = ({ project }) => {
                       </span>
                     </div>
                   </>
-                )}
-                {project.bathroom && (
+                ) : null}
+                {Number(project.bathroom) > 0 ? (
                   <>
                     <div className="h-3 w-[1px] bg-gray-200"></div>
                     <div>
@@ -146,14 +155,14 @@ const FeaturedProjectCard = ({ project }) => {
                       </span>
                     </div>
                   </>
-                )}
+                ) : null}
               </>
             )}
           </div>
 
           <p className="text-primary mb-5 text-xl font-extrabold">
             {formatPrice(project.price)}{" "}
-            {project.status === "rent" ? "/ tháng" : ""}
+            {project.price && project.status === "rent" ? "/ tháng" : ""}
           </p>
 
           <p className="text-secondary mb-8 line-clamp-3 leading-relaxed font-light text-stone-400 md:text-sm">

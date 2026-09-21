@@ -10,11 +10,12 @@ import {
 } from "../constants/estateOptions";
 
 export const formatPrice = (price) => {
-  if (!price) return "Thỏa thuận";
-  if (price >= 1000000000) {
-    return `${(price / 1000000000).toFixed(1).replace(".0", "")} Tỷ`;
+  if (!price || Number(price) <= 0) return "Thỏa thuận";
+  const num = Number(price);
+  if (num >= 1000000000) {
+    return `${(num / 1000000000).toFixed(1).replace(".0", "")} Tỷ`;
   }
-  return `${(price / 1000000).toFixed(1).replace(".0", "")} Triệu`;
+  return `${(num / 1000000).toFixed(1).replace(".0", "")} Triệu`;
 };
 
 /**
@@ -59,12 +60,54 @@ export const formatWard = (wardSlug, provinceCode = null) => {
 };
 
 /**
+ * 🌟 Ghép phần đuôi địa chỉ tự động: ", Phường ..., Tỉnh ..." hoặc ", Tỉnh ..."
+ * @param {string} provinceCode - Ví dụ: "TUYEN_QUANG"
+ * @param {string} wardSlug - Ví dụ: "xa-yen-nguyen"
+ * @returns {string} - Ví dụ: ", Xã Yên Nguyên, Tỉnh Tuyên Quang" hoặc ", Tỉnh Tuyên Quang"
+ */
+export const formatLocationSuffix = (provinceCode, wardSlug = "") => {
+  const pLabel = formatProvince(provinceCode);
+  const wLabel = formatWard(wardSlug, provinceCode);
+  if (wLabel && pLabel) return `, ${wLabel}, ${pLabel}`;
+  if (pLabel) return `, ${pLabel}`;
+  if (wLabel) return `, ${wLabel}`;
+  return "";
+};
+
+/**
+ * 🌟 Format hiển thị địa chỉ chi tiết sạch sẽ cho người dùng:
+ * Tự động loại bỏ dấu phẩy/khoảng trắng thừa ở đầu nếu người dùng không gõ số nhà/tên đường
+ * @param {string} addressDetail - Ví dụ: ", Phường An Khánh, Thành phố Hồ Chí Minh"
+ * @param {string} [wardSlug]
+ * @param {string} [provinceCode]
+ * @returns {string} - Ví dụ: "Phường An Khánh, Thành phố Hồ Chí Minh"
+ */
+export const formatDisplayAddress = (addressDetail, wardSlug = "", provinceCode = "") => {
+  let addr = (addressDetail || "").trim();
+  // Xóa dấu phẩy, khoảng trắng, gạch nối thừa ở đầu chuỗi (ví dụ: ", Phường An Khánh..." -> "Phường An Khánh...")
+  addr = addr.replace(/^[,\s-]+/, "").trim();
+
+  if (addr) {
+    return addr;
+  }
+
+  const wLabel = formatWard(wardSlug, provinceCode);
+  const pLabel = formatProvince(provinceCode);
+
+  if (wLabel && pLabel) return `${wLabel}, ${pLabel}`;
+  if (pLabel) return pLabel;
+  if (wLabel) return wLabel;
+
+  return "Đang cập nhật địa chỉ";
+};
+
+/**
  * 🌟 TRA CỨU HƯỚNG NHÀ TỪ HOUSE_DIRECTIONS CỦA BẠN
  * @param {string} directionSlug - Ví dụ: "dong-nam"
  * @returns {string} - Ví dụ: "Hướng Đông Nam"
  */
 export const formatDirection = (directionSlug) => {
-  if (!directionSlug) return "Chưa cập nhật";
+  if (!directionSlug || directionSlug === "chua-xac-dinh") return "Chưa xác định";
   const found = HOUSE_DIRECTIONS.find(
     (item) => item.value === directionSlug.toLowerCase(),
   );
@@ -77,7 +120,7 @@ export const formatDirection = (directionSlug) => {
  * @returns {string} - Ví dụ: "Căn hộ Studio"
  */
 export const formatApartmentType = (typeSlug) => {
-  if (!typeSlug) return "";
+  if (!typeSlug) return "Căn hộ";
   const found = APARTMENT_TYPES.find(
     (item) => item.value === typeSlug.toLowerCase(),
   );
@@ -85,7 +128,7 @@ export const formatApartmentType = (typeSlug) => {
 };
 
 export const formatHouseType = (typeSlug) => {
-  if (!typeSlug) return "";
+  if (!typeSlug) return "Nhà ở";
 
   const found = HOUSE_TYPES.find(
     (item) => item.value === typeSlug.toLowerCase(),
@@ -100,7 +143,7 @@ export const formatHouseType = (typeSlug) => {
  * @returns {string} - Nhãn hiển thị tiếng Việt (ví dụ: 'Đất thổ cư')
  */
 export const formatLandType = (typeValue) => {
-  if (!typeValue) return "---";
+  if (!typeValue) return "Đất nền";
 
   // Tìm item khớp với value trong mảng hằng số cấu hình của bạn
   const foundType = LAND_TYPES.find((item) => item.value === typeValue);
@@ -120,12 +163,13 @@ export const stripHtmlAndEntities = (htmlString) => {
 };
 
 export const formatPhoneNumber = (value) => {
+  if (!value) return "0937 175 384";
   const numbers = value.replace(/\D/g, "");
 
   if (numbers.length <= 4) return numbers;
 
   if (numbers.length <= 7) {
-    return `${numbers.slice(0, 4)}${numbers.slice(4)}`;
+    return `${numbers.slice(0, 4)} ${numbers.slice(4)}`;
   }
 
   return `${numbers.slice(0, 4)} ${numbers.slice(4, 7)} ${numbers.slice(7, 10)}`;

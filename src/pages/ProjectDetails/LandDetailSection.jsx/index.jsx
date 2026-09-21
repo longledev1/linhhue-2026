@@ -23,8 +23,9 @@ import {
   formatWard,
   formatProvince,
   formatDirection,
+  formatLandType,
+  formatDisplayAddress,
 } from "../../../utils/format";
-import { formatLandType } from "../../../utils/format";
 import { CircularProgress } from "@mui/material";
 import { BiBuildingHouse } from "react-icons/bi";
 
@@ -110,29 +111,29 @@ export default function LandDetailSection() {
 
   const isRent = project.status === "rent";
   const typeLabel = formatLandType(project.land_type) || "Đất nền";
-  const provinceLabel = formatProvince(project.province) || "Chưa xác định";
+  const provinceLabel = formatProvince(project.province) || "Đang cập nhật";
 
   const SPEC_ITEMS = [
     {
       icon: <FiDollarSign className="text-xl" />,
       label: "Khoảng giá từ:",
-      value: `${formatPrice(project.price)}${isRent ? "/tháng" : ""}`,
+      value: `${formatPrice(project.price)}${project.price && isRent ? "/tháng" : ""}`,
       isBoldLabel: true,
     },
     {
       icon: <FiMaximize className="text-lg" />,
       label: "Diện tích đất:",
-      value: project.area ? `${project.area} m²` : "Chưa cập nhật thông số",
+      value: project.area && Number(project.area) > 0 ? `${project.area} m²` : "Đang cập nhật",
     },
     {
       icon: <FiGrid className="text-lg" />, // Icon lưới đại diện cho kích thước hình học hình khối
       label: "Kích thước (Rộng x Sâu):",
-      value: project.dimensions || "Chưa cập nhật kích thước",
+      value: project.dimensions || "Đang cập nhật",
     },
     {
       icon: <FiMapPin className="text-lg" />, // Icon định vị đại diện cho đường lộ giới
       label: "Đường vào:",
-      value: project.road_width || "Chưa cập nhật thông tin đường",
+      value: project.road_width || "Đang cập nhật",
     },
     {
       icon: <FiTrendingUp className="text-lg" />, // Icon phân loại
@@ -144,7 +145,7 @@ export default function LandDetailSection() {
       label: "Hướng đất:",
       value: project.direction
         ? `${formatDirection(project.direction)}`
-        : "Chưa xác định hướng",
+        : "Đang cập nhật",
     },
     {
       icon: <BiBuildingHouse className="text-xl" />,
@@ -159,7 +160,7 @@ export default function LandDetailSection() {
   ];
 
   const statusLabel = isRent ? "Cho thuê mặt bằng" : "Mua bán đất nền";
-  const wardLabel = formatWard(project.ward) || "Chưa xác định";
+  const wardLabel = formatWard(project.ward, project.province) || "Đang cập nhật";
   return (
     <div className="mt-[140px] flex w-full flex-col bg-stone-50/20">
       <div className="container">
@@ -190,7 +191,11 @@ export default function LandDetailSection() {
               title={project.title}
               description={project.description}
               mapIframe={project.map_iframe}
-              address={project.address_detail}
+              address={formatDisplayAddress(
+                project.address_detail,
+                project.ward,
+                project.province,
+              )}
             />
 
             {/* Thanh chứa các dự án gợi ý ngẫu nhiên */}

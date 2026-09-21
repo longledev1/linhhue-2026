@@ -23,6 +23,11 @@ import {
   QUILL_FORMATS,
   QUILL_MODULES,
 } from "../../../../constants/quillConfig";
+import {
+  formatProvince,
+  formatWard,
+  formatLocationSuffix,
+} from "../../../../utils/format";
 
 export default function InfoFormCard({
   register,
@@ -231,7 +236,25 @@ export default function InfoFormCard({
                 label="Tỉnh / Thành phố"
                 fullWidth
                 onBlur={onBlur}
-                onChange={onChange}
+                onChange={(e) => {
+                  const newProvince = e.target.value;
+                  onChange(e);
+                  setValue("ward", "");
+
+                  const currentAddress = watch("address_detail") || "";
+                  const oldSuffix = formatLocationSuffix(selectedProvince, selectedWard);
+
+                  let prefix = "";
+                  if (oldSuffix && currentAddress.endsWith(oldSuffix)) {
+                    prefix = currentAddress.slice(0, -oldSuffix.length);
+                  } else if (currentAddress && !currentAddress.startsWith(",")) {
+                    prefix = currentAddress;
+                  }
+
+                  const newSuffix = formatLocationSuffix(newProvince, "");
+                  const newVal = prefix ? `${prefix.trimEnd()}${newSuffix}` : newSuffix;
+                  setValue("address_detail", newVal, { shouldValidate: true });
+                }}
                 value={value ?? ""}
                 inputRef={ref}
                 error={!!errors.province}
@@ -259,7 +282,24 @@ export default function InfoFormCard({
                   label="Khu vực Phường / Xã"
                   fullWidth
                   onBlur={onBlur}
-                  onChange={onChange}
+                  onChange={(e) => {
+                    const newWard = e.target.value;
+                    onChange(e);
+
+                    const currentAddress = watch("address_detail") || "";
+                    const oldSuffix = formatLocationSuffix(selectedProvince, selectedWard);
+
+                    let prefix = "";
+                    if (oldSuffix && currentAddress.endsWith(oldSuffix)) {
+                      prefix = currentAddress.slice(0, -oldSuffix.length);
+                    } else if (currentAddress && !currentAddress.startsWith(",")) {
+                      prefix = currentAddress;
+                    }
+
+                    const newSuffix = formatLocationSuffix(selectedProvince, newWard);
+                    const newVal = prefix ? `${prefix.trimEnd()}${newSuffix}` : newSuffix;
+                    setValue("address_detail", newVal, { shouldValidate: true });
+                  }}
                   value={value ?? ""}
                   inputRef={ref}
                   error={!!errors.ward}
@@ -297,15 +337,120 @@ export default function InfoFormCard({
 
         {/* Địa chỉ cụ thể */}
         <div className="mt-[16px]">
-          <TextField
-            label="Địa chỉ cụ thể (Số nhà, tên đường...)"
-            fullWidth
-            multiline
-            rows={2}
-            placeholder="Ví dụ: Căn hộ số 12.04 Block B, Chung cư Masteri An Phú..."
-            {...register("address_detail")}
-            error={!!errors.address_detail}
-            helperText={errors.address_detail?.message}
+          <Controller
+            name="address_detail"
+            control={control}
+            render={({ field }) => {
+              const locationSuffix = formatLocationSuffix(selectedProvince, selectedWard);
+              return (
+                <TextField
+                  {...field}
+                  label="Địa chỉ cụ thể (Tự động cập nhật theo Phường & Tỉnh/Thành)"
+                  fullWidth
+                  multiline
+                  rows={2}
+                  value={field.value ?? ""}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  placeholder="Ví dụ: Căn hộ số 12.04 Block B, Chung cư Masteri An Phú..."
+                  onKeyDown={(e) => {
+                    if (!locationSuffix) return;
+                    const input = e.target;
+                    const { selectionStart, selectionEnd } = input;
+                    const currentVal = input.value || "";
+                    const suffixIndex = currentVal.endsWith(locationSuffix)
+                      ? currentVal.length - locationSuffix.length
+                      : currentVal.length;
+
+                    // Phím Backspace
+                    if (e.key === "Backspace") {
+                      if (selectionEnd > suffixIndex) {
+                        e.preventDefault();
+                        if (selectionStart < suffixIndex) {
+                          const newPrefix = currentVal.substring(0, selectionStart);
+                          field.onChange(newPrefix + locationSuffix);
+                          requestAnimationFrame(() => {
+                            input.setSelectionRange(selectionStart, selectionStart);
+                          });
+                        }
+                        return;
+                      }
+                      if (selectionStart === suffixIndex && selectionStart === 0) {
+                        e.preventDefault();
+                        return;
+                      }
+                    }
+
+                    // Phím Delete
+                    if (e.key === "Delete") {
+                      if (selectionStart >= suffixIndex || selectionEnd > suffixIndex) {
+                        e.preventDefault();
+                        if (selectionStart < suffixIndex) {
+                          const newPrefix = currentVal.substring(0, selectionStart);
+                          field.onChange(newPrefix + locationSuffix);
+                          requestAnimationFrame(() => {
+                            input.setSelectionRange(selectionStart, selectionStart);
+                          });
+                        }
+                        return;
+                      }
+                    }
+
+                    // Gõ ký tự thường khi con trỏ rơi vào vùng suffix
+                    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                      if (selectionStart > suffixIndex || selectionEnd > suffixIndex) {
+                        e.preventDefault();
+                        const insertPos = Math.min(selectionStart, suffixIndex);
+                        const newPrefix = currentVal.substring(0, insertPos) + e.key;
+                        field.onChange(newPrefix + locationSuffix);
+                        const newPos = newPrefix.length;
+                        requestAnimationFrame(() => {
+                          input.setSelectionRange(newPos, newPos);
+                        });
+                        return;
+                      }
+                    }
+                  }}
+                  onChange={(e) => {
+                    const inputVal = e.target.value;
+                    if (!locationSuffix) {
+                      field.onChange(inputVal);
+                      return;
+                    }
+                    if (inputVal.endsWith(locationSuffix)) {
+                      field.onChange(inputVal);
+                    } else {
+                      let newPrefix = "";
+                      if (inputVal.includes(locationSuffix)) {
+                        newPrefix = inputVal.split(locationSuffix)[0];
+                      } else {
+                        let matchLen = 0;
+                        for (let i = locationSuffix.length; i > 0; i--) {
+                          const sub = locationSuffix.slice(0, i);
+                          if (inputVal.endsWith(sub)) {
+                            matchLen = i;
+                            break;
+                          }
+                        }
+                        if (matchLen > 0) {
+                          newPrefix = inputVal.slice(0, -matchLen);
+                        } else {
+                          newPrefix = inputVal;
+                        }
+                      }
+                      field.onChange(newPrefix ? `${newPrefix}${locationSuffix}` : locationSuffix);
+                    }
+                  }}
+                  error={!!errors.address_detail}
+                  helperText={
+                    errors.address_detail?.message ||
+                    "Nhập số nhà, tên đường ở phía trước. Phần Phường & Tỉnh/Thành được cố định tự động."
+                  }
+                />
+              );
+            }}
           />
         </div>
 

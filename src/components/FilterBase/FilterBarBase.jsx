@@ -318,7 +318,6 @@ export default function FilterBarBase({
                                 fontSize: "14px",
                               },
                             }}
-                            // 🌟 VÁ LỖI 1: Ép dùng option.value làm key cho từng thẻ li đổ xuống, giải quyết triệt để lỗi trùng tên phường xã
                             renderOption={(props, option) => {
                               const { key, ...otherProps } = props;
                               return (
@@ -419,7 +418,6 @@ export default function FilterBarBase({
                           onBlur={field.onBlur}
                           ref={field.ref}
                           MenuProps={{ disableScrollLock: true }}
-                          // 🌟 VÁ LỖI 2: Dùng slotProps chuẩn thay vì lồng PaperProps thô bạo vào MenuProps gây lỗi DOM attribute
                           slotProps={{
                             paper: {
                               style: { fontFamily: FONT_FAMILY },

@@ -2,14 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 
 import { MainLayout } from "../layouts/MainLayout.jsx";
-import AdminLayout from "../layouts/AdminLayout.jsx";
-
-// 🌟 IMPORT TẤM KHIÊN BẢO VỆ ROUTE
 import ProtectedRoute from "../components/Admin/ProtectedRoute.jsx";
 
-// ============================================================================
-// 🛠️ HÀM BỌC LAZY TỰ ĐỘNG KHẮC PHỤC LỖI FETCH MODULE (CACHE/DEPLOY MỚI)
-// ============================================================================
 const lazyWithRetry = (componentImport) =>
   lazy(() =>
     componentImport().catch((error) => {
@@ -18,16 +12,11 @@ const lazyWithRetry = (componentImport) =>
         error.message.includes("is not a valid script");
 
       if (isNetworkError) {
-        // Tự động ép trình duyệt reload lại để nhận danh sách file build mới nhất từ server
         window.location.reload();
       }
       throw error;
     }),
   );
-
-// ============================================================================
-// 📦 KHAI BÁO CÁC TRANG (ỨNG DỤNG LAZY WITH RETRY)
-// ============================================================================
 
 // USER
 const HomePage = lazyWithRetry(() => import("../pages/HomePage/index.jsx"));
@@ -57,6 +46,9 @@ const LandDetailSection = lazyWithRetry(
 );
 
 // ADMIN
+const AdminLayout = lazyWithRetry(
+  () => import("../layouts/AdminLayout.jsx"),
+);
 const AdminLogin = lazyWithRetry(
   () => import("../components/Admin/AdminLoginForm.jsx"),
 );
@@ -95,10 +87,7 @@ const AdminEditLand = lazyWithRetry(
 );
 
 // ============================================================================
-// 🗺️ ĐỊNH TUYẾN ROUTER
-// ============================================================================
 const router = createBrowserRouter([
-  // ======================== PHÂN HỆ USER KHÔNG KHÓA ========================
   {
     element: <MainLayout />,
     children: [
@@ -115,13 +104,10 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ======================== TRANG LOGIN CỦA ADMIN (MỞ CÔNG KHAI) ========================
   {
     path: "/admin/login",
     element: <AdminLogin />,
   },
-
-  // ======================== 🌟 VÙNG BẢO MẬT ADMIN (BỌC PROTECTEDROUTE) ========================
   {
     element: <ProtectedRoute children={<AdminLayout />} />,
     children: [

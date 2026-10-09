@@ -5,4 +5,18 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-mui": ["@mui/material", "@emotion/react", "@emotion/styled"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-motion": ["framer-motion"],
+          "vendor-swiper": ["swiper"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 });

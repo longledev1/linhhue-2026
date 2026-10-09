@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-// 🌟 IMPORT BỘ DATA TỈNH THÀNH VÀ LOGIC PHƯỜNG XÃ LIÊN KẾT ĐỘNG
 import {
   PROVINCE_OPTIONS,
   LOCATION_DATA,
@@ -28,8 +27,6 @@ import {
   formatLocationSuffix,
 } from "../../../../utils/format";
 
-// 🌟 ĐỒNG BỘ: Định nghĩa danh mục đất nền tương thích với DB
-
 export default function InfoFormCardLand({
   register,
   control,
@@ -40,7 +37,6 @@ export default function InfoFormCardLand({
   const selectedProvince = watch("province");
   const selectedWard = watch("ward");
 
-  // 🌟 ĐỒNG BỘ: Chống xóa nhầm phường khi Edit
   useEffect(() => {
     if (!selectedProvince) return;
     const provinceWards = LOCATION_DATA[selectedProvince] || [];

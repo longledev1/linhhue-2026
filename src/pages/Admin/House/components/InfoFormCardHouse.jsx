@@ -10,7 +10,6 @@ import {
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
-// 🌟 IMPORT BỘ DATA TỈNH THÀNH VÀ LOGIC PHƯỜNG XÃ LIÊN KẾT ĐỘNG
 import {
   PROVINCE_OPTIONS,
   LOCATION_DATA,

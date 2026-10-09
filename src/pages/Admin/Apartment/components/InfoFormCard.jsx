@@ -10,7 +10,6 @@ import {
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
-// 🌟 IMPORT BỘ DATA TỈNH THÀNH VÀ LOGIC PHƯỜNG XÃ LIÊN KẾT ĐỘNG
 import {
   PROVINCE_OPTIONS,
   LOCATION_DATA,
@@ -36,11 +35,9 @@ export default function InfoFormCard({
   watch,
   setValue,
 }) {
-  // Lắng nghe giá trị của cả Province và Ward trên Form theo thời gian thực
   const selectedProvince = watch("province");
   const selectedWard = watch("ward");
 
-  // 🌟 FIX CHÍ MẠNG TRANG EDIT: Logic chống ghi đè xóa nhầm phường xã khi load dữ liệu cũ
   useEffect(() => {
     // Nếu Form chưa có dữ liệu Tỉnh/Thành phố, không xử lý gì cả
     if (!selectedProvince) return;

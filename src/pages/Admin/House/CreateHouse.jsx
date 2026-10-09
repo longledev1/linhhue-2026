@@ -23,7 +23,6 @@ export default function AdminCreateHouse() {
   const navigate = useNavigate();
   const [isSubmittingState, setIsSubmittingState] = useState(false);
   const { addHouse } = useHouseStore();
-  // 🌟 CHÈN DÒNG NÀY ĐỂ THẤY ZOD ĐANG CHẶN Ô NÀO KHI BẠN BẤM ĐĂNG:
   const {
     register,
     handleSubmit,
